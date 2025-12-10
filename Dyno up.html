@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Voice Dino Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 200px;
+            background: #ffffff;
+            border: 3px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #score {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #555;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        #gameOver {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            color: white;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 10px;
+            z-index: 100;
+        }
+        
+        #gameOver h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 36px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        #restartBtn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 6px #5a67d8;
+            transition: all 0.2s;
+        }
+        
+        #restartBtn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px #5a67d8;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px #3d8b40;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px #3d8b40;
+        }
+        
+        #voiceBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px #d81b60;
+        }
+        
+        #voiceBtn:active {
+            box-shadow: 0 2px #d81b60;
+        }
+        
+        #voiceStatus {
+            margin-top: 15px;
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            font-size: 16px;
+            color: #333;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .listening {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%) !important;
+            color: white !important;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.7) !important;
+        }
+        
+        .voice-command {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin: 0 5px;
+            font-weight: bold;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        #instructions {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .mic-icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="600" height="200"></canvas>
+        <div id="score">0</div>
+        <div id="gameOver">
+            <h1>GAME OVER</h1>
+            <div id="finalScore">Score: 0</div>
+            <button id="restartBtn">PLAY AGAIN</button>
+        </div>
+        
+        <div class="controls">
+            <button id="jumpBtn" class="control-btn">TAP TO JUMP</button>
+            <button id="voiceBtn" class="control-btn pulse">
+                <span class="mic-icon">🎤</span>VOICE JUMP
+            </button>
+        </div>
+        
+        <div id="voiceStatus">
+            👆 Tap "VOICE JUMP" and say "JUMP" to make the Dino jump!
+        </div>
+        
+        <div id="instructions">
+            Say <span class="voice-command">"JUMP"</span> 
+            or <span class="voice-command">"UP"</span> 
+            or <span class="voice-command">"HOP"</span>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const gameOverScreen = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const voiceBtn = document.getElementById('voiceBtn');
+        
+        // Game constants
+        const GROUND_Y = 150;
+        const GAME_WIDTH = canvas.width;
+        const GAME_HEIGHT = canvas.height;
+        
+        // Speech recognition setup
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        let isListening = false;
+        
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onresult = function(event) {
+                const lastResult = event.results[event.results.length - 1];
+                const transcript = lastResult[0].transcript.trim().toLowerCase();
+                
+                voiceStatus.innerHTML = `🎤 Heard: "<strong>${transcript}</strong>"`;
+                
+                // Check for jump commands
+                if (transcript.includes('jump') || 
+                    transcript.includes('up') || 
+                    transcript.includes('hop') ||
+                    transcript.includes('leap')) {
+                    voiceStatus.innerHTML += `<br>✅ Dino is JUMPING!`;
+                    jump();
+                }
+                
+                // Restart command
+                if (transcript.includes('restart') || transcript.includes('play again')) {
+                    voiceStatus.innerHTML += `<br>🔄 Restarting game...`;
+                    setTimeout(() => resetGame(), 500);
+                }
+            };
+            
+            recognition.onerror = function(event) {
+                console.log('Speech recognition error:', event.error);
+                voiceStatus.innerHTML = `❌ Error: ${event.error}. Tap VOICE JUMP to try again.`;
+                stopListening();
+            };
+            
+            recognition.onend = function() {
+                if (isListening) {
+                    // Restart listening if it ended unexpectedly
+                    setTimeout(() => {
+                        if (isListening) {
+                            startListening();
+                        }
+                    }, 100);
+                }
+            };
+        } else {
+            voiceStatus.innerHTML = "❌ Voice control not supported in this browser. Try Chrome or Edge.";
+            voiceBtn.disabled = true;
+            voiceBtn.style.opacity = "0.5";
+        }
+        
+        // Voice control functions
+        function startListening() {
+            if (!recognition) return;
+            
+            try {
+                recognition.start();
+                isListening = true;
+                voiceBtn.classList.add('listening');
+                voiceStatus.innerHTML = "🎤 <strong>Listening...</strong> Say 'JUMP'!";
+                voiceStatus.classList.add('listening');
+            } catch (e) {
+                console.log("Speech recognition error:", e);
+            }
+        }
+        
+        function stopListening() {
+            if (!recognition) return;
+            
+            try {
+                recognition.stop();
+                isListening = false;
+                voiceBtn.classList.remove('listening');
+                voiceStatus.classList.remove('listening');
+                voiceStatus.innerHTML = "👆 Tap 'VOICE JUMP' to enable voice control";
+            } catch (e) {
+                console.log("Error stopping recognition:", e);
+            }
+        }
+        
+        function toggleListening() {
+            if (!recognition) return;
+            
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+        
+        // Game variables
+        let dino = {
+            x: 50,
+            y: GROUND_Y,
+            width: 40,
+            height: 50,
+            jumping: false,
+            velocity: 0,
+            gravity: 0.8,
+            jumpPower: -15
+        };
+        
+        let obstacles = [];
+        let clouds = [];
+        let score = 0;
+        let gameSpeed = 5;
+        let gameOver = false;
+        let frameCount = 0;
+        
+        // Initialize clouds
+        function initClouds() {
+            clouds = [];
+            for(let i = 0; i < 3; i++) {
+                clouds.push({
+                    x: Math.random() * GAME_WIDTH,
+                    y: 30 + Math.random() * 60,
+                    width: 40 + Math.random() * 30,
+                    speed: 0.5 + Math.random() * 0.5
+                });
+            }
+        }
+        
+        // Drawing functions
+        function drawSky() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F7FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, GAME_WIDTH, GROUND_Y);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            clouds.forEach(cloud => {
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.width/3, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width/4, cloud.y - 8, cloud.width/4, 0, Math.PI * 2);
+                ctx.arc(cloud.x - cloud.width/4, cloud.y, cloud.width/4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        function drawDino() {
+            // Dino body with gradient
+            const dinoGradient = ctx.createLinearGradient(dino.x, dino.y, dino.x, dino.y + dino.height);
+            dinoGradient.addColorStop(0, '#666');
+            dinoGradient.addColorStop(1, '#444');
+            ctx.fillStyle = dinoGradient;
+            ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+            
+            // Eye
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(dino.x + 25, dino.y + 10, 10, 10);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(dino.x + 28, dino.y + 13, 4, 4);
+            
+            // Smile
+            ctx.beginPath();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.arc(dino.x + 30, dino.y + 25, 8, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+            
+            // Legs with animation
+            ctx.fillStyle = '#333';
+            const legOffset = dino.jumping ? 0 : Math.sin(frameCount * 0.2) * 4;
+            ctx.fillRect(dino.x + 8, dino.y + dino.height - 8, 12, 10);
+            ctx.fillRect(dino.x + dino.width - 20, dino.y + dino.height - 8 + legOffset, 12, 10);
+            
+            // Voice indicator when jumping via voice
+            if (dino.jumping && isListening) {
+                ctx.fillStyle = 'rgba(255, 107, 107, 0.3)';
+                ctx.beginPath();
+                ctx.arc(dino.x + dino.width/2, dino.y - 10, 15, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function drawGround() {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(0, GROUND_Y + dino.height, GAME_WIDTH, 50);
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(0, GROUND_Y + dino.height, GAME_WIDTH, 5);
+        }
+        
+        function drawObstacles() {
+            obstacles.forEach(obs => {
+                const cactusGradient = ctx.createLinearGradient(obs.x, obs.y, obs.x, obs.y + obs.height);
+                cactusGradient.addColorStop(0, '#3CB371');
+                cactusGradient.addColorStop(1, '#2E8B57');
+                ctx.fillStyle = cactusGradient;
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                
+                // Cactus arms
+                ctx.fillStyle = '#228B22';
+                if(obs.height > 40) {
+                    ctx.fillRect(obs.x - 8, obs.y + 20, 10, 6);
+                    ctx.fillRect(obs.x + obs.width - 2, obs.y + 15, 10, 6);
+                }
+            });
+        }
+        
+        function updateDino() {
+            if(dino.jumping) {
+                dino.velocity += dino.gravity;
+                dino.y += dino.velocity;
+                
+                if(dino.y < 20) dino.y = 20;
+                if(dino.y >= GROUND_Y) {
+                    dino.y = GROUND_Y;
+                    dino.jumping = false;
+                    dino.velocity = 0;
+                }
+            }
+        }
+        
+        function updateObstacles() {
+            for(let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
+                if(obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                    score++;
+                    scoreElement.textContent = score;
+                }
+            }
+            
+            if(frameCount % 60 === 0 && obstacles.length < 3 && Math.random() < 0.5) {
+                const height = 35 + Math.random() * 25;
+                obstacles.push({
+                    x: GAME_WIDTH,
+                    y: GROUND_Y + dino.height - height,
+                    width: 15,
+                    height: height
+                });
+            }
+        }
+        
+        function updateClouds() {
+            clouds.forEach(cloud => {
+                cloud.x -= cloud.speed;
+                if(cloud.x + cloud.width < 0) {
+                    cloud.x = GAME_WIDTH + cloud.width;
+                    cloud.y = 30 + Math.random() * 60;
+                }
+            });
+        }
+        
+        function checkCollisions() {
+            for(let obs of obstacles) {
+                if(dino.x + 5 < obs.x + obs.width &&
+                   dino.x + dino.width - 5 > obs.x &&
+                   dino.y + 5 < obs.y + obs.height &&
+                   dino.y + dino.height - 5 > obs.y) {
+                    endGame();
+                    return;
+                }
+            }
+        }
+        
+        function endGame() {
+            gameOver = true;
+            stopListening();
+            finalScoreElement.textContent = `Score: ${score}`;
+            gameOverScreen.style.display = 'flex';
+        }
+        
+        function resetGame() {
+            dino = {
+                x: 50,
+                y: GROUND_Y,
+                width: 40,
+                height: 50,
+                jumping: false,
+                velocity: 0,
+                gravity: 0.8,
+                jumpPower: -15
+            };
+            
+            obstacles = [];
+            score = 0;
+            gameSpeed = 5;
+            gameOver = false;
+            frameCount = 0;
+            
+            scoreElement.textContent = '0';
+            gameOverScreen.style.display = 'none';
+            initClouds();
+            
+            // Auto-start voice control on restart
+            setTimeout(() => {
+                if (recognition && !isListening) {
+                    startListening();
+                }
+            }, 500);
+        }
+        
+        function jump() {
+            if(!dino.jumping && !gameOver) {
+                dino.jumping = true;
+                dino.velocity = dino.jumpPower;
+                
+                // Visual feedback
+                voiceStatus.innerHTML = "🦖 <strong>JUMPING!</strong>";
+                setTimeout(() => {
+                    if (isListening) {
+                        voiceStatus.innerHTML = "🎤 <strong>Listening...</strong> Say 'JUMP'!";
+                    }
+                }, 500);
+            }
+        }
+        
+        // Game loop
+        function gameLoop() {
+            if(gameOver) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+            
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            drawSky();
+            drawGround();
+            drawObstacles();
+            drawDino();
+            
+            updateDino();
+            updateObstacles();
+            updateClouds();
+            checkCollisions();
+            
+            frameCount++;
+            if(frameCount % 300 === 0) {
+                gameSpeed += 0.3;
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Event listeners
+        document.getElementById('jumpBtn').addEventListener('click', jump);
+        voiceBtn.addEventListener('click', toggleListening);
+        document.getElementById('restartBtn').addEventListener('click', resetGame);
+        
+        canvas.addEventListener('click', jump);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.code === 'Space' || e.code === 'ArrowUp') {
+                e.preventDefault();
+                jump();
+            }
+        });
+        
+        // Initialize and start
+        initClouds();
+        resetGame();
+        gameLoop();
+        
+        // Auto-start voice on page load
+        setTimeout(() => {
+            if (recognition) {
+                startListening();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Humanitarian Aid for Palestine</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f8f9fa; color: #333; line-height: 1.6; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .banner { background: #000; color: white; text-align: center; padding: 15px; margin-bottom: 25px; font-weight: bold; }
+        .banner a { color: #4CAF50; }
+        header, section { background: white; padding: 25px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #006400; margin-bottom: 15px; }
+        h2 { color: #007A3D; border-bottom: 2px solid #eee; padding-bottom: 8px; margin: 20px 0 15px; }
+        p { margin-bottom: 15px; }
+        .org-list { list-style: none; }
+        .org-list li { padding: 15px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; background-color: #f9f9f9; }
+        .org-name { font-weight: bold; color: #0056b3; display: block; font-size: 1.1em; }
+        .org-desc { display: block; margin: 8px 0 12px; color: #555; }
+        .btn { display: inline-block; background-color: #007A3D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; }
+        .btn:hover { background-color: #005a29; }
+        .warning { background-color: #fff8e1; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }
+        footer { text-align: center; margin-top: 30px; color: #666; font-size: 0.9em; padding: 20px; }
+    </style>
+</head>
+<body>
+    <!-- Awareness Banner -->
+    <div class="banner" id="liveBanner">
+    <span id="tickerText">🚚 Recent Aid: Over 12,000 meals distributed in Rafah this week. </span>
+    <span id="updateTimer" style="font-size:0.8em; opacity:0.9;"> (Updated recently)</span>
+</div>
+
+    <header>
+        <h1>Direct Humanitarian Support for Palestine</h1>
+        <p>This page serves as an information hub to connect donors with established and vetted humanitarian organizations providing urgent aid in Gaza and the West Bank.</p>
+        <p><strong>Important:</strong> This site does <u>not</u> collect or process donations. It directs you to the official, secure donation portals of the organizations listed.</p>
+    </header>
+
+    <section class="warning">
+        <h2>⚠️ Critical Notice for Donors</h2>
+        <p>Due to strict international sanctions and financial regulations, direct peer-to-peer fundraising for individuals in Gaza via major platforms carries a <strong>high risk of funds being frozen, returned, or accounts shut down</strong>[citation:2][citation:10].</p>
+        <p>Donating through legally authorized and registered non-governmental organizations (NGOs) is the safest and most reliable method to ensure your aid reaches those in need[citation:8].</p>
+    </section>
+
+    <section id="donate">
+        <h2>Vetted Humanitarian Organizations</h2>
+        <p>The following organizations are recognized for their humanitarian work in the region. <strong>Always conduct your own due diligence before donating.</strong></p>
+
+        <ul class="org-list">
+            <li>
+                <span class="org-name">Palestine Children's Relief Fund (PCRF)</span>
+                <span class="org-desc">Provides medical care and humanitarian aid to sick and injured children.</span>
+                <a href="https://www.pcrf.net/" class="btn" target="_blank">Visit PCRF</a>
+            </li>
+            <li>
+                <span class="org-name">Sawaed Palestine</span>
+                <span class="org-desc">A platform focused on providing basic needs like food, tents, and medical support in Gaza[citation:6].</span>
+                <a href="https://sawaidpalestine.com/en/" class="btn" target="_blank">Visit Sawaed Palestine</a>
+            </li>
+            <li>
+                <span class="org-name">UNRWA (UN Relief and Works Agency)</span>
+                <span class="org-desc">Provides education, healthcare, and relief services to Palestinian refugees.</span>
+                <a href="https://www.unrwa.org/" class="btn" target="_blank">Visit UNRWA</a>
+            </li>
+        </ul>
+        <p style="margin-top: 20px; font-style: italic;">Note: This is a shortlist for demonstration. Extensive research is required to identify the most suitable and current partners.</p>
+    </section>
+
+    <section>
+        <h2>How to Use & Distribute This App</h2>
+        <p><strong>1. Customize:</strong> Edit the HTML file. Add or remove organizations based on your research. You can also change the text and styling.</p>
+        <p><strong>2. Verify Links:</strong> Regularly check that all links to donation pages are active and current.</p>
+        <p><strong>3. Share Securely:</strong> Distribute the HTML file directly via email or messaging apps, or host it on a simple, static web server for online access.</p>
+    </section>
+   <section>
+    <h2>See the Impact</h2>
+    <p>A message from humanitarian workers on the ground:</p>
+    <!-- Example: Embed a video from the PCRF channel -->
+    <div style="max-width: 600px; margin: 20px auto;">
+        <iframe width="100%" height="340" src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p style="font-size:0.9em; color:#666;">Source: Palestine Children's Relief Fund (PCRF)</p>
+    </div>
+</section>
+    <footer>
+        <p>This page is for informational purposes only. The maintainer is not responsible for the donation process or the work of the linked organizations.</p>
+        <p>Last updated: December 2025 | From Mali, with solidarity.</p>
+    </footer>
+<!-- In your #donate section -->
+<div style="text-align: center; padding: 20px; margin: 25px 0; background: #e8f5e9; border-radius: 10px;">
+    <h3>Collective Support Counter</h3>
+    <p style="font-size: 2.5em; font-weight: bold; color: #007A3D;" id="impactCount">0</p>
+    <p>Click to add your pledge of support. This counter saves locally on your device.</p>
+    <button onclick="incrementCounter()" class="btn" style="background-color: #FF9800;">+1 Pledge of Support</button>
+    <button onclick="resetCounter()" style="color: #666; margin-left: 10px; background: transparent; border: none; cursor: pointer;">Reset My Count</button>
+</div>
+
+<!-- Script to add just before </body> -->
+<script>
+    // Get the current count from the user's browser storage, or start at 0
+    let currentCount = localStorage.getItem('localImpactCount') || 0;
+    document.getElementById('impactCount').textContent = currentCount;
+
+    function incrementCounter() {
+        currentCount++;
+        document.getElementById('impactCount').textContent = currentCount;
+        localStorage.setItem('localImpactCount', currentCount); // Save to this browser
+    }
+    function resetCounter() {
+        if(confirm('Reset only your local count?')) {
+            localStorage.setItem('localImpactCount', 0);
+            document.getElementById('impactCount').textContent = 0;
+            currentCount = 0;
+        }
+    }
+</script>
+</body>
+</html>

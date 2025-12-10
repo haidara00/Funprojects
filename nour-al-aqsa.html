@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noor Al Aqsa | Digital Sovereignty Hub</title>
+    <style>
+        :root {
+            --palestine-green: #006400;
+            --palestine-black: #000000;
+            --palestine-white: #ffffff;
+            --palestine-red: #ce1126;
+            --accent-gold: #f6b93b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f8f9fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--palestine-black) 0%, var(--palestine-green) 100%);
+            color: white; padding: 3rem 0; text-align: center;
+            border-bottom: 8px solid var(--palestine-red);
+        }
+        header h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+        header .heart { color: var(--palestine-red); }
+        header p { font-size: 1.3rem; max-width: 800px; margin: 0 auto; color: #ddd; }
+        
+        /* Sections */
+        .section {
+            background: white; margin: 2.5rem 0; padding: 2.5rem;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 100, 0, 0.08);
+            border-left: 6px solid var(--palestine-green);
+        }
+        .section-title {
+            color: var(--palestine-green); border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 10px; margin-bottom: 1.5rem; font-size: 2rem;
+        }
+        
+        /* Mission & Life OS */
+        .mission-box, .os-box {
+            background: linear-gradient(to right, #f8fff8, #ffffff);
+            padding: 2rem; border-radius: 15px; margin: 1.5rem 0;
+            border: 2px dashed var(--palestine-green);
+        }
+        .os-phase {
+            background: #f0f8f0; padding: 1.2rem; margin: 1rem 0;
+            border-radius: 10px; border-left: 5px solid var(--accent-gold);
+        }
+        .phase-title { color: var(--palestine-black); font-weight: bold; }
+        
+        /* Product Cards */
+        .card-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px; margin-top: 2rem;
+        }
+        .card {
+            background: white; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.07); transition: transform 0.3s;
+            border: 1px solid #eaeaea;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0, 100, 0, 0.12); }
+        .card-img {
+            height: 200px; width: 100%;
+            background-size: cover; background-position: center;
+        }
+        .card-content { padding: 1.5rem; }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block; background: var(--palestine-green); color: white;
+            padding: 14px 28px; border-radius: 50px; text-decoration: none;
+            font-weight: bold; border: none; cursor: pointer; margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: var(--palestine-black); transform: scale(1.05); }
+        .btn-accent { background: var(--accent-gold); color: black; }
+        .btn-accent:hover { background: #e0a82e; }
+        
+        /* Tools & Search */
+        .tool-box {
+            background: #f8f9ff; padding: 1.5rem; border-radius: 15px;
+            margin: 1rem 0; border: 1px solid #dde;
+        }
+        .search-container { margin: 2rem 0; text-align: center; }
+        .search-box {
+            width: 80%; padding: 15px; font-size: 1.1rem;
+            border: 2px solid var(--palestine-green); border-radius: 50px 0 0 50px;
+        }
+        .search-btn {
+            padding: 15px 30px; font-size: 1.1rem; border-radius: 0 50px 50px 0;
+            background: var(--palestine-green); color: white; border: none; cursor: pointer;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center; margin-top: 4rem; padding: 2.5rem;
+            color: #666; border-top: 1px solid #eee; background: #f5f5f5;
+        }
+        .arabic-text {
+            font-family: 'Segoe UI', 'Traditional Arabic', Tahoma;
+            font-size: 1.2rem; color: var(--palestine-green);
+            text-align: center; margin: 20px 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-grid { grid-template-columns: 1fr; }
+            .search-box { width: 70%; }
+            header h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== HEADER ==================== -->
+    <header>
+        <div class="container">
+            <h1>🇵🇸 Noor Al Aqsa <span class="heart">❤️</span> نور الأقصى</h1>
+            <p>A Digital Sovereignty Hub for Palestinian Creators, Entrepreneurs, and Storytellers.<br>مركز رقمي سيادي للمبدعين، رواد الأعمال، ورواة القصص الفلسطينيين</p>
+            <a href="#mission" class="btn btn-accent">Start Your Journey | ابدأ رحلتك</a>
+            <a href="#shop" class="btn">Visit The Market | زيار السوق</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- ==================== SECTION 1: MISSION & LIFE OS ==================== -->
+        <div id="mission" class="section">
+            <h2 class="section-title">📜 The Mission & The "Life OS" | المهمة ونظام التشغيل الحياتي</h2>
+            <p class="arabic-text">"لا يجرمنكم شنئان قوم على ألا تعدلوا" - (المائدة: 8)</p>
+            
+            <div class="mission-box">
+                <h3>🌟 Our "Why" | هدفنا</h3>
+                <p>To equip every Palestinian with the <strong>digital tools, skills, and sovereign mindset</strong> to build economic independence, control their narrative, and connect globally—using only a smartphone.</p>
+                <p><strong>بالعربي:</strong> تمكين كل فلسطيني بالأدوات الرقمية، المهارات، وعقلية السيادة لبناء استقلال اقتصادي، والتحكم بالرواية، والاتصال بالعالم – باستخدام الهاتف الذكي فقط.</p>
+            </div>
+            
+            <div class="os-box">
+                <h3>🧱 The 4-Phase "Life OS" Framework | إطار نظام التشغيل الحياتي ذو الأربع مراحل</h3>
+                <div class="os-phase">
+                    <div class="phase-title">Phase 1: The Arsenal | المرحلة 1: الترسانة</div>
+                    <p><strong>Learn:</strong> Video editing (Petal Clip), HTML website building, SEO.</p>
+                </div>
+                <div class="os-phase">
+                    <div class="phase-title">Phase 2: The Product | المرحلة 2: المنتج</div>
+                    <p><strong>Create:</strong> Your online store, your YouTube channel, your digital service.</p>
+                </div>
+                <div class="os-phase">
+                    <div class="phase-title">Phase 3: The Network | المرحلة 3: الشبكة</div>
+                    <p><strong>Connect:</strong> With other creators, form cooperatives, amplify each other.</p>
+                </div>
+                <div class="os-phase">
+                    <div class="phase-title">Phase 4: The Sovereignty | المرحلة 4: السيادة</div>
+                    <p><strong>Sustain:</strong> A resilient digital economy that operates on our terms.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 2: THE SOVEREIGN SHOP ==================== -->
+        <div id="shop" class="section">
+            <h2 class="section-title">🛍️ The Sovereign Shop | المتجر السيادي</h2>
+            <p>An instant, single-file showcase for products. This is the HTML foundation you teach.</p>
+            
+            <div class="card-grid">
+                <!-- Product 1 -->
+                <div class="card">
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="card-content">
+                        <h3>Hand-Embroidered Thobe</h3>
+                        <p>Tatreez from Hebron. Each stitch tells a story. تطريز من الخليل.</p>
+                        <div style="color: var(--palestine-red); font-size: 1.8rem; font-weight: bold; margin: 15px 0;">$120</div>
+                        <button class="btn" onclick="placeOrder('Hand-Embroidered Thobe')">Order via WhatsApp | اطلب عبر واتساب</button>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="card">
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="card-content">
+                        <h3>Bethlehem Olive Wood</h3>
+                        <p>Carving from ancient trees. نقش من خشب الزيتون.</p>
+                        <div style="color: var(--palestine-red); font-size: 1.8rem; font-weight: bold; margin: 15px 0;">$65</div>
+                        <button class="btn" onclick="placeOrder('Bethlehem Olive Wood Carving')">Order via WhatsApp | اطلب عبر واتساب</button>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="card">
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1542332212-9bf6badc6fe1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    <div class="card-content">
+                        <h3>Za'atar & Olive Oil Set</h3>
+                        <p>Taste of the land. زعتر وزيت زيتون.</p>
+                        <div style="color: var(--palestine-red); font-size: 1.8rem; font-weight: bold; margin: 15px 0;">$35</div>
+                        <button class="btn" onclick="placeOrder('Za\'atar & Olive Oil Set')">Order via WhatsApp | اطلب عبر واتساب</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 3: SHOW LOVE & SUPPORT ==================== -->
+        <div class="section">
+            <h2 class="section-title">❤️ Show Your Love & Support | أظهر حبك ودعمك</h2>
+            <div style="text-align: center; margin: 2.5rem 0;">
+                <button id="loveButton" class="btn btn-accent" style="font-size: 1.5rem; padding: 20px 40px;">
+                    ❤️ I Stand With Palestine & Al-Aqsa ❤️ <br>
+                    <small>أناصر فلسطين والمسجد الأقصى</small>
+                </button>
+                <p id="supportMessage" style="margin-top: 20px; font-size: 1.2rem; color: var(--palestine-green); min-height: 30px;"></p>
+            </div>
+            <div class="tool-box">
+                <p style="text-align: center; font-size: 2rem; margin: 10px 0;">
+                    Total Acts of Support: <strong id="clickCounter">0</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 4: TOOLS & RESEARCH ==================== -->
+        <div class="section">
+            <h2 class="section-title">🔍 Tools for Research & Unity | أدوات البحث والوحدة</h2>
+            
+            <div class="search-container">
+                <h3>Incognito Product Research</h3>
+                <p>Open Chrome > Tap <strong>•••</strong> > New Incognito Tab. Search without affecting your personal algorithm.</p>
+                <input type="text" class="search-box" id="searchQuery" placeholder="Search for a product (e.g., Palestinian embroidery...)" value="Palestinian embroidery">
+                <button class="search-btn" onclick="performSearch()">Research in New Tab | ابحث</button>
+            </div>
+            
+            <div class="tool-box">
+                <h4>🛠️ The Free Toolkit | مجموعة الأدوات المجانية</h4>
+                <p><strong>Petal Clip</strong> (Video Edit) | <strong>Canva</strong> (Graphics) | <strong>Google Docs</strong> (Scripts) | <strong>WhatsApp Business</strong> (Orders) | <strong>YouTube Studio</strong> (Analytics).</p>
+            </div>
+        </div>
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer>
+            <p><strong>Noor Al Aqsa</strong> - Built with ❤️🕊️ for Palestinian Digital Sovereignty.</p>
+            <p class="arabic-text">فلسطين حرة عربية .. والقدس عاصمتنا الأبدية</p>
+        </footer>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // Function to simulate product search
+        function performSearch() {
+            let query = document.getElementById('searchQuery').value;
+            if(query) {
+                let searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                window.open(searchUrl, '_blank');
+                alert("Opened search in new tab. Teach: Use Incognito for clean research.");
+            }
+        }
+        
+        // Function to simulate order placement via WhatsApp
+        function placeOrder(productName) {
+            let phoneNumber = "+970599000000"; // Example Palestinian WhatsApp number
+            let message = `Hello, I would like to order: ${productName}. My details are...`;
+            let whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // "Show Love" Button Functionality
+        let clickCount = localStorage.getItem('palestineSupportCount') || 0;
+        const messages = [
+            "Free Palestine! 🇵🇸",
+            "Al-Aqsa is in our hearts. 🕌",
+            "Your support is recorded. Thank you!",
+            "From the river to the sea. 🕊️",
+            "Solidarity is strength."
+        ];
+        document.getElementById('clickCounter').textContent = clickCount;
+        document.getElementById('loveButton').addEventListener('click', function() {
+            clickCount++;
+            localStorage.setItem('palestineSupportCount', clickCount);
+            document.getElementById('clickCounter').textContent = clickCount;
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('supportMessage').textContent = randomMessage;
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => { this.style.transform = 'scale(1)'; }, 150);
+        });
+        
+        // Simple page load message
+        window.onload = function() {
+            console.log("Noor Al Aqsa Loaded. Ready to build sovereignty.");
+        }
+    </script>
+</body>
+</html>
