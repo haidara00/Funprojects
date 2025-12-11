@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أكاديمية حيدرة | Hydara Academy - تعلم البرمجة دون إنترنت</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0A2472;
+            --accent-green: #00C896;
+            --action-orange: #FF6B35;
+            --gold: #D4AF37;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --border-color: #333;
+            --text-light: #ffffff;
+            --text-muted: #aaa;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.8;
+            direction: rtl;
+        }
+
+        /* Add Cairo font */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+        /* Language Toggle */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(10, 36, 114, 0.9);
+            border: 2px solid var(--accent-green);
+            border-radius: 25px;
+            padding: 8px 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--accent-green);
+            color: var(--dark-bg);
+            font-weight: bold;
+        }
+
+        /* Sovereignty Header */
+        .academy-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-bg));
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .academy-header::before {
+            content: '🦅';
+            font-size: 120px;
+            position: absolute;
+            opacity: 0.1;
+            top: 20px;
+            left: 20px;
+        }
+
+        .academy-header::after {
+            content: '🦅';
+            font-size: 120px;
+            position: absolute;
+            opacity: 0.1;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .sovereignty-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-green));
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0, 200, 150, 0.3);
+        }
+
+        .quran-verse {
+            font-size: 20px;
+            color: var(--gold);
+            margin: 20px auto;
+            max-width: 600px;
+            font-family: 'Cairo', serif;
+            line-height: 2;
+        }
+
+        .verse-ref {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* Academy Layout */
+        .academy-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1024px) {
+            .academy-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Navigation */
+        .academy-sidebar {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 3px solid var(--accent-green);
+            height: fit-content;
+            position: sticky;
+            top: 30px;
+        }
+
+        .student-profile {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent-green), var(--primary-blue));
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .student-level {
+            background: linear-gradient(45deg, var(--gold), #b8941f);
+            color: var(--dark-bg);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--primary-blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .nav-modules {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .module-btn {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-light);
+            text-align: right;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-btn:hover {
+            background: rgba(0, 200, 150, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .module-btn.active {
+            background: linear-gradient(90deg, var(--accent-green), transparent);
+            border-right: 4px solid var(--action-orange);
+        }
+
+        .module-icon {
+            font-size: 20px;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .academy-main {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 35px;
+            border: 3px solid var(--border-color);
+            min-height: 600px;
+        }
+
+        .module-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .module-title {
+            font-size: 32px;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .module-subtitle {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .lesson-content {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .lesson-content h3 {
+            color: var(--action-orange);
+            margin: 25px 0 15px;
+            font-size: 24px;
+        }
+
+        .lesson-content p {
+            margin-bottom: 20px;
+        }
+
+        .arabic-note {
+            background: rgba(212, 175, 55, 0.1);
+            border-right: 4px solid var(--gold);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Cairo', serif;
+            font-size: 20px;
+        }
+
+        /* Interactive Code Editor */
+        .code-editor {
+            background: #1e1e1e;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .editor-header {
+            background: #252525;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .editor-title {
+            font-family: monospace;
+            color: var(--accent-green);
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .editor-btn {
+            padding: 8px 15px;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .editor-btn:hover {
+            background: var(--accent-green);
+            transform: translateY(-2px);
+        }
+
+        .code-area {
+            width: 100%;
+            min-height: 300px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            padding: 20px;
+            border: none;
+            resize: vertical;
+            line-height: 1.6;
+            tab-size: 2;
+        }
+
+        .code-area:focus {
+            outline: 2px solid var(--accent-green);
+        }
+
+        .preview-area {
+            width: 100%;
+            min-height: 200px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-top: 20px;
+            padding: 20px;
+            overflow: auto;
+            color: black;
+        }
+
+        /* Practice Exercises */
+        .practice-section {
+            background: rgba(10, 36, 114, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid var(--primary-blue);
+        }
+
+        .exercise {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-right: 4px solid var(--accent-green);
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .exercise-icon {
+            font-size: 24px;
+            color: var(--gold);
+        }
+
+        .check-btn, .action-btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, var(--accent-green), var(--primary-blue));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .check-btn:hover, .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 200, 150, 0.4);
+        }
+
+        .check-btn:active, .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .check-btn:disabled, .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .achievement-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .achievement-card.earned {
+            border-color: var(--gold);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        /* Certificate */
+        .certificate-section {
+            background: linear-gradient(45deg, #0a0a0a, #1a1a1a);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 5px solid var(--gold);
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certificate-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2300C896' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .certificate-title {
+            font-size: 36px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-family: 'Cairo', serif;
+        }
+
+        .certificate-text {
+            font-size: 20px;
+            margin: 20px 0;
+            color: var(--text-light);
+        }
+
+        .generate-certificate {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, var(--gold), #b8941f);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+
+        .generate-certificate:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Footer */
+        .academy-footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 3px solid var(--border-color);
+            margin-top: 50px;
+            background: rgba(10, 36, 114, 0.1);
+        }
+
+        .footer-logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .export-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 12px 25px;
+            background: transparent;
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            background: var(--accent-green);
+            color: var(--dark-bg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .academy-container {
+                padding: 15px;
+            }
+            
+            .academy-main, .academy-sidebar {
+                padding: 20px;
+            }
+            
+            .module-title {
+                font-size: 24px;
+            }
+            
+            .code-area {
+                font-size: 14px;
+            }
+            
+            .export-options {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--action-orange);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 2000;
+            font-family: 'Cairo', sans-serif;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .notification.success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .notification.error {
+            background: var(--action-orange);
+            color: white;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="lang-btn active" onclick="setLanguage('ar')">العربية</button>
+        <button class="lang-btn" onclick="setLanguage('en')">English</button>
+    </div>
+
+    <!-- Academy Header -->
+    <header class="academy-header">
+        <h1 style="font-size: 48px; margin-bottom: 10px;">أكاديمية حيدرة</h1>
+        <div class="sovereignty-badge">Hydara Academy - تعلم البرمجة دون إنترنت</div>
+        
+        <div class="quran-verse" id="quranVerse">
+            "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ، خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ، اقْرَأْ وَرَبُّكَ الْأَكْرَمُ، الَّذِي عَلَّمَ بِالْقَلَمِ، عَلَّمَ الْإِنسَانَ مَا لَمْ يَعْلَمْ"
+            <div class="verse-ref">سورة العلق، الآيات 1-5</div>
+        </div>
+        
+        <p style="max-width: 800px; margin: 20px auto; color: var(--text-muted);">
+            أول أكاديمية برمجة عربية تعمل دون إنترنت. تعلم، مارس، وابنِ مهاراتك الرقمية بأي وقت، في أي مكان.
+        </p>
+    </header>
+
+    <!-- Academy Container -->
+    <div class="academy-container">
+        <!-- Sidebar Navigation -->
+        <aside class="academy-sidebar">
+            <div class="student-profile">
+                <div class="student-avatar" id="studentAvatar">🚀</div>
+                <h3 id="studentName">طالب السيادة الرقمية</h3>
+                <p style="color: var(--text-muted);" id="studentUsername">@مبرمج_عربي</p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="student-level" id="studentLevel">المستوى 1: المبتدئ</div>
+            </div>
+
+            <nav class="nav-modules" id="moduleList">
+                <!-- Modules loaded by JavaScript -->
+            </nav>
+
+            <div style="margin-top: 30px;">
+                <h4 style="color: var(--accent-green); margin-bottom: 15px;">📊 إحصائياتك</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; color: var(--accent-green);" id="completedLessons">0</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">دروس مكتملة</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; color: var(--gold);" id="totalPoints">0</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">نقطة مكتسبة</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="academy-main">
+            <div id="moduleContent">
+                <!-- Module content loaded by JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Achievements Section -->
+    <div style="max-width: 1400px; margin: 50px auto; padding: 0 30px;">
+        <h2 style="text-align: center; color: var(--accent-green); margin-bottom: 30px; font-size: 32px;">🏆 إنجازاتك</h2>
+        <div class="achievements-grid" id="achievementsGrid">
+            <!-- Achievements loaded by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Certificate Section -->
+    <div style="max-width: 1400px; margin: 50px auto; padding: 0 30px;">
+        <div class="certificate-section">
+            <div class="footer-logo">🦅</div>
+            <h2 class="certificate-title">شهادة السيادة الرقمية</h2>
+            <p class="certificate-text">عند إكمال جميع الدروس، ستتلقى شهادة معتمدة من أكاديمية حيدرة تثبت مهاراتك في البرمجة والبناء دون إنترنت.</p>
+            <p class="certificate-text" id="certificateProgress">0% مكتمل - واصل التعلم!</p>
+            <button class="generate-certificate" onclick="generateCertificate()" id="certificateBtn" disabled>
+                توليد الشهادة
+            </button>
+        </div>
+    </div>
+
+    <!-- Academy Footer -->
+    <footer class="academy-footer">
+        <div class="footer-logo">🦅</div>
+        <h3>أكاديمية حيدرة - Hydara Academy</h3>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 20px auto;">
+            جزء من مبادرة حيدرة سوفت - التحالف العربي للصمود الرقمي للشباب الإنساني<br>
+            جميع الحقوق محفوظة - التعليم حق للجميع
+        </p>
+        
+        <div class="export-options">
+            <button class="export-btn" onclick="exportProgress()">
+                💾 حفظ تقدمك محلياً
+            </button>
+            <button class="export-btn" onclick="importProgress()">
+                📂 استيراد تقدم سابق
+            </button>
+            <button class="export-btn" onclick="resetProgress()">
+                🔄 بدء من جديد
+            </button>
+            <button class="export-btn" onclick="shareAcademy()">
+                🔗 مشاركة الأكاديمية
+            </button>
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 14px; color: var(--text-muted);">
+            <p>ملف HTML واحد | يعمل 100% دون إنترنت | لا يتتبع بيانات | مجاني دائمًا</p>
+            <p>© 2024 حيدرة سوفت - التحالف العربي للصمود الرقمي</p>
+        </div>
+    </footer>
+
+    <script>
+        // Hydara Academy - Single File Coding Education
+        class HydaraAcademy {
+            constructor() {
+                this.currentLanguage = 'ar';
+                this.currentModule = 'welcome';
+                this.student = {
+                    name: 'طالب السيادة الرقمية',
+                    username: '@مبرمج_عربي',
+                    avatar: '🚀',
+                    level: 1,
+                    points: 0,
+                    completedLessons: 0,
+                    progress: 0
+                };
+                
+                this.modules = [
+                    {
+                        id: 'welcome',
+                        title: { ar: 'مرحباً بك', en: 'Welcome' },
+                        icon: '👋',
+                        lessons: 1,
+                        completed: true,
+                        description: { 
+                            ar: 'بداية رحلة السيادة الرقمية', 
+                            en: 'Start your digital sovereignty journey' 
+                        }
+                    },
+                    {
+                        id: 'html_basics',
+                        title: { ar: 'أساسيات HTML', en: 'HTML Basics' },
+                        icon: '📄',
+                        lessons: 5,
+                        completed: false,
+                        description: { 
+                            ar: 'لغة بناء صفحات الويب', 
+                            en: 'The language of web pages' 
+                        }
+                    },
+                    {
+                        id: 'css_styling',
+                        title: { ar: 'تصميم CSS', en: 'CSS Styling' },
+                        icon: '🎨',
+                        lessons: 5,
+                        completed: false,
+                        description: { 
+                            ar: 'تنسيق وتصميم المواقع', 
+                            en: 'Styling and designing websites' 
+                        }
+                    },
+                    {
+                        id: 'javascript_logic',
+                        title: { ar: 'منطق JavaScript', en: 'JavaScript Logic' },
+                        icon: '🧠',
+                        lessons: 6,
+                        completed: false,
+                        description: { 
+                            ar: 'إضافة التفاعل للمواقع', 
+                            en: 'Adding interactivity to websites' 
+                        }
+                    },
+                    {
+                        id: 'local_storage',
+                        title: { ar: 'الحفظ المحلي', en: 'Local Storage' },
+                        icon: '💾',
+                        lessons: 4,
+                        completed: false,
+                        description: { 
+                            ar: 'حفظ البيانات دون إنترنت', 
+                            en: 'Saving data without internet' 
+                        }
+                    },
+                    {
+                        id: 'single_file_apps',
+                        title: { ar: 'تطبيقات الملف الواحد', en: 'Single File Apps' },
+                        icon: '🦅',
+                        lessons: 4,
+                        completed: false,
+                        description: { 
+                            ar: 'بناء تطبيقات كاملة في ملف واحد', 
+                            en: 'Building complete apps in one file' 
+                        }
+                    }
+                ];
+                
+                this.achievements = [
+                    { 
+                        id: 'first_lesson', 
+                        title: { ar: 'أول خطوة', en: 'First Step' }, 
+                        icon: '👣', 
+                        earned: true,
+                        description: { ar: 'أكمل أول درس في الأكاديمية', en: 'Complete first academy lesson' }
+                    },
+                    { 
+                        id: 'html_master', 
+                        title: { ar: 'سيد HTML', en: 'HTML Master' }, 
+                        icon: '👑', 
+                        earned: false,
+                        description: { ar: 'أكمل جميع دروس HTML', en: 'Complete all HTML lessons' }
+                    },
+                    { 
+                        id: 'css_artist', 
+                        title: { ar: 'فنان CSS', en: 'CSS Artist' }, 
+                        icon: '🎨', 
+                        earned: false,
+                        description: { ar: 'أكمل جميع دروس CSS', en: 'Complete all CSS lessons' }
+                    },
+                    { 
+                        id: 'js_wizard', 
+                        title: { ar: 'ساحر JavaScript', en: 'JS Wizard' }, 
+                        icon: '🧙', 
+                        earned: false,
+                        description: { ar: 'أكمل جميع دروس JavaScript', en: 'Complete all JavaScript lessons' }
+                    },
+                    { 
+                        id: 'sovereignty_builder', 
+                        title: { ar: 'باني السيادة', en: 'Sovereignty Builder' }, 
+                        icon: '🦅', 
+                        earned: false,
+                        description: { ar: 'أكمل درس تطبيقات الملف الواحد', en: 'Complete single file apps lesson' }
+                    },
+                    { 
+                        id: 'academy_graduate', 
+                        title: { ar: 'خريج الأكاديمية', en: 'Academy Graduate' }, 
+                        icon: '🎓', 
+                        earned: false,
+                        description: { ar: 'أكمل جميع دروس الأكاديمية', en: 'Complete all academy lessons' }
+                    }
+                ];
+                
+                this.init();
+            }
+            
+            init() {
+                this.loadProgress();
+                this.renderModules();
+                this.renderAchievements();
+                this.updateStudentInfo();
+                this.loadModule('welcome');
+                
+                console.log('🦅 Hydara Academy initialized');
+                console.log('📚 Single-file coding education ready');
+            }
+            
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                
+                // Update button states
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.textContent.includes(lang === 'ar' ? 'العربية' : 'English'));
+                });
+                
+                // Update Quran verse
+                if (lang === 'ar') {
+                    document.getElementById('quranVerse').innerHTML = `
+                        "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ، خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ، اقْرَأْ وَرَبُّكَ الْأَكْرَمُ، الَّذِي عَلَّمَ بِالْقَلَمِ، عَلَّمَ الْإِنسَانَ مَا لَمْ يَعْلَمْ"
+                        <div class="verse-ref">سورة العلق، الآيات 1-5</div>
+                    `;
+                } else {
+                    document.getElementById('quranVerse').innerHTML = `
+                        "Read in the name of your Lord who created, Created man from a clinging substance, Read, and your Lord is the most Generous, Who taught by the pen, Taught man that which he knew not"
+                        <div class="verse-ref">Surah Al-Alaq, Verses 1-5</div>
+                    `;
+                }
+                
+                this.renderModules();
+                this.renderAchievements();
+                this.updateStudentInfo();
+                this.loadModule(this.currentModule);
+            }
+            
+            renderModules() {
+                const moduleList = document.getElementById('moduleList');
+                if (!moduleList) return;
+                
+                moduleList.innerHTML = '';
+                
+                this.modules.forEach(module => {
+                    const moduleBtn = document.createElement('button');
+                    moduleBtn.className = `module-btn ${this.currentModule === module.id ? 'active' : ''}`;
+                    moduleBtn.innerHTML = `
+                        <span>${module.title[this.currentLanguage]}</span>
+                        <span class="module-icon">${module.icon} ${module.completed ? '✅' : ''}</span>
+                    `;
+                    moduleBtn.onclick = () => {
+                        this.loadModule(module.id);
+                    };
+                    
+                    moduleList.appendChild(moduleBtn);
+                });
+            }
+            
+            loadModule(moduleId) {
+                this.currentModule = moduleId;
+                this.renderModules();
+                
+                const content = document.getElementById('moduleContent');
+                if (!content) return;
+                
+                // Clear content with fade animation
+                content.style.opacity = '0';
+                setTimeout(() => {
+                    content.innerHTML = this.getModuleContent(moduleId);
+                    content.style.opacity = '1';
+                    
+                    // Initialize code editor if needed
+                    if (moduleId === 'html_basics') {
+                        this.setupCodeEditor();
+                    }
+                }, 200);
+            }
+            
+            getModuleContent(moduleId) {
+                const module = this.modules.find(m => m.id === moduleId);
+                if (!module) return '';
+                
+                const isArabic = this.currentLanguage === 'ar';
+                
+                switch(moduleId) {
+                    case 'welcome':
+                        return `
+                            <div class="module-header">
+                                <h1 class="module-title">${module.title[this.currentLanguage]} ${module.icon}</h1>
+                                <p class="module-subtitle">${module.description[this.currentLanguage]}</p>
+                            </div>
+                            
+                            <div class="lesson-content">
+                                <div class="arabic-note">
+                                    ${isArabic ? '"العلم في الصغر كالنقش في الحجر"' : '"Knowledge in youth is like carving in stone"'}
+                                </div>
+                                
+                                <h3>${isArabic ? '🎯 مهمتنا' : '🎯 Our Mission'}</h3>
+                                <p>${isArabic ? 
+                                    'أكاديمية حيدرة تهدف إلى تمكين الشباب العربي بالمهارات الرقمية التي تعمل في أي ظرف، دون الحاجة إلى اتصال إنترنت دائم أو منصات خارجية.' : 
+                                    'Hydara Academy aims to empower Arab youth with digital skills that work in any circumstance, without needing constant internet or external platforms.'}</p>
+                                
+                                <h3>${isArabic ? '🚀 ماذا ستتعلم؟' : '🚀 What Will You Learn?'}</h3>
+                                <p>${isArabic ? 
+                                    '• برمجة المواقع بلغات HTML, CSS, JavaScript<br>• بناء تطبيقات تعمل دون إنترنت<br>• حفظ البيانات محلياً على جهازك<br>• تصميم واجهات مستخدم عربية<br>• نشر مشاريعك في ملف واحد' : 
+                                    '• Website programming with HTML, CSS, JavaScript<br>• Building offline applications<br>• Saving data locally on your device<br>• Designing Arabic user interfaces<br>• Publishing your projects in single files'}</p>
+                                
+                                <h3>${isArabic ? '💡 لماذا أكاديمية حيدرة؟' : '💡 Why Hydara Academy?'}</h3>
+                                <p>${isArabic ? 
+                                    'لأن التعليم حق للجميع، ولأن السيادة الرقمية تبدأ بالمعرفة. هنا تتعلم بأسلوب عربي، بأمثلة من واقعنا، وبأدوات تعمل في أي ظرف.' : 
+                                    'Because education is a right for all, and because digital sovereignty begins with knowledge. Here you learn in Arabic style, with examples from our reality, with tools that work in any situation.'}</p>
+                                
+                                <div class="practice-section">
+                                    <h3 style="color: var(--action-orange);">${isArabic ? '🎯 تمرينك الأول' : '🎯 Your First Exercise'}</h3>
+                                    <p>${isArabic ? 'اضغط على الزر أدناه لتبدأ أول درس في رحلتك:' : 'Click the button below to start your first lesson:'}</p>
+                                    <button class="check-btn" onclick="academy.completeLesson()">
+                                        ${isArabic ? '✅ أكمل درس الترحيب' : '✅ Complete Welcome Lesson'}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                    case 'html_basics':
+                        return `
+                            <div class="module-header">
+                                <h1 class="module-title">${module.title[this.currentLanguage]} ${module.icon}</h1>
+                                <p class="module-subtitle">${module.description[this.currentLanguage]}</p>
+                            </div>
+                            
+                            <div class="lesson-content">
+                                <h3>${isArabic ? 'ما هو HTML؟' : 'What is HTML?'}</h3>
+                                <p>${isArabic ? 
+                                    'HTML هي لغة ترميز تستخدم لإنشاء صفحات الويب. كل موقع إلكتروني تستخدمه مبني باستخدام HTML.' : 
+                                    'HTML is a markup language used to create web pages. Every website you use is built with HTML.'}</p>
+                                
+                                <div class="code-editor">
+                                    <div class="editor-header">
+                                        <div class="editor-title">index.html</div>
+                                        <div class="editor-controls">
+                                            <button class="editor-btn" onclick="runCode()">▶️ ${isArabic ? 'تشغيل' : 'Run'}</button>
+                                            <button class="editor-btn" onclick="resetCode()">🔄 ${isArabic ? 'إعادة' : 'Reset'}</button>
+                                        </div>
+                                    </div>
+                                    <textarea class="code-area" id="htmlCode" spellcheck="false">
+<!DOCTYPE html>
+<html lang="${isArabic ? 'ar' : 'en'}">
+<head>
+    <meta charset="UTF-8">
+    <title>${isArabic ? 'موقعي الأول' : 'My First Site'}</title>
+    <style>
+        body {
+            font-family: ${isArabic ? "'Cairo', sans-serif" : "Arial, sans-serif"};
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            background: #0A2472;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .content {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body ${isArabic ? 'dir="rtl"' : ''}>
+    <div class="header">
+        <h1>${isArabic ? 'مرحباً بالعالم! 🌍' : 'Hello World! 🌍'}</h1>
+        <p>${isArabic ? 'هذا موقعي الأول باستخدام HTML' : 'This is my first site with HTML'}</p>
+    </div>
+    
+    <div class="content">
+        <h2>${isArabic ? 'عن فلسطين 🇵🇸' : 'About Palestine 🇵🇸'}</h2>
+        <p>${isArabic ? 'فلسطين أرض الأنبياء والحضارات' : 'Palestine, land of prophets and civilizations'}</p>
+        
+        <!-- Student should add h3 here -->
+        
+        <!-- Student should add list here -->
+    </div>
+    
+    <footer style="margin-top: 40px; text-align: center; color: #666;">
+        <p>${isArabic ? 'بنيت بـ ❤️ وأكاديمية حيدرة' : 'Built with ❤️ and Hydara Academy'}</p>
+    </footer>
+</body>
+</html></textarea>
+                                    <div class="preview-area" id="htmlPreview"></div>
+                                </div>
+                                
+                                <div class="practice-section">
+                                    <h3 style="color: var(--action-orange);">${isArabic ? '🎯 تمرين عملي' : '🎯 Practical Exercise'}</h3>
+                                    
+                                    <div class="exercise">
+                                        <div class="exercise-header">
+                                            <div class="exercise-icon">1️⃣</div>
+                                            <div>
+                                                <h4>${isArabic ? 'أضف عنواناً جديداً' : 'Add a new heading'}</h4>
+                                                <p>${isArabic ? 'أضف عنواناً من المستوى الثالث (<h3>) يتحدث عن مسقط رأسك' : 'Add a level 3 heading (<h3>) about your hometown'}</p>
+                                                <code style="background: #2d2d2d; padding: 5px 10px; border-radius: 5px; display: block; margin-top: 5px; font-family: monospace;">
+                                                    ${isArabic ? '<h3>مدينتي الغالية</h3>' : '<h3>My Hometown</h3>'}
+                                                </code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="exercise">
+                                        <div class="exercise-header">
+                                            <div class="exercise-icon">2️⃣</div>
+                                            <div>
+                                                <h4>${isArabic ? 'أنشئ قائمة' : 'Create a list'}</h4>
+                                                <p>${isArabic ? 'أنشئ قائمة غير مرتبة (<ul>) تضم 3 إنجازات عربية في التكنولوجيا' : 'Create an unordered list (<ul>) with 3 Arab achievements in technology'}</p>
+                                                <code style="background: #2d2d2d; padding: 5px 10px; border-radius: 5px; display: block; margin-top: 5px; font-family: monospace;">
+${isArabic ? `<ul>
+  <li>الإنجاز الأول</li>
+  <li>الإنجاز الثاني</li>
+  <li>الإنجاز الثالث</li>
+</ul>` : `<ul>
+  <li>First achievement</li>
+  <li>Second achievement</li>
+  <li>Third achievement</li>
+</ul>`}
+                                                </code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="check-btn" onclick="academy.checkHtmlExercise()">
+                                        ${isArabic ? '✅ التحقق من التمرين' : '✅ Check Exercise'}
+                                    </button>
+                                    <button class="action-btn" onclick="academy.completeLesson()" style="background: var(--action-orange);">
+                                        ${isArabic ? '⏩ تخطي التمرين' : '⏩ Skip Exercise'}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                    default:
+                        return `
+                            <div class="module-header">
+                                <h1 class="module-title">${module.title[this.currentLanguage]} ${module.icon}</h1>
+                                <p class="module-subtitle">${module.description[this.currentLanguage]}</p>
+                            </div>
+                            
+                            <div class="lesson-content">
+                                <div class="arabic-note">
+                                    ${isArabic ? 'قريباً... يتم إعداد هذا الدرس' : 'Coming soon... This lesson is being prepared'}
+                                </div>
+                                
+                                <h3>${isArabic ? '📚 المحتوى قيد التطوير' : '📚 Content Under Development'}</h3>
+                                <p>${isArabic ? 
+                                    'هذا الدرس قيد التطوير حالياً. سنضيف محتوى تفاعلياً وشاملاً قريباً.' : 
+                                    'This lesson is currently under development. We will add interactive and comprehensive content soon.'}</p>
+                                
+                                <div class="practice-section">
+                                    <button class="check-btn" onclick="academy.completeLesson()">
+                                        ${isArabic ? '✅ وضع علامة كمكتمل' : '✅ Mark as Complete'}
+                                    </button>
+                                    <button class="action-btn" onclick="academy.loadModule('html_basics')" style="background: var(--primary-blue);">
+                                        ${isArabic ? '← العودة إلى HTML' : '← Back to HTML'}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                }
+            }
+            
+            setupCodeEditor() {
+                // Initialize code editor
+                const codeArea = document.getElementById('htmlCode');
+                const preview = document.getElementById('htmlPreview');
+                
+                if (codeArea && preview) {
+                    // Set initial preview
+                    preview.innerHTML = codeArea.value;
+                    
+                    // Update preview on code change
+                    codeArea.addEventListener('input', () => {
+                        preview.innerHTML = codeArea.value;
+                    });
+                }
+            }
+            
+            completeLesson() {
+                this.student.completedLessons++;
+                this.student.points += 10;
+                
+                // Mark current module as completed if not already
+                const currentModule = this.modules.find(m => m.id === this.currentModule);
+                if (currentModule && !currentModule.completed) {
+                    currentModule.completed = true;
+                }
+                
+                // Check for achievements
+                this.checkAchievements();
+                
+                // Update UI
+                this.updateProgress();
+                
+                this.showNotification(
+                    this.currentLanguage === 'ar' ? 
+                    '🎉 مبروك! أكملت الدرس بنجاح +10 نقاط' : 
+                    '🎉 Congratulations! Lesson completed +10 points',
+                    'success'
+                );
+            }
+            
+            checkHtmlExercise() {
+                const code = document.getElementById('htmlCode').value;
+                const hasH3 = code.includes('<h3') && code.includes('</h3>');
+                const hasUl = code.includes('<ul>') && code.includes('</ul>');
+                const liCount = (code.match(/<li>/g) || []).length;
+                
+                if (hasH3 && hasUl && liCount >= 3) {
+                    this.student.points += 25;
+                    this.student.completedLessons++;
+                    
+                    const htmlModule = this.modules.find(m => m.id === 'html_basics');
+                    if (htmlModule) htmlModule.completed = true;
+                    
+                    this.updateProgress();
+                    
+                    this.showNotification(
+                        this.currentLanguage === 'ar' ?
+                        '🎉 أحسنت! أكملت تمرين HTML بنجاح +25 نقطة' :
+                        '🎉 Excellent! HTML exercise completed +25 points',
+                        'success'
+                    );
+                    
+                    // Check for HTML master achievement
+                    this.checkAchievements();
+                } else {
+                    let message = this.currentLanguage === 'ar' ? '📝 تحتاج إلى:' : '📝 You need to:';
+                    if (!hasH3) message += this.currentLanguage === 'ar' ? ' إضافة عنوان h3' : ' Add h3 heading';
+                    if (!hasUl) message += this.currentLanguage === 'ar' ? ' إضافة قائمة ul' : ' Add ul list';
+                    if (liCount < 3) message += this.currentLanguage === 'ar' ? ` (${liCount}/3 عناصر في القائمة)` : ` (${liCount}/3 list items)`;
+                    
+                    this.showNotification(message, 'error');
+                }
+            }
+            
+            checkAchievements() {
+                // Check HTML master
+                const htmlModule = this.modules.find(m => m.id === 'html_basics');
+                if (htmlModule && htmlModule.completed) {
+                    this.earnAchievement('html_master');
+                }
+                
+                // Check academy graduate
+                const allCompleted = this.modules.every(m => m.completed);
+                if (allCompleted) {
+                    this.earnAchievement('academy_graduate');
+                }
+            }
+            
+            earnAchievement(achievementId) {
+                const achievement = this.achievements.find(a => a.id === achievementId);
+                if (achievement && !achievement.earned) {
+                    achievement.earned = true;
+                    this.student.points += 50;
+                    this.renderAchievements();
+                    this.updateStudentInfo();
+                    
+                    this.showNotification(
+                        this.currentLanguage === 'ar' ?
+                        `🏆 إنجاز جديد: ${achievement.title.ar} +50 نقطة` :
+                        `🏆 New Achievement: ${achievement.title.en} +50 points`,
+                        'success'
+                    );
+                }
+            }
+            
+            renderAchievements() {
+                const grid = document.getElementById('achievementsGrid');
+                if (!grid) return;
+                
+                grid.innerHTML = '';
+                
+                this.achievements.forEach(achievement => {
+                    const card = document.createElement('div');
+                    card.className = `achievement-card ${achievement.earned ? 'earned' : ''}`;
+                    card.innerHTML = `
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <h4>${achievement.title[this.currentLanguage]}</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 5px 0;">
+                            ${achievement.description[this.currentLanguage]}
+                        </p>
+                        <div style="font-size: 12px; color: ${achievement.earned ? 'var(--gold)' : 'var(--text-muted)'}; margin-top: 10px;">
+                            ${achievement.earned ? 
+                                (this.currentLanguage === 'ar' ? '✅ مكتسب' : '✅ Earned') : 
+                                (this.currentLanguage === 'ar' ? '🔒 غير مكتسب' : '🔒 Not Earned')}
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            }
+            
+            updateStudentInfo() {
+                // Calculate progress
+                const totalLessons = this.modules.reduce((sum, module) => sum + module.lessons, 0);
+                const progressPercentage = Math.min((this.student.completedLessons / totalLessons) * 100, 100);
+                
+                // Update progress bar
+                const progressFill = document.getElementById('progressFill');
+                if (progressFill) {
+                    progressFill.style.width = `${progressPercentage}%`;
+                }
+                
+                // Update level based on points
+                const newLevel = Math.floor(this.student.points / 100) + 1;
+                if (newLevel > this.student.level) {
+                    this.student.level = newLevel;
+                    this.showNotification(
+                        this.currentLanguage === 'ar' ?
+                        `🎉 مستوى جديد! أنت الآن في المستوى ${this.student.level}` :
+                        `🎉 New Level! You are now Level ${this.student.level}`,
+                        'success'
+                    );
+                }
+                
+                // Update level display
+                const levelNames = {
+                    ar: ['مبتدئ', 'متوسط', 'متقدم', 'خبير', 'سيد', 'أستاذ'],
+                    en: ['Beginner', 'Intermediate', 'Advanced', 'Expert', 'Master', 'Professor']
+                };
+                const levelName = levelNames[this.currentLanguage][Math.min(this.student.level - 1, 5)] || levelNames[this.currentLanguage][5];
+                
+                document.getElementById('studentLevel').textContent = 
+                    this.currentLanguage === 'ar' ?
+                    `المستوى ${this.student.level}: ${levelName}` :
+                    `Level ${this.student.level}: ${levelName}`;
+                
+                // Update stats
+                document.getElementById('completedLessons').textContent = this.student.completedLessons;
+                document.getElementById('totalPoints').textContent = this.student.points;
+                
+                // Update certificate progress
+                const certProgress = document.getElementById('certificateProgress');
+                const certBtn = document.getElementById('certificateBtn');
+                
+                if (certProgress) {
+                    certProgress.textContent = 
+                        this.currentLanguage === 'ar' ?
+                        `${Math.round(progressPercentage)}% مكتمل - ${this.student.completedLessons}/${totalLessons} درس` :
+                        `${Math.round(progressPercentage)}% complete - ${this.student.completedLessons}/${totalLessons} lessons`;
+                }
+                
+                if (certBtn) {
+                    certBtn.disabled = progressPercentage < 100;
+                    certBtn.innerHTML = progressPercentage < 100 ? 
+                        (this.currentLanguage === 'ar' ? 'توليد الشهادة (غير متاح)' : 'Generate Certificate (Disabled)') :
+                        (this.currentLanguage === 'ar' ? '🎓 توليد الشهادة' : '🎓 Generate Certificate');
+                }
+            }
+            
+            updateProgress() {
+                this.saveProgress();
+                this.updateStudentInfo();
+                this.renderModules();
+            }
+            
+            saveProgress() {
+                try {
+                    const data = {
+                        student: this.student,
+                        modules: this.modules,
+                        achievements: this.achievements,
+                        currentLanguage: this.currentLanguage,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    localStorage.setItem('hydara_academy_progress', JSON.stringify(data));
+                } catch (e) {
+                    console.log('Progress save failed:', e);
+                }
+            }
+            
+            loadProgress() {
+                try {
+                    const saved = localStorage.getItem('hydara_academy_progress');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        this.student = data.student || this.student;
+                        this.modules = data.modules || this.modules;
+                        this.achievements = data.achievements || this.achievements;
+                        this.currentLanguage = data.currentLanguage || 'ar';
+                    }
+                } catch (e) {
+                    console.log('Progress load failed:', e);
+                }
+            }
+            
+            exportProgress() {
+                const data = {
+                    student: this.student,
+                    modules: this.modules,
+                    achievements: this.achievements,
+                    exportDate: new Date().toISOString(),
+                    academy: 'Hydara Academy v1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `hydara-academy-progress-${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showNotification(
+                    this.currentLanguage === 'ar' ?
+                    '💾 تم حفظ تقدمك في ملف محلي' :
+                    '💾 Your progress saved to local file',
+                    'success'
+                );
+            }
+            
+            importProgress() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            
+                            // Validate the data structure
+                            if (data.student && data.modules && data.achievements) {
+                                this.student = data.student;
+                                this.modules = data.modules;
+                                this.achievements = data.achievements;
+                                
+                                this.updateProgress();
+                                this.renderModules();
+                                this.renderAchievements();
+                                this.loadModule(this.currentModule);
+                                
+                                this.showNotification(
+                                    this.currentLanguage === 'ar' ?
+                                    '📂 تم استيراد تقدمك السابق بنجاح' :
+                                    '📂 Previous progress imported successfully',
+                                    'success'
+                                );
+                            } else {
+                                throw new Error('Invalid data structure');
+                            }
+                        } catch (error) {
+                            this.showNotification(
+                                this.currentLanguage === 'ar' ?
+                                '❌ ملف غير صالح أو تالف' :
+                                '❌ Invalid or corrupted file',
+                                'error'
+                            );
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+            
+            resetProgress() {
+                const message = this.currentLanguage === 'ar' ?
+                    'هل أنت متأكد؟ سيتم حذف كل تقدمك وستبدأ من جديد.' :
+                    'Are you sure? All your progress will be deleted and you will start fresh.';
+                
+                if (confirm(message)) {
+                    localStorage.removeItem('hydara_academy_progress');
+                    
+                    // Reset student data
+                    this.student = {
+                        name: 'طالب السيادة الرقمية',
+                        username: '@مبرمج_عربي',
+                        avatar: '🚀',
+                        level: 1,
+                        points: 0,
+                        completedLessons: 0,
+                        progress: 0
+                    };
+                    
+                    // Reset modules
+                    this.modules.forEach(module => {
+                        module.completed = module.id === 'welcome';
+                    });
+                    
+                    // Reset achievements
+                    this.achievements.forEach(achievement => {
+                        achievement.earned = achievement.id === 'first_lesson';
+                    });
+                    
+                    this.updateProgress();
+                    this.renderModules();
+                    this.renderAchievements();
+                    this.loadModule('welcome');
+                    
+                    this.showNotification(
+                        this.currentLanguage === 'ar' ?
+                        '🔄 بدأت رحلة جديدة!' :
+                        '🔄 Started a new journey!',
+                        'success'
+                    );
+                }
+            }
+            
+            generateCertificate() {
+                const progress = Math.min((this.student.completedLessons / 25) * 100, 100);
+                if (progress < 100) {
+                    this.showNotification(
+                        this.currentLanguage === 'ar' ?
+                        '❌ يجب إكمال جميع الدروس أولاً' :
+                        '❌ You must complete all lessons first',
+                        'error'
+                    );
+                    return;
+                }
+                
+                // Create certificate in new window
+                const certWindow = window.open('', '_blank');
+                const isArabic = this.currentLanguage === 'ar';
+                
+                certWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="${isArabic ? 'ar' : 'en'}" ${isArabic ? 'dir="rtl"' : ''}>
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>${isArabic ? 'شهادة أكاديمية حيدرة' : 'Hydara Academy Certificate'}</title>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                            
+                            body {
+                                font-family: ${isArabic ? "'Cairo', sans-serif" : "Arial, sans-serif"};
+                                margin: 0;
+                                padding: 40px;
+                                background: #f5f5f5;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                min-height: 100vh;
+                            }
+                            
+                            .certificate {
+                                background: white;
+                                width: 800px;
+                                height: 600px;
+                                border: 20px solid #D4AF37;
+                                padding: 50px;
+                                text-align: center;
+                                position: relative;
+                                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                            }
+                            
+                            .watermark {
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                font-size: 120px;
+                                color: rgba(0, 200, 150, 0.1);
+                                z-index: 0;
+                            }
+                            
+                            h1 {
+                                color: #0A2472;
+                                font-size: 42px;
+                                margin: 20px 0;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            
+                            h2 {
+                                color: #00C896;
+                                font-size: 28px;
+                                margin: 20px 0;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            
+                            .student-name {
+                                font-size: 48px;
+                                color: #0A2472;
+                                margin: 40px 0;
+                                padding: 20px;
+                                border-bottom: 3px solid #D4AF37;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            
+                            .details {
+                                display: flex;
+                                justify-content: space-around;
+                                margin: 40px 0;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            
+                            .detail-item {
+                                text-align: center;
+                            }
+                            
+                            .detail-value {
+                                font-size: 24px;
+                                color: #0A2472;
+                                font-weight: bold;
+                            }
+                            
+                            .detail-label {
+                                color: #666;
+                                font-size: 14px;
+                                margin-top: 5px;
+                            }
+                            
+                            .footer {
+                                margin-top: 60px;
+                                color: #666;
+                                font-size: 14px;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            
+                            .signature {
+                                margin-top: 40px;
+                                padding-top: 20px;
+                                border-top: 2px solid #ccc;
+                            }
+                            
+                            @media print {
+                                body {
+                                    padding: 0;
+                                }
+                                
+                                .certificate {
+                                    border: 30px solid #D4AF37;
+                                    box-shadow: none;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="certificate">
+                            <div class="watermark">🦅</div>
+                            
+                            <h1>${isArabic ? 'شهادة أكاديمية حيدرة' : 'Hydara Academy Certificate'}</h1>
+                            <h2>${isArabic ? 'شهادة السيادة الرقمية' : 'Digital Sovereignty Certificate'}</h2>
+                            
+                            <p style="font-size: 18px; color: #666; margin: 20px 0; position: relative; z-index: 1;">
+                                ${isArabic ? 
+                                'تُمنح هذه الشهادة تقديراً لإتمام برنامج السيادة الرقمية وإتقان مهارات البرمجة دون إنترنت' :
+                                'This certificate is awarded in recognition of completing the Digital Sovereignty Program and mastering offline programming skills'}
+                            </p>
+                            
+                            <div class="student-name">${this.student.name}</div>
+                            
+                            <div class="details">
+                                <div class="detail-item">
+                                    <div class="detail-value">${this.student.level}</div>
+                                    <div class="detail-label">${isArabic ? 'المستوى' : 'Level'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-value">${this.student.points}</div>
+                                    <div class="detail-label">${isArabic ? 'النقاط' : 'Points'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-value">${this.student.completedLessons}</div>
+                                    <div class="detail-label">${isArabic ? 'درس مكتمل' : 'Lessons Completed'}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="signature">
+                                <div style="margin-bottom: 10px;">${isArabic ? 'تم الإصدار في:' : 'Issued on:'}</div>
+                                <div style="font-weight: bold; color: #0A2472;">${new Date().toLocaleDateString(isArabic ? 'ar-EG' : 'en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                })}</div>
+                            </div>
+                            
+                            <div class="footer">
+                                <div>🦅 ${isArabic ? 'التحالف العربي للصمود الرقمي للشباب الإنساني' : 'Humanitarian Youth Digital Arab Resilience Alliance'}</div>
+                                <div style="margin-top: 10px; font-size: 12px;">
+                                    ${isArabic ? 
+                                    'شهادة رقمية صادرة من أكاديمية حيدرة - ملف HTML واحد يعمل دون إنترنت' :
+                                    'Digital certificate issued by Hydara Academy - Single HTML file works offline'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <script>
+                            // Auto-print after 1 second
+                            setTimeout(() => {
+                                window.print();
+                            }, 1000);
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                
+                this.showNotification(
+                    this.currentLanguage === 'ar' ?
+                    '🎓 تم توليد شهادتك! سيتم الطباعة تلقائياً' :
+                    '🎓 Certificate generated! It will auto-print',
+                    'success'
+                );
+            }
+            
+            shareAcademy() {
+                // Create a downloadable version of the academy
+                const academyHTML = document.documentElement.outerHTML;
+                const blob = new Blob([academyHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                const shareText = this.currentLanguage === 'ar' ?
+                    `🦅 اكتشف أكاديمية حيدرة - أول أكاديمية برمجة عربية تعمل دون إنترنت!\n\nتعلم HTML, CSS, JavaScript في ملف واحد يعمل 100% دون إنترنت.\n\n#أكاديمية_حيدرة #تعلم_البرمجة #تقنية_عربية` :
+                    `🦅 Discover Hydara Academy - First Arabic coding academy that works without internet!\n\nLearn HTML, CSS, JavaScript in one file that works 100% offline.\n\n#HydaraAcademy #LearnToCode #ArabTech`;
+                
+                // Try Web Share API first
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Hydara Academy',
+                        text: shareText,
+                        url: url
+                    }).catch(console.error);
+                } else {
+                    // Fallback: download file
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'hydara_academy.html';
+                    a.click();
+                    
+                    this.showNotification(
+                        this.currentLanguage === 'ar' ?
+                        '🔗 تم حفظ الأكاديمية في ملف، شاركه مع أصدقائك!' :
+                        '🔗 Academy saved to file, share it with friends!',
+                        'success'
+                    );
+                }
+            }
+            
+            showNotification(message, type = 'success') {
+                // Remove existing notifications
+                document.querySelectorAll('.notification').forEach(n => n.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    z-index: 2000;
+                    font-family: 'Cairo', sans-serif;
+                    animation: slideInRight 0.3s ease;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                    max-width: 400px;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+        
+        // Global functions for code editor
+        function runCode() {
+            const code = document.getElementById('htmlCode');
+            const preview = document.getElementById('htmlPreview');
+            if (code && preview) {
+                preview.innerHTML = code.value;
+            }
+        }
+        
+        function resetCode() {
+            const code = document.getElementById('htmlCode');
+            if (code) {
+                const isArabic = window.academy.currentLanguage === 'ar';
+                code.value = `<!DOCTYPE html>
+<html lang="${isArabic ? 'ar' : 'en'}">
+<head>
+    <meta charset="UTF-8">
+    <title>${isArabic ? 'موقعي الأول' : 'My First Site'}</title>
+    <style>
+        body {
+            font-family: ${isArabic ? "'Cairo', sans-serif" : "Arial, sans-serif"};
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            background: #0A2472;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .content {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body ${isArabic ? 'dir="rtl"' : ''}>
+    <div class="header">
+        <h1>${isArabic ? 'مرحباً بالعالم! 🌍' : 'Hello World! 🌍'}</h1>
+        <p>${isArabic ? 'هذا موقعي الأول باستخدام HTML' : 'This is my first site with HTML'}</p>
+    </div>
+    
+    <div class="content">
+        <h2>${isArabic ? 'عن فلسطين 🇵🇸' : 'About Palestine 🇵🇸'}</h2>
+        <p>${isArabic ? 'فلسطين أرض الأنبياء والحضارات' : 'Palestine, land of prophets and civilizations'}</p>
+        
+        <!-- Student should add h3 here -->
+        
+        <!-- Student should add list here -->
+    </div>
+    
+    <footer style="margin-top: 40px; text-align: center; color: #666;">
+        <p>${isArabic ? 'بنيت بـ ❤️ وأكاديمية حيدرة' : 'Built with ❤️ and Hydara Academy'}</p>
+    </footer>
+</body>
+</html>`;
+                runCode();
+            }
+        }
+        
+        // Initialize academy
+        document.addEventListener('DOMContentLoaded', () => {
+            window.academy = new HydaraAcademy();
+            
+            // Set global functions
+            window.setLanguage = (lang) => window.academy.setLanguage(lang);
+            window.exportProgress = () => window.academy.exportProgress();
+            window.importProgress = () => window.academy.importProgress();
+            window.resetProgress = () => window.academy.resetProgress();
+            window.generateCertificate = () => window.academy.generateCertificate();
+            window.shareAcademy = () => window.academy.shareAcademy();
+            
+            console.log('%c🦅 HYADARA ACADEMY ACTIVATED', 
+                'color: #00C896; font-size: 24px; font-weight: bold;');
+            console.log('%cSingle-file coding education | Arabic-first | 100% offline', 
+                'color: #FF6B35; font-size: 14px;');
+        });
+    </script>
+</body>
+</html>
