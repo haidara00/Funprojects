@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Rocket Dodge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #0c0c2e, #1a1a4a);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            border: 3px solid #4a4aff;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #050510;
+            box-shadow: 0 0 40px rgba(74, 74, 255, 0.4);
+        }
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        #uiPanel {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-shadow: 0 2px 4px black;
+            pointer-events: none;
+        }
+        #score { color: #4eff9e; }
+        #highScore { color: #ffb84a; }
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(5, 5, 16, 0.92);
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+        #gameOverScreen { display: none; }
+        h1 {
+            color: #4a4aff;
+            margin-bottom: 10px;
+            font-size: 2.8em;
+            text-shadow: 0 0 15px currentColor;
+        }
+        h2 {
+            color: #ffb84a;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+        p {
+            margin-bottom: 20px;
+            color: #aaa;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+        .ctaButton {
+            background: linear-gradient(to bottom, #4a4aff, #2a2ac8);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-top: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(74, 74, 255, 0.5);
+            transition: all 0.2s;
+        }
+        .ctaButton:active {
+            transform: scale(0.96);
+            box-shadow: 0 2px 8px rgba(74, 74, 255, 0.7);
+        }
+        #controlsHint {
+            position: absolute;
+            bottom: 20px;
+            color: #888;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="uiPanel">
+            <div>SCORE: <span id="score">0</span></div>
+            <div>BEST: <span id="highScore">0</span></div>
+        </div>
+        <div id="startScreen">
+            <h1>🚀 ROCKET DODGE</h1>
+            <p>TAP & HOLD to ascend.<br>Release to descend.<br>Dodge the red obstacles!</p>
+            <button class="ctaButton" id="startButton">START GAME</button>
+            <div id="controlsHint">Keep tapping to fly!</div>
+        </div>
+        <div id="gameOverScreen">
+            <h2>GAME OVER</h2>
+            <p>Your score: <span id="finalScore">0</span></p>
+            <button class="ctaButton" id="restartButton">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        // Game Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('highScore');
+        const finalScoreElement = document.getElementById('finalScore');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startButton = document.getElementById('startButton');
+        const restartButton = document.getElementById('restartButton');
+
+        // Set canvas to full container size (Mobile-first, vertical)
+        function resizeCanvas() {
+            const container = document.getElementById('gameContainer');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Game Variables
+        let gameRunning = false;
+        let score = 0;
+        let highScore = localStorage.getItem('rocketHighScore') || 0;
+        highScoreElement.textContent = highScore;
+
+        // Player Object
+        const player = {
+            x: 0,
+            y: 0,
+            width: 30,
+            height: 50,
+            velocityY: 0,
+            gravity: 0.5,
+            lift: -12,
+            color: '#4a9fff',
+            thrusting: false,
+
+            reset() {
+                this.x = canvas.width / 2 - this.width / 2;
+                this.y = canvas.height / 2;
+                this.velocityY = 0;
+            },
+
+            update() {
+                // Apply gravity
+                this.velocityY += this.gravity;
+                this.y += this.velocityY;
+
+                // Apply thrust if holding
+                if (this.thrusting) {
+                    this.velocityY += this.lift * 0.3; // Continuous thrust
+                }
+
+                // Floor and ceiling boundaries
+                if (this.y + this.height > canvas.height) {
+                    this.y = canvas.height - this.height;
+                    this.velocityY = 0;
+                }
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.velocityY = 0;
+                }
+            },
+
+            draw() {
+                ctx.fillStyle = this.color;
+                // Draw rocket body
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                // Draw rocket nose
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.height);
+                ctx.lineTo(this.x + this.width / 2, this.y + this.height + 20);
+                ctx.lineTo(this.x + this.width, this.y + this.height);
+                ctx.closePath();
+                ctx.fill();
+                // Draw thrust flame
+                if (this.thrusting) {
+                    ctx.fillStyle = '#ff9900';
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y + this.height);
+                    ctx.lineTo(this.x + this.width / 2, this.y + this.height + 25);
+                    ctx.lineTo(this.x + this.width, this.y + this.height);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            },
+
+            jump() {
+                this.velocityY = this.lift;
+                this.thrusting = true;
+            },
+
+            stopThrust() {
+                this.thrusting = false;
+            }
+        };
+
+        // Obstacles Array
+        let obstacles = [];
+        const obstacleWidth = 30;
+        let obstacleSpeed = 4;
+        let obstacleGap = 180;
+        let obstacleFrequency = 90; // frames between obstacles
+        let frameCount = 0;
+
+        function createObstacle() {
+            const gapPosition = Math.random() * (canvas.height - obstacleGap - 100) + 50;
+            obstacles.push({
+                x: canvas.width,
+                topHeight: gapPosition,
+                bottomY: gapPosition + obstacleGap,
+                width: obstacleWidth,
+                color: '#ff4a4a',
+                passed: false
+            });
+        }
+
+        function updateObstacles() {
+            // Create new obstacle periodically
+            if (frameCount % obstacleFrequency === 0) {
+                createObstacle();
+            }
+
+            // Move and manage obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= obstacleSpeed;
+
+                // Score point when player passes an obstacle
+                if (!obstacles[i].passed && obstacles[i].x + obstacleWidth < player.x) {
+                    obstacles[i].passed = true;
+                    score++;
+                    scoreElement.textContent = score;
+                    // Increase difficulty slightly
+                    if (score % 5 === 0) {
+                        obstacleSpeed += 0.3;
+                        obstacleFrequency = Math.max(45, obstacleFrequency - 2);
+                    }
+                }
+
+                // Remove off-screen obstacles
+                if (obstacles[i].x + obstacleWidth < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+            frameCount++;
+        }
+
+        function drawObstacles() {
+            obstacles.forEach(obs => {
+                ctx.fillStyle = obs.color;
+                // Top obstacle
+                ctx.fillRect(obs.x, 0, obs.width, obs.topHeight);
+                // Bottom obstacle
+                ctx.fillRect(obs.x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
+            });
+        }
+
+        // Collision Detection
+        function checkCollision() {
+            for (let obs of obstacles) {
+                // Check if player rectangle overlaps with obstacle rectangle
+                if (player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    ((player.y < obs.topHeight) || (player.y + player.height > obs.bottomY))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Game Loop
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            // Clear canvas with a starry background effect
+            ctx.fillStyle = 'rgba(5, 5, 16, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Draw some static stars
+            ctx.fillStyle = 'white';
+            for (let i = 0; i < 20; i++) {
+                let starX = (i * 47) % canvas.width;
+                let starY = (i * 23) % canvas.height;
+                ctx.fillRect(starX, starY, 2, 2);
+            }
+
+            // Update and draw game objects
+            player.update();
+            updateObstacles();
+            player.draw();
+            drawObstacles();
+
+            // Check for collision
+            if (checkCollision()) {
+                endGame();
+                return;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Game Control Functions
+        function startGame() {
+            gameRunning = true;
+            score = 0;
+            scoreElement.textContent = '0';
+            obstacles = [];
+            frameCount = 0;
+            obstacleSpeed = 4;
+            obstacleFrequency = 90;
+            player.reset();
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            gameRunning = false;
+            finalScoreElement.textContent = score;
+            if (score > highScore) {
+                highScore = score;
+                highScoreElement.textContent = highScore;
+                localStorage.setItem('rocketHighScore', highScore);
+            }
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // Event Listeners for Controls
+        // Touch/Mouse for thrust
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameRunning) player.jump();
+        });
+        canvas.addEventListener('mousedown', () => {
+            if (gameRunning) player.jump();
+        });
+        // Stop thrust on release
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (gameRunning) player.stopThrust();
+        });
+        canvas.addEventListener('mouseup', () => {
+            if (gameRunning) player.stopThrust();
+        });
+
+        // Button Events
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+
+        // Prevent context menu on long press (mobile)
+        canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Initialize player position
+        player.reset();
+    </script>
+</body>
+</html>
