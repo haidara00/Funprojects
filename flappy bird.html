@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydaraSoft Flappy Bird | Digital Sovereignty Gaming</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0A2472 0%, #121212 50%, #000000 100%);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            touch-action: manipulation;
+            color: #00C896;
+        }
+
+        .hydra-header {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-bottom: 2px solid #00C896;
+        }
+
+        .hydra-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00C896;
+            text-shadow: 0 0 10px rgba(0, 200, 150, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .hydra-subtitle {
+            font-size: 14px;
+            color: #FF6B35;
+            margin-top: 5px;
+        }
+
+        .hydra-emblem {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            background: radial-gradient(circle, #00C896 0%, #0A2472 100%);
+            border-radius: 50%;
+            position: relative;
+            animation: hydra-pulse 2s infinite;
+        }
+
+        .hydra-emblem::before,
+        .hydra-emblem::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #FF6B35;
+            border-radius: 50%;
+            top: 10px;
+        }
+
+        .hydra-emblem::before {
+            left: -10px;
+        }
+
+        .hydra-emblem::after {
+            right: -10px;
+        }
+
+        @keyframes hydra-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        #gameContainer {
+            position: relative;
+            margin: 10px auto;
+            border: 3px solid #00C896;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 200, 150, 0.3);
+        }
+
+        canvas {
+            display: block;
+            background: linear-gradient(to bottom, #0A2472 0%, #121212 100%);
+        }
+
+        #scoreDisplay {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #00C896;
+            text-shadow: 0 0 15px rgba(0, 200, 150, 0.7);
+            z-index: 10;
+            font-family: 'Courier New', monospace;
+        }
+
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 36, 114, 0.95);
+            color: #00C896;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #FF6B35;
+        }
+
+        #gameOverScreen {
+            display: none;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            color: #00C896;
+            text-shadow: 0 0 20px rgba(0, 200, 150, 0.8);
+            letter-spacing: 3px;
+        }
+
+        .hydra-bird-title {
+            background: linear-gradient(45deg, #00C896, #FF6B35);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #FF6B35;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+
+        #finalScore {
+            font-size: 60px;
+            color: #00C896;
+            margin: 20px 0;
+            text-shadow: 0 0 25px rgba(0, 200, 150, 0.9);
+            font-family: 'Courier New', monospace;
+        }
+
+        .sovereignty-badge {
+            background: linear-gradient(45deg, #0A2472, #121212);
+            border: 2px solid #00C896;
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #FF6B35;
+            box-shadow: 0 0 15px rgba(0, 200, 150, 0.3);
+        }
+
+        button {
+            background: linear-gradient(45deg, #0A2472, #00C896);
+            border: 2px solid #FF6B35;
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover, button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 200, 150, 0.4);
+            border-color: #00C896;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .instructions {
+            margin: 20px;
+            font-size: 16px;
+            color: #00C896;
+            max-width: 400px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(0, 200, 150, 0.3);
+        }
+
+        .mobile-instructions {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #FF6B35;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .difficulty-btn {
+            background: linear-gradient(45deg, #121212, #0A2472);
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .active-difficulty {
+            background: linear-gradient(45deg, #FF6B35, #00C896);
+            border-color: #00C896;
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+        }
+
+        .hydra-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            padding: 10px;
+            border-top: 1px solid #00C896;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .code-sovereignty {
+            color: #FF6B35;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            canvas {
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+            }
+            
+            .hydra-title {
+                font-size: 20px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            #scoreDisplay {
+                font-size: 36px;
+            }
+            
+            #finalScore {
+                font-size: 48px;
+            }
+            
+            .mobile-instructions {
+                display: block;
+            }
+            
+            .desktop-instructions {
+                display: none;
+            }
+            
+            button {
+                padding: 12px 24px;
+                font-size: 18px;
+            }
+            
+            .controls {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .hydra-title {
+                font-size: 18px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+            
+            .instructions {
+                font-size: 14px;
+            }
+            
+            .hydra-emblem {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hydra-header">
+        <div class="hydra-emblem"></div>
+        <div class="hydra-title">HYDRASOFT</div>
+        <div class="hydra-subtitle">Digital Sovereignty Gaming</div>
+    </div>
+    
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="scoreDisplay">0</div>
+        
+        <div id="startScreen">
+            <h1>FLAPPY</h1>
+            <div class="hydra-bird-title">HYDRA BIRD</div>
+            <div class="sovereignty-badge">One File. Infinite Freedom.</div>
+            <div class="instructions">
+                <p>Fly through the pipes of constraint. Build your sovereignty.</p>
+                <p class="desktop-instructions">Press SPACE or CLICK to ascend</p>
+                <p class="mobile-instructions">TAP to ascend to freedom</p>
+            </div>
+            <button id="startButton">BEGIN SOVEREIGNTY</button>
+            <div class="controls">
+                <button id="easyBtn" class="difficulty-btn">LIBERTY</button>
+                <button id="normalBtn" class="difficulty-btn">SOVEREIGNTY</button>
+                <button id="hardBtn" class="difficulty-btn">RESILIENCE</button>
+            </div>
+        </div>
+        
+        <div id="gameOverScreen">
+            <h2>SOVEREIGNTY HALTED</h2>
+            <div id="finalScore">0</div>
+            <div class="sovereignty-badge">Continue building your digital freedom</div>
+            <button id="restartButton">REBUILD SOVEREIGNTY</button>
+            <div class="controls">
+                <button id="easyBtn2" class="difficulty-btn">LIBERTY</button>
+                <button id="normalBtn2" class="difficulty-btn">SOVEREIGNTY</button>
+                <button id="hardBtn2" class="difficulty-btn">RESILIENCE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hydra-footer">
+        <p>Built with <span class="code-sovereignty">Code Sovereignty</span> by HydaraSoft</p>
+        <p>Single HTML File | No Dependencies | Complete Freedom</p>
+    </div>
+
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startButton = document.getElementById('startButton');
+        const restartButton = document.getElementById('restartButton');
+        
+        // Difficulty buttons
+        const easyBtn = document.getElementById('easyBtn');
+        const normalBtn = document.getElementById('normalBtn');
+        const hardBtn = document.getElementById('hardBtn');
+        const easyBtn2 = document.getElementById('easyBtn2');
+        const normalBtn2 = document.getElementById('normalBtn2');
+        const hardBtn2 = document.getElementById('hardBtn2');
+        
+        // HydaraSoft Branding Variables
+        const hydraColors = {
+            primary: '#0A2472',
+            secondary: '#00C896',
+            accent: '#FF6B35',
+            dark: '#121212'
+        };
+        
+        // Game settings
+        let game = {
+            running: false,
+            score: 0,
+            gravity: 0.5,
+            difficulty: 'sovereignty',
+            pipeGap: 150,
+            pipeWidth: 60,
+            pipeSpeed: 3,
+            sovereigntyLevel: 0
+        };
+        
+        // Hydra Bird properties
+        const hydraBird = {
+            x: 100,
+            y: canvas.height / 2,
+            width: 34,
+            height: 24,
+            velocity: 0,
+            jumpStrength: -10,
+            color: hydraColors.secondary,
+            heads: 1,
+            draw() {
+                // Draw main bird body
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y, this.width/2, this.height/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw hydra emblem on body
+                ctx.fillStyle = hydraColors.accent;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - 5);
+                ctx.lineTo(this.x - 3, this.y + 5);
+                ctx.lineTo(this.x + 3, this.y + 5);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw eye with sovereignty glow
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(this.x + 8, this.y - 4, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = hydraColors.primary;
+                ctx.beginPath();
+                ctx.arc(this.x + 9, this.y - 3, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw sovereignty wings based on score
+                ctx.fillStyle = hydraColors.accent;
+                const wingFlap = Math.sin(Date.now() / 200) * 3;
+                ctx.beginPath();
+                ctx.ellipse(this.x - 10, this.y + 5 + wingFlap, 12, 8, Math.PI/4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.ellipse(this.x - 8, this.y + wingFlap, 10, 6, -Math.PI/4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw sovereignty trail
+                if (game.score > 10) {
+                    ctx.strokeStyle = hydraColors.secondary;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - 15, this.y);
+                    ctx.lineTo(this.x - 30, this.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            },
+            flap() {
+                this.velocity = this.jumpStrength;
+                
+                // Sovereignty power effect
+                this.color = hydraColors.accent;
+                setTimeout(() => {
+                    this.color = hydraColors.secondary;
+                }, 100);
+                
+                // Sovereignty particle effect
+                createSovereigntyParticles(this.x, this.y);
+            },
+            update() {
+                this.velocity += game.gravity;
+                this.y += this.velocity;
+                
+                if (this.y + this.height/2 >= canvas.height - 10) {
+                    this.y = canvas.height - 10 - this.height/2;
+                    if (game.running) gameOver();
+                }
+                
+                if (this.y - this.height/2 <= 0) {
+                    this.y = this.height/2;
+                    this.velocity = 0;
+                }
+            },
+            reset() {
+                this.y = canvas.height / 2;
+                this.velocity = 0;
+                this.color = hydraColors.secondary;
+                this.heads = 1;
+            }
+        };
+        
+        // Sovereignty particles
+        let sovereigntyParticles = [];
+        
+        function createSovereigntyParticles(x, y) {
+            for (let i = 0; i < 5; i++) {
+                sovereigntyParticles.push({
+                    x: x,
+                    y: y,
+                    size: Math.random() * 3 + 2,
+                    speedX: Math.random() * 4 - 2,
+                    speedY: Math.random() * 4 - 2,
+                    color: i % 2 === 0 ? hydraColors.secondary : hydraColors.accent,
+                    life: 30
+                });
+            }
+        }
+        
+        function updateParticles() {
+            for (let i = sovereigntyParticles.length - 1; i >= 0; i--) {
+                const p = sovereigntyParticles[i];
+                p.x += p.speedX;
+                p.y += p.speedY;
+                p.life--;
+                
+                if (p.life <= 0) {
+                    sovereigntyParticles.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawParticles() {
+            sovereigntyParticles.forEach(p => {
+                ctx.globalAlpha = p.life / 30;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+        }
+        
+        // Pipes array
+        let pipes = [];
+        
+        // Pipe class with HydaraSoft styling
+        class SovereigntyPipe {
+            constructor() {
+                this.x = canvas.width;
+                this.width = game.pipeWidth;
+                this.gap = game.pipeGap;
+                this.speed = game.pipeSpeed;
+                
+                const minTopHeight = 50;
+                const maxTopHeight = canvas.height - this.gap - minTopHeight;
+                this.topHeight = Math.random() * (maxTopHeight - minTopHeight) + minTopHeight;
+                this.bottomY = this.topHeight + this.gap;
+                
+                this.passed = false;
+                this.sovereigntyGlow = Math.random() * Math.PI * 2;
+            }
+            
+            draw() {
+                // Top pipe with sovereignty gradient
+                const topGradient = ctx.createLinearGradient(this.x, 0, this.x + this.width, this.topHeight);
+                topGradient.addColorStop(0, hydraColors.primary);
+                topGradient.addColorStop(1, hydraColors.dark);
+                
+                ctx.fillStyle = topGradient;
+                ctx.fillRect(this.x, 0, this.width, this.topHeight);
+                
+                // Top pipe cap with sovereignty pattern
+                ctx.fillStyle = hydraColors.secondary;
+                ctx.fillRect(this.x - 5, this.topHeight - 20, this.width + 10, 20);
+                
+                // Sovereignty pattern on cap
+                ctx.fillStyle = hydraColors.accent;
+                for (let i = 0; i < this.width + 10; i += 10) {
+                    ctx.fillRect(this.x - 5 + i, this.topHeight - 20, 5, 5);
+                }
+                
+                // Bottom pipe
+                const bottomGradient = ctx.createLinearGradient(this.x, this.bottomY, this.x + this.width, canvas.height);
+                bottomGradient.addColorStop(0, hydraColors.dark);
+                bottomGradient.addColorStop(1, hydraColors.primary);
+                
+                ctx.fillStyle = bottomGradient;
+                ctx.fillRect(this.x, this.bottomY, this.width, canvas.height - this.bottomY);
+                
+                // Bottom pipe cap
+                ctx.fillStyle = hydraColors.secondary;
+                ctx.fillRect(this.x - 5, this.bottomY, this.width + 10, 20);
+                
+                // Sovereignty glow effect
+                this.sovereigntyGlow += 0.1;
+                const glowIntensity = Math.sin(this.sovereigntyGlow) * 0.3 + 0.7;
+                
+                ctx.strokeStyle = `rgba(0, 200, 150, ${glowIntensity})`;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x - 2, 0, this.width + 4, this.topHeight);
+                ctx.strokeRect(this.x - 2, this.bottomY, this.width + 4, canvas.height - this.bottomY);
+            }
+            
+            update() {
+                this.x -= this.speed;
+                
+                if (!this.passed && this.x + this.width < hydraBird.x) {
+                    this.passed = true;
+                    game.score++;
+                    game.sovereigntyLevel = Math.floor(game.score / 5);
+                    scoreDisplay.textContent = game.score;
+                    
+                    // Sovereignty achievement effect
+                    hydraBird.color = hydraColors.accent;
+                    setTimeout(() => {
+                        if (hydraBird.color === hydraColors.accent) hydraBird.color = hydraColors.secondary;
+                    }, 150);
+                    
+                    createSovereigntyParticles(hydraBird.x, hydraBird.y);
+                }
+                
+                if (hydraBird.x + hydraBird.width/2 > this.x && 
+                    hydraBird.x - hydraBird.width/2 < this.x + this.width) {
+                    if (hydraBird.y - hydraBird.height/2 < this.topHeight || 
+                        hydraBird.y + hydraBird.height/2 > this.bottomY) {
+                        gameOver();
+                    }
+                }
+            }
+        }
+        
+        // Set difficulty with HydaraSoft theme
+        function setDifficulty(level) {
+            game.difficulty = level;
+            
+            switch(level) {
+                case 'liberty':
+                    game.gravity = 0.4;
+                    game.pipeGap = 180;
+                    game.pipeSpeed = 2.5;
+                    break;
+                case 'sovereignty':
+                    game.gravity = 0.5;
+                    game.pipeGap = 150;
+                    game.pipeSpeed = 3;
+                    break;
+                case 'resilience':
+                    game.gravity = 0.6;
+                    game.pipeGap = 120;
+                    game.pipeSpeed = 3.5;
+                    break;
+            }
+            
+            // Update active button state
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active-difficulty');
+            });
+            
+            document.getElementById(level + 'Btn').classList.add('active-difficulty');
+            document.getElementById(level + 'Btn2').classList.add('active-difficulty');
+        }
+        
+        // Initialize difficulty buttons
+        easyBtn.addEventListener('click', () => setDifficulty('liberty'));
+        normalBtn.addEventListener('click', () => setDifficulty('sovereignty'));
+        hardBtn.addEventListener('click', () => setDifficulty('resilience'));
+        easyBtn2.addEventListener('click', () => setDifficulty('liberty'));
+        normalBtn2.addEventListener('click', () => setDifficulty('sovereignty'));
+        hardBtn2.addEventListener('click', () => setDifficulty('resilience'));
+        
+        // Start game
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+        
+        // Game controls
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && game.running) {
+                hydraBird.flap();
+                e.preventDefault();
+            }
+            
+            if (e.code === 'Space' && !game.running && startScreen.style.display === 'none') {
+                startGame();
+            }
+        });
+        
+        canvas.addEventListener('click', () => {
+            if (game.running) {
+                hydraBird.flap();
+            }
+        });
+        
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            if (game.running) {
+                hydraBird.flap();
+                e.preventDefault();
+            }
+        });
+        
+        // Start game function
+        function startGame() {
+            game.running = true;
+            game.score = 0;
+            game.sovereigntyLevel = 0;
+            scoreDisplay.textContent = '0';
+            
+            hydraBird.reset();
+            pipes = [];
+            sovereigntyParticles = [];
+            
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            
+            gameLoop();
+        }
+        
+        // Game over function
+        function gameOver() {
+            game.running = false;
+            finalScoreDisplay.textContent = game.score;
+            gameOverScreen.style.display = 'flex';
+            
+            ctx.fillStyle = `rgba(10, 36, 114, 0.7)`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // Draw sovereignty background
+        function drawSovereigntyBackground() {
+            // Stars in background
+            for (let i = 0; i < 50; i++) {
+                const x = (i * 31) % canvas.width;
+                const y = (i * 17) % canvas.height;
+                const size = Math.sin(Date.now() / 1000 + i) * 1 + 1;
+                
+                ctx.fillStyle = hydraColors.secondary;
+                ctx.globalAlpha = Math.abs(Math.sin(Date.now() / 1000 + i)) * 0.5 + 0.2;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+            
+            // Sovereignty grid
+            ctx.strokeStyle = `rgba(0, 200, 150, 0.1)`;
+            ctx.lineWidth = 1;
+            
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Sovereignty level indicator
+            if (game.sovereigntyLevel > 0) {
+                ctx.fillStyle = hydraColors.accent;
+                ctx.font = '12px Courier New';
+                ctx.fillText(`Sovereignty Level: ${game.sovereigntyLevel}`, 10, 20);
+            }
+        }
+        
+        // Draw sovereignty ground
+        function drawSovereigntyGround() {
+            // Ground with sovereignty pattern
+            ctx.fillStyle = hydraColors.primary;
+            ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+            
+            ctx.fillStyle = hydraColors.secondary;
+            for (let i = 0; i < canvas.width; i += 20) {
+                ctx.fillRect(i, canvas.height - 10, 10, 3);
+            }
+            
+            // HydraSoft branding on ground
+            ctx.fillStyle = hydraColors.accent;
+            ctx.font = '10px Courier New';
+            ctx.fillText('HYDRASOFT', canvas.width - 70, canvas.height - 3);
+        }
+        
+        // Game loop
+        function gameLoop() {
+            if (!game.running) return;
+            
+            // Clear canvas
+            ctx.fillStyle = hydraColors.dark;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw sovereignty elements
+            drawSovereigntyBackground();
+            
+            // Update and draw particles
+            updateParticles();
+            drawParticles();
+            
+            // Draw ground
+            drawSovereigntyGround();
+            
+            // Update and draw hydra bird
+            hydraBird.update();
+            hydraBird.draw();
+            
+            // Generate new pipes
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 250) {
+                pipes.push(new SovereigntyPipe());
+            }
+            
+            // Update and draw pipes
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].update();
+                pipes[i].draw();
+                
+                if (pipes[i].x + pipes[i].width < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+            
+            // Sovereignty level effects
+            if (game.sovereigntyLevel >= 2) {
+                // Add sovereignty trail
+                ctx.strokeStyle = `rgba(255, 107, 53, 0.3)`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(hydraBird.x, hydraBird.y);
+                ctx.lineTo(hydraBird.x + 20, hydraBird.y - 10);
+                ctx.stroke();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Initialize with sovereignty difficulty
+        setDifficulty('sovereignty');
+        
+        // Mobile detection
+        if ('ontouchstart' in window || navigator.maxTouchPoints) {
+            document.querySelector('.mobile-instructions').style.display = 'block';
+            document.querySelector('.desktop-instructions').style.display = 'none';
+        }
+        
+        // HydaraSoft initialization message
+        console.log('%c🦅 HydaraSoft Sovereignty Gaming Initialized', 
+            'color: #00C896; font-size: 16px; font-weight: bold;');
+        console.log('%cSingle File Sovereignty | Build Your Digital Freedom', 
+            'color: #FF6B35; font-size: 12px;');
+    </script>
+</body>
+</html>
