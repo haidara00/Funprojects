@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydracalc | Digital Sovereignty Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0A2472 0%, #121212 100%);
+            font-family: 'Courier New', monospace;
+            color: #00C896;
+            padding: 20px;
+            touch-action: manipulation;
+        }
+
+        .hydra-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 2px solid #00C896;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .hydra-emblem {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 10px;
+            background: radial-gradient(circle, #00C896 0%, #0A2472 100%);
+            border-radius: 50%;
+            position: relative;
+            animation: hydraPulse 2s infinite;
+        }
+
+        .hydra-emblem::before,
+        .hydra-emblem::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #FF6B35;
+            border-radius: 50%;
+            top: 12.5px;
+        }
+
+        .hydra-emblem::before {
+            left: -12.5px;
+        }
+
+        .hydra-emblem::after {
+            right: -12.5px;
+        }
+
+        @keyframes hydraPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .sovereignty-badge {
+            background: linear-gradient(45deg, #0A2472, #121212);
+            border: 1px solid #00C896;
+            border-radius: 15px;
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #FF6B35;
+            margin: 5px 0;
+            display: inline-block;
+        }
+
+        .calculator {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 20px;
+            border: 3px solid #00C896;
+            box-shadow: 0 0 30px rgba(0, 200, 150, 0.3);
+            overflow: hidden;
+        }
+
+        .display-container {
+            padding: 20px;
+            background: #000;
+            border-bottom: 2px solid #00C896;
+            position: relative;
+        }
+
+        .display {
+            font-size: 48px;
+            text-align: right;
+            color: #00C896;
+            font-family: 'Courier New', monospace;
+            min-height: 60px;
+            word-break: break-all;
+            overflow: hidden;
+            text-shadow: 0 0 10px rgba(0, 200, 150, 0.5);
+        }
+
+        .calculation {
+            font-size: 18px;
+            color: #FF6B35;
+            text-align: right;
+            min-height: 27px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .sovereignty-status {
+            position: absolute;
+            bottom: 5px;
+            left: 20px;
+            font-size: 10px;
+            color: #00C896;
+            opacity: 0.7;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            padding: 20px;
+            background: #1a1a1a;
+        }
+
+        .btn {
+            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .function {
+            background: linear-gradient(145deg, #FF6B35, #e05a2b);
+            color: white;
+        }
+
+        .operator {
+            background: linear-gradient(145deg, #00C896, #00b386);
+            color: white;
+        }
+
+        .number {
+            background: linear-gradient(145deg, #3d3d3d, #2a2a2a);
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .converter-btn {
+            background: linear-gradient(145deg, #0A2472, #081b5c);
+            color: #00C896;
+            font-size: 18px;
+        }
+
+        .sovereignty-panel {
+            display: none;
+            padding: 20px;
+            background: rgba(10, 36, 114, 0.9);
+            border-top: 2px solid #FF6B35;
+        }
+
+        .sovereignty-panel.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #FF6B35;
+        }
+
+        .close-panel {
+            background: none;
+            border: none;
+            color: #00C896;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .converter-input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #00C896;
+            border-radius: 8px;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .converter-select {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #FF6B35;
+            border-radius: 8px;
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .unit-group {
+            margin-bottom: 15px;
+        }
+
+        .unit-group h4 {
+            color: #00C896;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid #FF6B35;
+            color: #FF6B35;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #FF6B35;
+            color: white;
+        }
+
+        .history-panel {
+            display: none;
+            padding: 20px;
+            background: rgba(26, 26, 26, 0.95);
+            border-top: 2px solid #00C896;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-panel.active {
+            display: block;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            color: #00C896;
+            font-family: 'Courier New', monospace;
+        }
+
+        .history-item:hover {
+            background: rgba(0, 200, 150, 0.1);
+        }
+
+        .clear-history {
+            background: linear-gradient(145deg, #FF6B35, #e05a2b);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .crisis-mode {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            z-index: 1000;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .crisis-content {
+            background: rgba(0,0,0,0.8);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: 100px auto;
+            border: 3px solid #FF6B35;
+        }
+
+        .crisis-content h2 {
+            color: #FF6B35;
+            margin-bottom: 20px;
+        }
+
+        .close-crisis {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding: 10px;
+            border-top: 1px solid #333;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .sovereignty-mode {
+            color: #FF6B35;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                border-radius: 15px;
+            }
+            
+            .display {
+                font-size: 36px;
+            }
+            
+            .btn {
+                font-size: 20px;
+                padding: 12px 0;
+            }
+            
+            .buttons {
+                gap: 8px;
+                padding: 15px;
+            }
+            
+            .converter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .display {
+                font-size: 28px;
+            }
+            
+            .btn {
+                font-size: 18px;
+                padding: 10px 0;
+            }
+            
+            .mode-selector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hydra-header">
+        <div class="hydra-emblem"></div>
+        <h1>HYDRACALC</h1>
+        <div class="sovereignty-badge">Digital Sovereignty Calculator</div>
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="basic">Basic</button>
+            <button class="mode-btn" data-mode="business">Business</button>
+            <button class="mode-btn" data-mode="converter">Converter</button>
+        </div>
+    </div>
+
+    <div class="calculator">
+        <div class="display-container">
+            <div class="calculation" id="calculation"></div>
+            <div class="display" id="display">0</div>
+            <div class="sovereignty-status" id="sovereigntyStatus">
+                <span class="sovereignty-mode">SOVEREIGNTY MODE: ACTIVE</span> | 
+                <span id="lastOnline">Last Sync: Today</span>
+            </div>
+        </div>
+
+        <div class="buttons" id="basicButtons">
+            <button class="btn function" data-action="clear">C</button>
+            <button class="btn function" data-action="toggleSign">±</button>
+            <button class="btn function" data-action="percentage">%</button>
+            <button class="btn operator" data-action="divide">÷</button>
+            <button class="btn operator" data-action="power">x²</button>
+
+            <button class="btn number" data-number="7">7</button>
+            <button class="btn number" data-number="8">8</button>
+            <button class="btn number" data-number="9">9</button>
+            <button class="btn operator" data-action="multiply">×</button>
+            <button class="btn operator" data-action="sqrt">√</button>
+
+            <button class="btn number" data-number="4">4</button>
+            <button class="btn number" data-number="5">5</button>
+            <button class="btn number" data-number="6">6</button>
+            <button class="btn operator" data-action="subtract">−</button>
+            <button class="btn converter-btn" id="converterToggle">CONV</button>
+
+            <button class="btn number" data-number="1">1</button>
+            <button class="btn number" data-number="2">2</button>
+            <button class="btn number" data-number="3">3</button>
+            <button class="btn operator" data-action="add">+</button>
+            <button class="btn converter-btn" id="historyToggle">HIST</button>
+
+            <button class="btn number zero" data-number="0">0</button>
+            <button class="btn number" data-number=".">.</button>
+            <button class="btn operator" data-action="equals">=</button>
+            <button class="btn function" data-action="backspace">⌫</button>
+            <button class="btn function" id="themeToggle">🌙</button>
+        </div>
+
+        <div class="sovereignty-panel" id="converterPanel">
+            <div class="panel-header">
+                <h3>🔄 Sovereignty Converter</h3>
+                <button class="close-panel" id="closeConverter">✕</button>
+            </div>
+            
+            <div class="unit-group">
+                <h4>Currency (Cached Rates)</h4>
+                <div class="converter-grid">
+                    <input type="number" class="converter-input" id="currencyInput" placeholder="Amount" value="100">
+                    <select class="converter-select" id="currencyFrom">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="ILS">ILS - Israeli Shekel</option>
+                        <option value="JOD">JOD - Jordanian Dinar</option>
+                        <option value="EGP">EGP - Egyptian Pound</option>
+                        <option value="EUR">EUR - Euro</option>
+                    </select>
+                    <div style="text-align: center; padding: 10px;">→</div>
+                    <select class="converter-select" id="currencyTo">
+                        <option value="ILS">ILS - Israeli Shekel</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="JOD">JOD - Jordanian Dinar</option>
+                        <option value="EGP">EGP - Egyptian Pound</option>
+                        <option value="EUR">EUR - Euro</option>
+                    </select>
+                    <div class="converter-input" id="currencyResult">365.00</div>
+                    <button class="btn function" style="font-size: 14px;" id="convertCurrency">Convert</button>
+                </div>
+            </div>
+
+            <div class="unit-group">
+                <h4>Business Calculations</h4>
+                <div class="converter-grid">
+                    <input type="number" class="converter-input" id="costPrice" placeholder="Cost Price" value="50">
+                    <input type="number" class="converter-input" id="sellingPrice" placeholder="Selling Price" value="75">
+                    <div class="converter-input" id="profitMargin">50.00%</div>
+                    <div class="converter-input" id="markup">50.00%</div>
+                    <button class="btn function" style="font-size: 14px;" id="calculateBusiness">Calculate</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-panel" id="historyPanel">
+            <div class="panel-header">
+                <h3>📊 Calculation History</h3>
+                <button class="close-panel" id="closeHistory">✕</button>
+            </div>
+            <div id="historyList">
+                <!-- History items will appear here -->
+            </div>
+            <button class="clear-history" id="clearHistory">Clear History</button>
+        </div>
+    </div>
+
+    <div class="crisis-mode" id="crisisMode">
+        <div class="crisis-content">
+            <h2>⚡ CRISIS MODE ACTIVATED ⚡</h2>
+            <p>Offline for over 24 hours. Enabling emergency calculations.</p>
+            
+            <div style="margin: 20px 0;">
+                <h3>Essential Calculators:</h3>
+                <div class="converter-grid">
+                    <input type="number" class="converter-input" id="peopleCount" placeholder="People" value="5">
+                    <input type="number" class="converter-input" id="daysCount" placeholder="Days" value="7">
+                    <div class="converter-input" id="waterNeeded">175.00 L</div>
+                    <div class="converter-input" id="caloriesNeeded">122500 kcal</div>
+                </div>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h3>Emergency Contacts:</h3>
+                <p>Red Crescent: 101</p>
+                <p>Civil Defense: 102</p>
+                <p>Police: 100</p>
+            </div>
+
+            <button class="close-crisis" id="closeCrisis">Continue to Calculator</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🦅 <span class="sovereignty-mode">HYDRASOFT SOVEREIGNTY TECHNOLOGY</span></p>
+        <p>Single HTML File | Works 100% Offline | No Data Collection</p>
+        <p>Last Updated: <span id="currentDate"></span></p>
+    </div>
+
+    <script>
+        // HydraSoft Sovereignty Calculator
+        class HydraCalc {
+            constructor() {
+                this.currentValue = '0';
+                this.previousValue = null;
+                this.operator = null;
+                this.waitingForNewValue = false;
+                this.calculationHistory = [];
+                this.theme = 'dark';
+                this.currentMode = 'basic';
+                this.lastOnline = Date.now();
+                this.crisisMode = false;
+                
+                // Cached exchange rates (updated weekly)
+                this.exchangeRates = {
+                    USD: { ILS: 3.65, JOD: 0.709, EGP: 30.90, EUR: 0.85, USD: 1 },
+                    ILS: { USD: 0.274, JOD: 0.194, EGP: 8.47, EUR: 0.233, ILS: 1 },
+                    JOD: { USD: 1.41, ILS: 5.15, EGP: 43.6, EUR: 1.20, JOD: 1 },
+                    EGP: { USD: 0.0324, ILS: 0.118, JOD: 0.0229, EUR: 0.0275, EGP: 1 },
+                    EUR: { USD: 1.18, ILS: 4.29, JOD: 0.833, EGP: 36.4, EUR: 1 }
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.loadHistory();
+                this.setupEventListeners();
+                this.updateDateTime();
+                this.checkCrisisMode();
+                setInterval(() => this.checkCrisisMode(), 60000); // Check every minute
+            }
+            
+            setupEventListeners() {
+                // Number buttons
+                document.querySelectorAll('[data-number]').forEach(btn => {
+                    btn.addEventListener('click', () => this.inputNumber(btn.dataset.number));
+                });
+                
+                // Operation buttons
+                document.querySelectorAll('[data-action]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const action = btn.dataset.action;
+                        if (['add', 'subtract', 'multiply', 'divide', 'power', 'sqrt'].includes(action)) {
+                            this.setOperation(action);
+                        } else {
+                            this[action]();
+                        }
+                    });
+                });
+                
+                // Mode switching
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.switchMode(btn.dataset.mode));
+                });
+                
+                // Converter functionality
+                document.getElementById('converterToggle').addEventListener('click', () => {
+                    this.togglePanel('converterPanel');
+                });
+                
+                document.getElementById('historyToggle').addEventListener('click', () => {
+                    this.togglePanel('historyPanel');
+                });
+                
+                document.getElementById('closeConverter').addEventListener('click', () => {
+                    this.togglePanel('converterPanel');
+                });
+                
+                document.getElementById('closeHistory').addEventListener('click', () => {
+                    this.togglePanel('historyPanel');
+                });
+                
+                document.getElementById('convertCurrency').addEventListener('click', () => {
+                    this.convertCurrency();
+                });
+                
+                document.getElementById('calculateBusiness').addEventListener('click', () => {
+                    this.calculateBusiness();
+                });
+                
+                document.getElementById('clearHistory').addEventListener('click', () => {
+                    this.clearHistory();
+                });
+                
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+                
+                document.getElementById('closeCrisis').addEventListener('click', () => {
+                    document.getElementById('crisisMode').style.display = 'none';
+                });
+                
+                // Crisis mode calculators
+                document.getElementById('peopleCount').addEventListener('input', () => this.updateCrisisCalculations());
+                document.getElementById('daysCount').addEventListener('input', () => this.updateCrisisCalculations());
+                
+                // Keyboard support
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+            }
+            
+            inputNumber(num) {
+                if (this.waitingForNewValue) {
+                    this.currentValue = num;
+                    this.waitingForNewValue = false;
+                } else {
+                    this.currentValue = this.currentValue === '0' ? num : this.currentValue + num;
+                }
+                this.updateDisplay();
+            }
+            
+            setOperation(op) {
+                if (this.previousValue !== null && !this.waitingForNewValue) {
+                    this.calculate();
+                }
+                
+                this.operator = op;
+                this.previousValue = this.currentValue;
+                this.waitingForNewValue = true;
+                this.updateCalculationDisplay();
+            }
+            
+            calculate() {
+                if (this.previousValue === null || this.operator === null) return;
+                
+                const prev = parseFloat(this.previousValue);
+                const current = parseFloat(this.currentValue);
+                let result;
+                
+                switch(this.operator) {
+                    case 'add': result = prev + current; break;
+                    case 'subtract': result = prev - current; break;
+                    case 'multiply': result = prev * current; break;
+                    case 'divide': result = prev / current; break;
+                    case 'power': result = Math.pow(prev, current); break;
+                    case 'sqrt': result = Math.sqrt(current); break;
+                    default: return;
+                }
+                
+                // Save to history
+                const operationSymbols = {
+                    'add': '+', 'subtract': '-', 'multiply': '×', 'divide': '÷',
+                    'power': '^', 'sqrt': '√'
+                };
+                
+                const historyEntry = {
+                    calculation: `${this.previousValue} ${operationSymbols[this.operator]} ${this.currentValue}`,
+                    result: result.toString(),
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                this.calculationHistory.unshift(historyEntry);
+                this.saveHistory();
+                this.updateHistoryDisplay();
+                
+                this.currentValue = Number.isInteger(result) ? result.toString() : result.toFixed(5).replace(/\.?0+$/, '');
+                this.operator = null;
+                this.previousValue = null;
+                this.waitingForNewValue = true;
+                this.updateDisplay();
+                this.updateCalculationDisplay();
+            }
+            
+            clear() {
+                this.currentValue = '0';
+                this.previousValue = null;
+                this.operator = null;
+                this.waitingForNewValue = false;
+                this.updateDisplay();
+                this.updateCalculationDisplay();
+            }
+            
+            toggleSign() {
+                this.currentValue = (parseFloat(this.currentValue) * -1).toString();
+                this.updateDisplay();
+            }
+            
+            percentage() {
+                this.currentValue = (parseFloat(this.currentValue) / 100).toString();
+                this.updateDisplay();
+            }
+            
+            power() {
+                this.setOperation('power');
+            }
+            
+            sqrt() {
+                this.currentValue = Math.sqrt(parseFloat(this.currentValue)).toString();
+                this.updateDisplay();
+                this.addToHistory(`√${this.previousValue || ''}`, this.currentValue);
+            }
+            
+            backspace() {
+                if (this.currentValue.length > 1) {
+                    this.currentValue = this.currentValue.slice(0, -1);
+                } else {
+                    this.currentValue = '0';
+                }
+                this.updateDisplay();
+            }
+            
+            equals() {
+                if (this.previousValue !== null && this.operator !== null) {
+                    this.calculate();
+                }
+            }
+            
+            updateDisplay() {
+                document.getElementById('display').textContent = this.currentValue;
+            }
+            
+            updateCalculationDisplay() {
+                const operationSymbols = {
+                    'add': '+', 'subtract': '-', 'multiply': '×', 'divide': '÷',
+                    'power': '^', 'sqrt': '√'
+                };
+                
+                const symbol = this.operator ? operationSymbols[this.operator] : '';
+                const display = this.previousValue ? `${this.previousValue} ${symbol}` : '';
+                document.getElementById('calculation').textContent = display;
+            }
+            
+            switchMode(mode) {
+                this.currentMode = mode;
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.mode === mode);
+                });
+                
+                // Update button visibility based on mode
+                if (mode === 'business') {
+                    document.getElementById('converterToggle').click();
+                }
+            }
+            
+            togglePanel(panelId) {
+                const panel = document.getElementById(panelId);
+                const otherPanel = panelId === 'converterPanel' ? 'historyPanel' : 'converterPanel';
+                document.getElementById(otherPanel).classList.remove('active');
+                panel.classList.toggle('active');
+            }
+            
+            convertCurrency() {
+                const amount = parseFloat(document.getElementById('currencyInput').value) || 0;
+                const from = document.getElementById('currencyFrom').value;
+                const to = document.getElementById('currencyTo').value;
+                
+                if (from === to) {
+                    document.getElementById('currencyResult').textContent = amount.toFixed(2);
+                    return;
+                }
+                
+                const rate = this.exchangeRates[from][to];
+                const result = amount * rate;
+                document.getElementById('currencyResult').textContent = result.toFixed(2);
+                
+                this.addToHistory(`${amount} ${from} to ${to}`, `${result.toFixed(2)} ${to}`);
+            }
+            
+            calculateBusiness() {
+                const cost = parseFloat(document.getElementById('costPrice').value) || 0;
+                const selling = parseFloat(document.getElementById('sellingPrice').value) || 0;
+                
+                if (cost === 0 || selling === 0) return;
+                
+                const profitMargin = ((selling - cost) / selling * 100).toFixed(2);
+                const markup = ((selling - cost) / cost * 100).toFixed(2);
+                
+                document.getElementById('profitMargin').textContent = `${profitMargin}%`;
+                document.getElementById('markup').textContent = `${markup}%`;
+                
+                this.addToHistory(`Profit Margin (${selling}-${cost})`, `${profitMargin}%`);
+            }
+            
+            addToHistory(calculation, result) {
+                const historyEntry = {
+                    calculation,
+                    result,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                this.calculationHistory.unshift(historyEntry);
+                if (this.calculationHistory.length > 20) {
+                    this.calculationHistory.pop();
+                }
+                
+                this.saveHistory();
+                this.updateHistoryDisplay();
+            }
+            
+            saveHistory() {
+                try {
+                    localStorage.setItem('hydracalc_history', JSON.stringify(this.calculationHistory));
+                } catch (e) {
+                    console.log('Local storage not available');
+                }
+            }
+            
+            loadHistory() {
+                try {
+                    const saved = localStorage.getItem('hydracalc_history');
+                    if (saved) {
+                        this.calculationHistory = JSON.parse(saved);
+                        this.updateHistoryDisplay();
+                    }
+                } catch (e) {
+                    console.log('Could not load history');
+                }
+            }
+            
+            updateHistoryDisplay() {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+                
+                this.calculationHistory.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <div style="color: #FF6B35;">${item.calculation}</div>
+                        <div style="color: #00C896; font-size: 18px;">= ${item.result}</div>
+                        <div style="font-size: 10px; color: #666;">${item.timestamp}</div>
+                    `;
+                    historyList.appendChild(div);
+                    
+                    // Click to use result
+                    div.addEventListener('click', () => {
+                        this.currentValue = item.result;
+                        this.updateDisplay();
+                    });
+                });
+            }
+            
+            clearHistory() {
+                this.calculationHistory = [];
+                this.saveHistory();
+                this.updateHistoryDisplay();
+            }
+            
+            toggleTheme() {
+                this.theme = this.theme === 'dark' ? 'light' : 'dark';
+                document.body.style.background = this.theme === 'dark' 
+                    ? 'linear-gradient(135deg, #0A2472 0%, #121212 100%)'
+                    : 'linear-gradient(135deg, #4a6fa5 0%, #f0f0f0 100%)';
+                
+                document.getElementById('themeToggle').textContent = this.theme === 'dark' ? '🌙' : '☀️';
+            }
+            
+            updateCrisisCalculations() {
+                const people = parseInt(document.getElementById('peopleCount').value) || 1;
+                const days = parseInt(document.getElementById('daysCount').value) || 1;
+                
+                // Water: 5L per person per day
+                const waterNeeded = people * days * 5;
+                document.getElementById('waterNeeded').textContent = `${waterNeeded.toFixed(2)} L`;
+                
+                // Calories: 2500 per person per day
+                const caloriesNeeded = people * days * 2500;
+                document.getElementById('caloriesNeeded').textContent = `${caloriesNeeded.toFixed(0)} kcal`;
+            }
+            
+            checkCrisisMode() {
+                const now = Date.now();
+                const offlineHours = (now - this.lastOnline) / (1000 * 60 * 60);
+                
+                // Simulate offline detection (in real app, use navigator.onLine)
+                const isOnline = Math.random() > 0.1; // 90% chance online for demo
+                
+                if (!isOnline && offlineHours > 24 && !this.crisisMode) {
+                    this.crisisMode = true;
+                    document.getElementById('crisisMode').style.display = 'block';
+                }
+                
+                // Update last online display
+                const lastOnlineElement = document.getElementById('lastOnline');
+                if (isOnline) {
+                    this.lastOnline = now;
+                    lastOnlineElement.textContent = `Last Sync: ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                } else {
+                    lastOnlineElement.textContent = `Offline: ${Math.floor(offlineHours)}h`;
+                }
+            }
+            
+            updateDateTime() {
+                const now = new Date();
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+            }
+            
+            handleKeyboard(e) {
+                e.preventDefault();
+                
+                if (e.key >= '0' && e.key <= '9') this.inputNumber(e.key);
+                if (e.key === '.') this.inputNumber('.');
+                if (e.key === '+') this.setOperation('add');
+                if (e.key === '-') this.setOperation('subtract');
+                if (e.key === '*') this.setOperation('multiply');
+                if (e.key === '/') this.setOperation('divide');
+                if (e.key === 'Enter' || e.key === '=') this.equals();
+                if (e.key === 'Escape') this.clear();
+                if (e.key === 'Backspace') this.backspace();
+                if (e.key === '%') this.percentage();
+            }
+        }
+        
+        // Initialize HydraCalc when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const hydracalc = new HydraCalc();
+            
+            // Log sovereignty initialization
+            console.log('%c🦅 HYDRACALC SOVEREIGNTY INITIALIZED', 
+                'color: #00C896; font-size: 16px; font-weight: bold;');
+            console.log('%cSingle File | Offline First | Digital Sovereignty', 
+                'color: #FF6B35; font-size: 12px;');
+            
+            // Make available globally for debugging
+            window.hydracalc = hydracalc;
+        });
+    </script>
+</body>
+</html>
