@@ -1,0 +1,474 @@
+<!DOCTtml>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕋 Nour Al-Aqsa - Light The Dome</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1520 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .header {
+            margin: 30px 0;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #f6b93b, #e58e26);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(245, 185, 59, 0.3);
+        }
+        
+        .subtitle {
+            color: #a0c8ff;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        .dome-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #2c3e50;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dome-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .light-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(246, 185, 59, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            border-radius: 15px;
+        }
+        
+        .dome-icon {
+            font-size: 4rem;
+            color: #f6b93b;
+            filter: drop-shadow(0 0 10px rgba(246, 185, 59, 0.5));
+        }
+        
+        .counter {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #f6b93b;
+            margin: 20px 0;
+            text-shadow: 0 0 15px rgba(246, 185, 59, 0.7);
+        }
+        
+        .goal-text {
+            color: #a0c8ff;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background: #2c3e50;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #0A5D36, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .btn-light {
+            background: linear-gradient(45deg, #f6b93b, #e58e26);
+            color: #000;
+            border: none;
+            padding: 18px 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin: 20px 0;
+            cursor: pointer;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 5px 15px rgba(245, 185, 59, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-light:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(245, 185, 59, 0.6);
+        }
+        
+        .btn-donate {
+            background: transparent;
+            color: #2ecc71;
+            border: 2px solid #2ecc71;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            margin: 10px 0;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            transition: all 0.3s;
+        }
+        
+        .btn-donate:hover {
+            background: rgba(46, 204, 113, 0.1);
+        }
+        
+        .message {
+            background: rgba(10, 93, 54, 0.3);
+            border-left: 4px solid #2ecc71;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            text-align: left;
+            display: none;
+        }
+        
+        .instructions {
+            background: rgba(44, 62, 80, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            color: #f6b93b;
+            font-weight: bold;
+        }
+        
+        footer {
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #2c3e50;
+            width: 100%;
+        }
+        
+        @media (max-width: 500px) {
+            h1 { font-size: 2.2rem; }
+            .counter { font-size: 2.8rem; }
+            .dome-image { height: 200px; }
+        }
+
+  /* Language Toggle */
+.lang-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.lang-btn {
+    background: rgba(10, 93, 54, 0.3);
+    color: #2ecc71;
+    border: 1px solid #2ecc71;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Language Display */
+.text-ar {
+    display: none;
+}
+
+.text-en {
+    display: inline;
+}
+
+body.arabic .text-ar {
+    display: inline;
+}
+
+body.arabic .text-en {
+    display: none;
+}
+
+body.arabic {
+    direction: rtl;
+    font-family: 'Segoe UI', 'Noto Sans Arabic', Tahoma, sans-serif;
+}
+  </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Toggle -->
+        <div class="lang-toggle">
+            <button id="langBtn" class="lang-btn">العربية</button>
+        </div>
+        
+        <div class="header">
+            <h1><i class="fas fa-mosque"></i> <span class="text-ar">نور الأقصى</span><span class="text-en">Nour Al-Aqsa</span></h1>
+            <p class="subtitle">
+                <span class="text-ar">أضيء قبة المصلى القبلي • ادعم غزة وفلسطين</span>
+                <span class="text-en">Light the Qibli Dome • Support Gaza & Palestine</span>
+            </p>
+        </div>
+        
+        <div class="dome-container">
+            <div class="dome-image" id="domeImage">
+                <div class="light-effect" id="lightEffect"></div>
+                <i class="fas fa-dome dome-icon"></i>
+            </div>
+            
+            <div class="counter" id="counter">0</div>
+            <p class="goal-text">
+                <span class="text-ar">مصباح مضاء من أصل ١٠٠٠</span>
+                <span class="text-en">lights lit of 1,000 goal</span>
+            </p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <button class="btn-light" id="lightBtn">
+            <i class="fas fa-lightbulb"></i> 
+            <span class="text-ar">أضيء قبة القبلة</span>
+            <span class="text-en">LIGHT THE QIBLI DOME</span>
+        </button>
+        
+        <button class="btn-donate" id="donateBtn">
+            <i class="fas fa-hand-holding-heart"></i> 
+            <span class="text-ar">تبرع مباشرة لغزة</span>
+            <span class="text-en">DONATE DIRECTLY TO GAZA</span>
+        </button>
+        
+        <!-- Share Button (Conditional) -->
+        <button class="btn-donate" id="shareBtn" style="display:none;">
+            <i class="fas fa-share-alt"></i> 
+            <span class="text-ar">شارك هذا مع الأصدقاء</span>
+            <span class="text-en">SHARE WITH FRIENDS</span>
+        </button>
+        
+        <div class="message" id="message">
+            <span class="text-ar"><strong>ما شاء الله!</strong> أضأت ١٠٠ مصباح افتراضي. فكّر في التبرع الحقيقي لدعم الأقصى والإغاثة في غزة.</span>
+            <span class="text-en"><strong>MashaAllah!</strong> You've lit 100 virtual lights. Consider making a real donation to support Al-Aqsa and humanitarian aid in Gaza.</span>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> <span class="text-ar">كيف يساعد هذا:</span><span class="text-en">How This Helps:</span></h3>
+            <p class="text-ar">١. كل نقرة تمثّل <span class="highlight">نور تضامن افتراضي</span> للأقصى.</p>
+            <p class="text-en">1. Every click represents a <span class="highlight">virtual light of solidarity</span> for Al-Aqsa.</p>
+            
+            <p class="text-ar">٢. كل ١٠٠ مصباح، سنذكّرك <span class="highlight">بالتبرع لجمعيات موثوقة</span> تساعد غزة.</p>
+            <p class="text-en">2. Every 100 lights, you'll be prompted to <span class="highlight">donate to verified NGOs</span> helping Gaza.</p>
+            
+            <p class="text-ar">٣. هذا التطبيق يعمل على <span class="highlight">أي هاتف</span> - هواوي, آيفون, أندرويد - بدون متجر تطبيقات!</p>
+            <p class="text-en">3. This PWA works on <span class="highlight">ANY phone</span> - Huawei, iPhone, Android - no app store needed!</p>
+            
+            <p class="text-ar">٤. شاركه مع الأصدقاء <span class="highlight">لنشر الوعي</span>.</p>
+            <p class="text-en">4. Share with friends to <span class="highlight">spread awareness</span>.</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p><span class="text-ar">صُنع بـ <i class="fas fa-heart" style="color:#e74c3c;"></i> للأقصى وفلسطين | هذا لله والأقصى</span>
+           <span class="text-en">Made with <i class="fas fa-heart" style="color:#e74c3c;"></i> for Al-Aqsa & Palestine | This is for Allah & Al-Aqsa</span></p>
+        <p><span class="text-ar">شفافية ١٠٠٪ | التبرعات تذهب لجمعيات موثوقة</span>
+           <span class="text-en">100% transparent | Donations go to verified NGOs</span></p>
+    </footer>
+    <script>
+    // Initialize
+    let lightsLit = parseInt(localStorage.getItem('nourLights')) || 0;
+    const goalLights = 1000;
+    const donationUrl = "https://www.pcrf.net/";
+    let isArabic = false;
+    
+    // DOM Elements
+    const counterElement = document.getElementById('counter');
+    const progressBar = document.getElementById('progressBar');
+    const lightBtn = document.getElementById('lightBtn');
+    const donateBtn = document.getElementById('donateBtn');
+    const messageElement = document.getElementById('message');
+    const lightEffect = document.getElementById('lightEffect');
+    const langBtn = document.getElementById('langBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const domeImage = document.getElementById('domeImage');
+    
+    // Initialize Display
+    updateDisplay();
+    
+    // Language Toggle
+    langBtn.addEventListener('click', () => {
+        isArabic = !isArabic;
+        document.body.classList.toggle('arabic', isArabic);
+        langBtn.textContent = isArabic ? 'English' : 'العربية';
+        localStorage.setItem('nourLang', isArabic ? 'ar' : 'en');
+    });
+    
+    // Load saved language
+    const savedLang = localStorage.getItem('nourLang');
+    if (savedLang === 'ar') {
+        isArabic = true;
+        document.body.classList.add('arabic');
+        langBtn.textContent = 'English';
+    }
+    
+    // Light the Dome
+    function lightTheDome() {
+        lightsLit++;
+        localStorage.setItem('nourLights', lightsLit);
+        
+        // Visual effect
+        lightEffect.style.opacity = '1';
+        setTimeout(() => lightEffect.style.opacity = '0', 500);
+        
+        // Dome "pulse" animation
+        domeImage.style.transform = 'scale(1.03)';
+        setTimeout(() => domeImage.style.transform = 'scale(1)', 300);
+        
+        updateDisplay();
+        
+        // Every 100 lights prompt
+        if (lightsLit % 100 === 0) {
+            const message = isArabic 
+                ? `ما شاء الله! أضأت ${lightsLit} مصباح.\n\nهل تريد التبرع الحقيقي لدعم الأقصى وغزة؟`
+                : `MashaAllah! You've lit ${lightsLit} lights.\n\nWould you like to make a real donation to support Al-Aqsa and Gaza?`;
+            
+            if (confirm(message)) {
+                window.open(donationUrl, '_blank');
+            }
+        }
+        
+        // Vibrate if supported
+        if (navigator.vibrate) navigator.vibrate(30);
+    }
+    
+    // Update Display
+    function updateDisplay() {
+        counterElement.textContent = lightsLit.toLocaleString();
+        const percentage = Math.min((lightsLit / goalLights) * 100, 100);
+        progressBar.style.width = percentage + '%';
+        
+        // Show message every 100 lights
+        if (lightsLit > 0 && lightsLit % 100 === 0) {
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 5000);
+        }
+    }
+    
+    // Event Listeners
+    lightBtn.addEventListener('click', lightTheDome);
+    domeImage.addEventListener('click', lightTheDome);
+    
+    donateBtn.addEventListener('click', () => {
+        window.open(donationUrl, '_blank');
+    });
+    
+    // Keyboard support
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space' || event.code === 'Enter') {
+            event.preventDefault();
+            lightTheDome();
+        }
+    });
+    
+    // Share API
+    if (navigator.share) {
+        shareBtn.style.display = 'block';
+        shareBtn.addEventListener('click', async () => {
+            const shareText = isArabic
+                ? 'انضم إليّ في إضاءة الأنوار الافتراضية للأقصى ودعم غزة!'
+                : 'Join me in lighting virtual lights for Al-Aqsa and supporting Gaza!';
+            
+            try {
+                await navigator.share({
+                    title: isArabic ? 'نور الأقصى - أضيء القبة' : 'Nour Al-Aqsa - Light The Dome',
+                    text: shareText,
+                    url: window.location.href,
+                });
+            } catch (err) {
+                console.log('Sharing cancelled');
+            }
+        });
+    }
+    
+    // PWA Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(console.log);
+        });
+    }
+    
+    // Install Prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        deferredPrompt = e;
+        console.log('PWA installable');
+    });
+    
+    // Easter egg: Double-click dome for special message
+    let clickCount = 0;
+    let lastClick = 0;
+    domeImage.addEventListener('dblclick', () => {
+        const now = Date.now();
+        if (now - lastClick < 500) {
+            clickCount++;
+            if (clickCount === 3) {
+                alert(isArabic ? '🕋 الله أكبر! الحمد لله على نعمة الأقصى.' : '🕋 Allahu Akbar! Alhamdulillah for Al-Aqsa.');
+                clickCount = 0;
+            }
+        }
+        lastClick = now;
+    });
+</script>
+</body>
+</html>
