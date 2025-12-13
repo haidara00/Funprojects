@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereignty Store | HydraSoft E-Commerce</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sovereignty-blue: #0A2472;
+            --hydra-green: #00C896;
+            --accent-orange: #FF6B35;
+            --dark-bg: #121212;
+            --light-text: #ffffff;
+            --gray-border: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Sovereignty Header */
+        .sovereignty-header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--hydra-green);
+            position: relative;
+        }
+
+        .sovereignty-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--sovereignty-blue), var(--hydra-green));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0, 200, 150, 0.3);
+        }
+
+        .offline-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-orange);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Store Layout */
+        .store-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .store-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gray-border);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--hydra-green);
+            box-shadow: 0 10px 30px rgba(0, 200, 150, 0.1);
+        }
+
+        .product-card.sovereignty-item {
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(45deg, var(--sovereignty-blue), var(--dark-bg));
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--hydra-green);
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--light-text);
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 15px;
+            min-height: 60px;
+        }
+
+        .product-price {
+            font-size: 24px;
+            color: var(--hydra-green);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: var(--sovereignty-blue);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            background: transparent;
+            border: 1px solid var(--gray-border);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--hydra-green), var(--sovereignty-blue));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 200, 150, 0.4);
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gray-border);
+            border-radius: 15px;
+            padding: 25px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--hydra-green);
+            font-weight: bold;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-total {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: right;
+            color: var(--hydra-green);
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 2px solid var(--gray-border);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--accent-orange), #e05a2b);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .checkout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .save-cart {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid var(--hydra-green);
+            color: var(--hydra-green);
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-cart:hover {
+            background: var(--hydra-green);
+            color: white;
+        }
+
+        /* Order Form */
+        .order-form {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gray-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .order-form.hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--hydra-green);
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--hydra-green);
+        }
+
+        /* Orders History */
+        .orders-history {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gray-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 40px;
+        }
+
+        .orders-history.hidden {
+            display: none;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gray-border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .order-id {
+            color: var(--hydra-green);
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .order-date {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .order-total {
+            font-size: 18px;
+            color: var(--hydra-green);
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        /* Sovereignty Features */
+        .sovereignty-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(0, 200, 150, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--hydra-green);
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--light-text);
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        /* Footer */
+        .sovereignty-footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid var(--gray-border);
+            color: #666;
+            font-size: 14px;
+        }
+
+        .sovereignty-footer a {
+            color: var(--hydra-green);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-card {
+                padding: 15px;
+            }
+            
+            .sovereignty-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sovereignty Header -->
+    <header class="sovereignty-header">
+        <h1>🦅 Sovereignty Store</h1>
+        <div class="sovereignty-badge">Single-File E-Commerce | 100% Offline</div>
+        <div class="offline-status" id="offlineStatus">
+            <span>●</span> Online
+        </div>
+        <p>Build your business sovereignty. One HTML file at a time.</p>
+    </header>
+
+    <!-- Store Container -->
+    <div class="store-container">
+        <!-- Products Section -->
+        <main>
+            <h2>Sovereignty Products</h2>
+            <p style="color: #aaa; margin-bottom: 20px;">Digital tools for economic independence</p>
+            
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- Sovereignty Features -->
+            <div class="sovereignty-features">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Single File</h3>
+                    <p class="feature-desc">Entire store in one HTML file. No servers needed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Offline First</h3>
+                    <p class="feature-desc">Works without internet. Data stored locally.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3 class="feature-title">No Fees</h3>
+                    <p class="feature-desc">0% platform fees. Keep all your profits.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="feature-title">Global</h3>
+                    <p class="feature-desc">Works anywhere, on any device with a browser.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Cart Sidebar -->
+        <aside class="cart-sidebar">
+            <div class="cart-header">
+                <h3>🛒 Your Sovereignty Cart</h3>
+                <span id="cartCount">0 items</span>
+            </div>
+            
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will appear here -->
+                <div id="emptyCart" style="text-align: center; color: #666; padding: 40px 0;">
+                    Your cart is empty<br>
+                    Add sovereignty products to begin
+                </div>
+            </div>
+            
+            <div class="cart-total" id="cartTotal">
+                Total: $0.00
+            </div>
+            
+            <button class="checkout-btn" id="checkoutBtn" disabled>
+                ⚡ Proceed to Sovereignty Checkout
+            </button>
+            
+            <button class="save-cart" id="saveCartBtn">
+                💾 Save Cart Locally
+            </button>
+            
+            <button class="save-cart" id="loadCartBtn" style="margin-top: 10px;">
+                📂 Load Saved Cart
+            </button>
+            
+            <button class="save-cart" id="viewOrdersBtn" style="margin-top: 10px;">
+                📋 View Orders
+            </button>
+        </aside>
+    </div>
+
+    <!-- Order Form (Hidden by default) -->
+    <div class="order-form hidden" id="orderForm">
+        <h2>🦅 Complete Your Sovereignty Order</h2>
+        
+        <div class="form-group">
+            <label for="customerName">Your Name</label>
+            <input type="text" id="customerName" class="form-control" placeholder="Enter your name">
+        </div>
+        
+        <div class="form-group">
+            <label for="customerEmail">Email Address</label>
+            <input type="email" id="customerEmail" class="form-control" placeholder="you@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="orderNotes">Order Notes</label>
+            <textarea id="orderNotes" class="form-control" rows="3" placeholder="Any special instructions..."></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button class="checkout-btn" id="submitOrderBtn">
+                ✅ Submit Sovereignty Order
+            </button>
+            <button class="save-cart" id="cancelOrderBtn">
+                ↩ Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Orders History (Hidden by default) -->
+    <div class="orders-history hidden" id="ordersHistory">
+        <h2>📋 Your Sovereignty Orders</h2>
+        <div id="ordersList">
+            <!-- Orders will appear here -->
+            <div style="text-align: center; color: #666; padding: 40px 0;">
+                No orders yet<br>
+                Complete your first sovereignty purchase!
+            </div>
+        </div>
+        <button class="save-cart" id="backToStoreBtn" style="margin-top: 20px;">
+            ← Back to Store
+        </button>
+    </div>
+
+    <!-- Sovereignty Footer -->
+    <footer class="sovereignty-footer">
+        <p>🦅 <strong>Sovereignty Store v1.0</strong> - Built with HydraSoft Technology</p>
+        <p>Single HTML File | Offline-First E-Commerce | No Platform Dependencies</p>
+        <p>© 2024 HydraSoft Digital Sovereignty Initiative. All bytes preserved.</p>
+        <p style="margin-top: 20px;">
+            <a href="#" id="exportStoreBtn">Export Store Data</a> • 
+            <a href="#" id="resetStoreBtn">Reset Store</a> • 
+            <a href="#" id="viewSourceBtn">View Source Code</a>
+        </p>
+    </footer>
+
+    <script>
+        // Sovereignty Store - Single File E-Commerce
+        class SovereigntyStore {
+            constructor() {
+                this.products = [
+                    {
+                        id: 1,
+                        name: "Digital Sovereignty Starter Kit",
+                        description: "Complete guide to building single-file businesses. Includes templates and tutorials.",
+                        price: 49.99,
+                        category: "education",
+                        isSovereignty: true,
+                        icon: "📚"
+                    },
+                    {
+                        id: 2,
+                        name: "HydraSoft Calculator Pro",
+                        description: "Advanced business calculator with offline currency conversion and crisis mode.",
+                        price: 29.99,
+                        category: "tools",
+                        isSovereignty: true,
+                        icon: "🧮"
+                    },
+                    {
+                        id: 3,
+                        name: "Single-File E-Commerce Template",
+                        description: "Complete store template like this one. Customize and deploy instantly.",
+                        price: 79.99,
+                        category: "templates",
+                        isSovereignty: true,
+                        icon: "🛍️"
+                    },
+                    {
+                        id: 4,
+                        name: "Offline-First Inventory System",
+                        description: "Manage inventory without internet. Syncs when connection available.",
+                        price: 59.99,
+                        category: "business",
+                        isSovereignty: true,
+                        icon: "📦"
+                    },
+                    {
+                        id: 5,
+                        name: "Digital Solidarity Widget",
+                        description: "Add a solidarity counter to any website. Works 100% offline.",
+                        price: 19.99,
+                        category: "widgets",
+                        isSovereignty: true,
+                        icon: "🤝"
+                    },
+                    {
+                        id: 6,
+                        name: "Sovereignty Hosting Package",
+                        description: "One-year hosting for single-file apps. 99.9% uptime guarantee.",
+                        price: 99.99,
+                        category: "services",
+                        isSovereignty: false,
+                        icon: "🚀"
+                    }
+                ];
+                
+                this.cart = [];
+                this.orders = [];
+                this.currentView = 'store'; // store, checkout, orders
+                
+                this.init();
+            }
+            
+            init() {
+                this.loadFromLocalStorage();
+                this.renderProducts();
+                this.updateCartUI();
+                this.setupEventListeners();
+                this.checkOfflineStatus();
+                
+                // Simulate network status
+                setInterval(() => this.checkOfflineStatus(), 30000);
+                
+                console.log('🦅 Sovereignty Store initialized');
+                console.log('📁 Single-file e-commerce ready');
+            }
+            
+            renderProducts() {
+                const productsGrid = document.getElementById('productsGrid');
+                productsGrid.innerHTML = '';
+                
+                this.products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = `product-card ${product.isSovereignty ? 'sovereignty-item' : ''}`;
+                    
+                    productCard.innerHTML = `
+                        <div class="product-image">
+                            <div style="font-size: 48px;">${product.icon}</div>
+                        </div>
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" data-action="decrease" data-id="${product.id}">-</button>
+                            <input type="number" class="quantity-input" id="qty-${product.id}" value="1" min="1" max="99">
+                            <button class="quantity-btn" data-action="increase" data-id="${product.id}">+</button>
+                        </div>
+                        <button class="add-to-cart" data-id="${product.id}">
+                            🛒 Add to Sovereignty Cart
+                        </button>
+                    `;
+                    
+                    productsGrid.appendChild(productCard);
+                });
+            }
+            
+            addToCart(productId, quantity = 1) {
+                const product = this.products.find(p => p.id === productId);
+                if (!product) return;
+                
+                const existingItem = this.cart.find(item => item.productId === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    this.cart.push({
+                        productId,
+                        quantity,
+                        addedAt: new Date().toISOString()
+                    });
+                }
+                
+                this.saveToLocalStorage();
+                this.updateCartUI();
+                this.showNotification(`${product.name} added to cart`);
+            }
+            
+            updateCartItem(productId, newQuantity) {
+                if (newQuantity < 1) {
+                    this.removeFromCart(productId);
+                    return;
+                }
+                
+                const item = this.cart.find(item => item.productId === productId);
+                if (item) {
+                    item.quantity = newQuantity;
+                    this.saveToLocalStorage();
+                    this.updateCartUI();
+                }
+            }
+            
+            removeFromCart(productId) {
+                this.cart = this.cart.filter(item => item.productId !== productId);
+                this.saveToLocalStorage();
+                this.updateCartUI();
+                this.showNotification('Item removed from cart');
+            }
+            
+            updateCartUI() {
+                // Update cart count
+                const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                document.getElementById('cartCount').textContent = `${totalItems} ${totalItems === 1 ? 'item' : 'items'}`;
+                
+                // Update cart items
+                const cartItemsContainer = document.getElementById('cartItems');
+                const emptyCart = document.getElementById('emptyCart');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+                
+                if (this.cart.length === 0) {
+                    emptyCart.style.display = 'block';
+                    cartItemsContainer.innerHTML = '';
+                    cartItemsContainer.appendChild(emptyCart);
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.textContent = '🛒 Cart is Empty';
+                } else {
+                    emptyCart.style.display = 'none';
+                    
+                    let cartHTML = '';
+                    let total = 0;
+                    
+                    this.cart.forEach(cartItem => {
+                        const product = this.products.find(p => p.id === cartItem.productId);
+                        if (!product) return;
+                        
+                        const itemTotal = product.price * cartItem.quantity;
+                        total += itemTotal;
+                        
+                        cartHTML += `
+                            <div class="cart-item">
+                                <div class="cart-item-info">
+                                    <h4>${product.name}</h4>
+                                    <div class="cart-item-price">$${product.price.toFixed(2)} × ${cartItem.quantity}</div>
+                                </div>
+                                <div class="cart-item-quantity">
+                                    <button class="quantity-btn" onclick="store.updateCartItem(${product.id}, ${cartItem.quantity - 1})">-</button>
+                                    <span>${cartItem.quantity}</span>
+                                    <button class="quantity-btn" onclick="store.updateCartItem(${product.id}, ${cartItem.quantity + 1})">+</button>
+                                    <button style="background: transparent; border: none; color: var(--accent-orange); margin-left: 10px;" onclick="store.removeFromCart(${product.id})">✕</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    cartItemsContainer.innerHTML = cartHTML;
+                    document.getElementById('cartTotal').innerHTML = `Total: <strong>$${total.toFixed(2)}</strong>`;
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.textContent = `⚡ Checkout - $${total.toFixed(2)}`;
+                }
+            }
+            
+            showCheckoutForm() {
+                this.currentView = 'checkout';
+                document.getElementById('orderForm').classList.remove('hidden');
+                document.querySelector('.store-container').style.display = 'none';
+                document.querySelector('.sovereignty-features').style.display = 'none';
+            }
+            
+            hideCheckoutForm() {
+                this.currentView = 'store';
+                document.getElementById('orderForm').classList.add('hidden');
+                document.querySelector('.store-container').style.display = 'grid';
+                document.querySelector('.sovereignty-features').style.display = 'grid';
+            }
+            
+            showOrdersHistory() {
+                this.currentView = 'orders';
+                this.renderOrdersHistory();
+                document.getElementById('ordersHistory').classList.remove('hidden');
+                document.querySelector('.store-container').style.display = 'none';
+                document.querySelector('.sovereignty-features').style.display = 'none';
+                document.getElementById('orderForm').classList.add('hidden');
+            }
+            
+            hideOrdersHistory() {
+                this.currentView = 'store';
+                document.getElementById('ordersHistory').classList.add('hidden');
+                document.querySelector('.store-container').style.display = 'grid';
+                document.querySelector('.sovereignty-features').style.display = 'grid';
+            }
+            
+            submitOrder() {
+                const name = document.getElementById('customerName').value.trim();
+                const email = document.getElementById('customerEmail').value.trim();
+                const notes = document.getElementById('orderNotes').value.trim();
+                
+                if (!name || !email) {
+                    this.showNotification('Please fill in name and email', 'error');
+                    return;
+                }
+                
+                // Create order
+                const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
+                const orderTotal = this.getCartTotal();
+                const orderItems = this.cart.map(item => {
+                    const product = this.products.find(p => p.id === item.productId);
+                    return {
+                        productId: item.productId,
+                        productName: product.name,
+                        quantity: item.quantity,
+                        price: product.price
+                    };
+                });
+                
+                const order = {
+                    id: orderId,
+                    date: new Date().toISOString(),
+                    customerName: name,
+                    customerEmail: email,
+                    notes: notes,
+                    items: orderItems,
+                    total: orderTotal,
+                    status: 'pending'
+                };
+                
+                this.orders.unshift(order);
+                this.cart = [];
+                this.saveToLocalStorage();
+                
+                // Update UI
+                this.hideCheckoutForm();
+                this.updateCartUI();
+                
+                // Show confirmation
+                this.showNotification(`Order ${orderId} submitted successfully!`, 'success');
+                
+                // Clear form
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerEmail').value = '';
+                document.getElementById('orderNotes').value = '';
+            }
+            
+            renderOrdersHistory() {
+                const ordersList = document.getElementById('ordersList');
+                
+                if (this.orders.length === 0) {
+                    ordersList.innerHTML = `
+                        <div style="text-align: center; color: #666; padding: 40px 0;">
+                            No orders yet<br>
+                            Complete your first sovereignty purchase!
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let ordersHTML = '';
+                
+                this.orders.forEach(order => {
+                    ordersHTML += `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <div class="order-id">${order.id}</div>
+                                    <div>${order.customerName} • ${order.customerEmail}</div>
+                                </div>
+                                <div class="order-date">${new Date(order.date).toLocaleDateString()}</div>
+                            </div>
+                            <div class="order-items">
+                                ${order.items.map(item => `
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>${item.productName} × ${item.quantity}</span>
+                                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="order-total">Total: $${order.total.toFixed(2)}</div>
+                            <div style="margin-top: 10px; font-size: 12px; color: ${order.status === 'pending' ? '#FF6B35' : '#00C896'}">
+                                Status: ${order.status.toUpperCase()}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                ordersList.innerHTML = ordersHTML;
+            }
+            
+            getCartTotal() {
+                return this.cart.reduce((total, item) => {
+                    const product = this.products.find(p => p.id === item.productId);
+                    return total + (product.price * item.quantity);
+                }, 0);
+            }
+            
+            saveCartToLocalStorage() {
+                try {
+                    localStorage.setItem('sovereignty_store_cart', JSON.stringify(this.cart));
+                    this.showNotification('Cart saved locally');
+                } catch (e) {
+                    this.showNotification('Failed to save cart', 'error');
+                }
+            }
+            
+            loadCartFromLocalStorage() {
+                try {
+                    const savedCart = localStorage.getItem('sovereignty_store_cart');
+                    if (savedCart) {
+                        this.cart = JSON.parse(savedCart);
+                        this.updateCartUI();
+                        this.showNotification('Cart loaded from local storage');
+                    }
+                } catch (e) {
+                    this.showNotification('Failed to load cart', 'error');
+                }
+            }
+            
+            saveToLocalStorage() {
+                try {
+                    localStorage.setItem('sovereignty_store_data', JSON.stringify({
+                        cart: this.cart,
+                        orders: this.orders
+                    }));
+                } catch (e) {
+                    console.log('Local storage save failed');
+                }
+            }
+            
+            loadFromLocalStorage() {
+                try {
+                    const savedData = localStorage.getItem('sovereignty_store_data');
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        this.cart = data.cart || [];
+                        this.orders = data.orders || [];
+                    }
+                } catch (e) {
+                    console.log('Local storage load failed');
+                }
+            }
+            
+            exportStoreData() {
+                const data = {
+                    cart: this.cart,
+                    orders: this.orders,
+                    exportDate: new Date().toISOString(),
+                    store: 'Sovereignty Store v1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sovereignty-store-data-${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showNotification('Store data exported');
+            }
+            
+            resetStore() {
+                if (confirm('Are you sure? This will clear all cart items and orders.')) {
+                    this.cart = [];
+                    this.orders = [];
+                    localStorage.removeItem('sovereignty_store_data');
+                    localStorage.removeItem('sovereignty_store_cart');
+                    this.updateCartUI();
+                    this.showNotification('Store reset to default');
+                }
+            }
+            
+            checkOfflineStatus() {
+                const statusElement = document.getElementById('offlineStatus');
+                const isOnline = navigator.onLine;
+                
+                if (isOnline) {
+                    statusElement.innerHTML = '<span style="color: #00C896;">●</span> Online';
+                    statusElement.style.background = 'var(--hydra-green)';
+                } else {
+                    statusElement.innerHTML = '<span style="color: #FF6B35;">●</span> Offline';
+                    statusElement.style.background = 'var(--accent-orange)';
+                    this.showNotification('Working offline - data saved locally', 'info');
+                }
+            }
+            
+            showNotification(message, type = 'success') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'error' ? 'var(--accent-orange)' : 'var(--hydra-green)'};
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    z-index: 1000;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+                
+                // Add CSS for animation
+                if (!document.querySelector('#notification-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'notification-styles';
+                    style.textContent = `
+                        @keyframes slideIn {
+                            from { transform: translateX(100%); opacity: 0; }
+                            to { transform: translateX(0); opacity: 1; }
+                        }
+                        @keyframes slideOut {
+                            from { transform: translateX(0); opacity: 1; }
+                            to { transform: translateX(100%); opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+            
+            setupEventListeners() {
+                // Add to cart buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('add-to-cart')) {
+                        const productId = parseInt(e.target.dataset.id);
+                        const quantityInput = document.getElementById(`qty-${productId}`);
+                        const quantity = parseInt(quantityInput.value) || 1;
+                        this.addToCart(productId, quantity);
+                    }
+                    
+                    // Quantity controls
+                    if (e.target.classList.contains('quantity-btn')) {
+                        const action = e.target.dataset.action;
+                        const productId = parseInt(e.target.dataset.id);
+                        const quantityInput = document.getElementById(`qty-${productId}`);
+                        let quantity = parseInt(quantityInput.value) || 1;
+                        
+                        if (action === 'increase') {
+                            quantity++;
+                        } else if (action === 'decrease' && quantity > 1) {
+                            quantity--;
+                        }
+                        
+                        quantityInput.value = quantity;
+                    }
+                });
+                
+                // Checkout button
+                document.getElementById('checkoutBtn').addEventListener('click', () => {
+                    this.showCheckoutForm();
+                });
+                
+                // Save cart button
+                document.getElementById('saveCartBtn').addEventListener('click', () => {
+                    this.saveCartToLocalStorage();
+                });
+                
+                // Load cart button
+                document.getElementById('loadCartBtn').addEventListener('click', () => {
+                    this.loadCartFromLocalStorage();
+                });
+                
+                // View orders button
+                document.getElementById('viewOrdersBtn').addEventListener('click', () => {
+                    this.showOrdersHistory();
+                });
+                
+                // Submit order button
+                document.getElementById('submitOrderBtn').addEventListener('click', () => {
+                    this.submitOrder();
+                });
+                
+                // Cancel order button
+                document.getElementById('cancelOrderBtn').addEventListener('click', () => {
+                    this.hideCheckoutForm();
+                });
+                
+                // Back to store button
+                document.getElementById('backToStoreBtn').addEventListener('click', () => {
+                    this.hideOrdersHistory();
+                });
+                
+                // Export data button
+                document.getElementById('exportStoreBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.exportStoreData();
+                });
+                
+                // Reset store button
+                document.getElementById('resetStoreBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.resetStore();
+                });
+                
+                // View source button
+                document.getElementById('viewSourceBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('This entire e-commerce store is contained in ONE HTML file!\n\nFile size: ~40KB\nTechnologies: HTML, CSS, JavaScript\nDependencies: NONE\n\nHydraSoft Sovereignty Technology');
+                });
+                
+                // Online/offline events
+                window.addEventListener('online', () => this.checkOfflineStatus());
+                window.addEventListener('offline', () => this.checkOfflineStatus());
+            }
+        }
+        
+        // Initialize store when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.store = new SovereigntyStore();
+            
+            // Log initialization
+            console.log('%c🦅 SOVEREIGNTY STORE ACTIVATED', 
+                'color: #00C896; font-size: 18px; font-weight: bold;');
+            console.log('%cSingle-file e-commerce | Offline-first | No platform fees', 
+                'color: #FF6B35; font-size: 12px;');
+        });
+    </script>
+</body>
+</html>
