@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUAWEI Camera with Live Feed</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        body { background-color: #0a0a0a; color: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
+        
+        .camera-app {
+            width: 100%; max-width: 400px; height: 85vh; background-color: #000; border-radius: 24px; overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05); border: 1px solid #222; display: flex; flex-direction: column; position: relative;
+        }
+
+        .status-bar { padding: 12px 20px 8px; display: flex; justify-content: space-between; font-size: 14px; color: #fff; background-color: #000; border-bottom: 1px solid #222; }
+        .time { font-weight: bold; }
+        
+        .viewfinder-container { flex-grow: 1; background-color: #111; position: relative; overflow: hidden; }
+        #videoFeed { width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1); }
+        #fallbackImage { width: 100%; height: 100%; object-fit: cover; display: none; }
+        
+        .top-controls { position: absolute; top: 50px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; }
+        .control-btn { background: rgba(30, 30, 30, 0.7); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; }
+        
+        .mode-selector { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(30, 30, 30, 0.7); border-radius: 20px; padding: 6px; backdrop-filter: blur(5px); display: flex; gap: 5px; }
+        .mode-btn { padding: 6px 14px; border: none; border-radius: 16px; background: transparent; color: #aaa; font-size: 13px; cursor: pointer; }
+        .mode-btn.active { background: rgba(255, 255, 255, 0.15); color: #fff; font-weight: bold; }
+        
+        .bottom-controls { padding: 20px; background: rgba(0, 0, 0, 0.9); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; }
+        .shutter-btn { width: 70px; height: 70px; border-radius: 50%; border: 4px solid rgba(255, 255, 255, 0.9); background: transparent; cursor: pointer; position: relative; }
+        .shutter-btn-inner { position: absolute; top: 5px; left: 5px; width: calc(100% - 10px); height: calc(100% - 10px); border-radius: 50%; background: rgba(255, 255, 255, 0.95); }
+        .camera-switch { width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        .permission-prompt { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.9); padding: 20px; border-radius: 16px; text-align: center; display: none; }
+        .permission-btn { background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="camera-app">
+        <div class="status-bar">
+            <div class="time" id="currentTime">9:41</div>
+            <div class="status-icons">HUAWEI Live Camera</div>
+        </div>
+        
+        <div class="viewfinder-container">
+            <video id="videoFeed" autoplay playsinline></video>
+            <img id="fallbackImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Fallback View">
+        </div>
+        
+        <div class="permission-prompt" id="permissionPrompt">
+            <p>Camera access is required for live feed.</p>
+            <button class="permission-btn" id="requestPermissionBtn">Allow Camera Access</button>
+        </div>
+        
+        <div class="top-controls">
+            <button class="control-btn" id="flashBtn">⚡</button>
+            <button class="control-btn" id="timerBtn">⏱️</button>
+        </div>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="photo">PHOTO</button>
+            <button class="mode-btn" data-mode="portrait">PORTRAIT</button>
+        </div>
+        
+        <div class="bottom-controls">
+            <button class="shutter-btn" id="shutterBtn">
+                <div class="shutter-btn-inner"></div>
+            </button>
+            <button class="camera-switch" id="cameraSwitchBtn">🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let currentStream = null;
+        let isFrontCamera = false;
+        let capturedPhotos = [];
+        
+        // DOM Elements
+        const videoFeed = document.getElementById('videoFeed');
+        const fallbackImage = document.getElementById('fallbackImage');
+        const permissionPrompt = document.getElementById('permissionPrompt');
+        const shutterBtn = document.getElementById('shutterBtn');
+        const cameraSwitchBtn = document.getElementById('cameraSwitchBtn');
+        const requestPermissionBtn = document.getElementById('requestPermissionBtn');
+        
+        // Initialize app
+        function initApp() {
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Request camera access on load
+            initCamera();
+            
+            // Event listeners
+            requestPermissionBtn.addEventListener('click', initCamera);
+            shutterBtn.addEventListener('click', capturePhoto);
+            cameraSwitchBtn.addEventListener('click', switchCamera);
+        }
+        
+        // Camera initialization
+        async function initCamera() {
+            permissionPrompt.style.display = 'none';
+            
+            // Stop existing stream if any
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            
+            try {
+                // Get camera stream with constraints
+                const constraints = {
+                    video: {
+                        facingMode: isFrontCamera ? 'user' : 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+                
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoFeed.srcObject = currentStream;
+                videoFeed.style.display = 'block';
+                fallbackImage.style.display = 'none';
+                
+                console.log('Camera access granted');
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                videoFeed.style.display = 'none';
+                fallbackImage.style.display = 'block';
+                permissionPrompt.style.display = 'block';
+                
+                if (error.name === 'NotAllowedError') {
+                    permissionPrompt.innerHTML = '<p>Camera permission was denied. Please allow camera access in your browser settings.</p>';
+                } else if (error.name === 'NotFoundError') {
+                    permissionPrompt.innerHTML = '<p>No camera found on this device.</p>';
+                }
+            }
+        }
+        
+        // Switch between front/back camera
+        async function switchCamera() {
+            isFrontCamera = !isFrontCamera;
+            cameraSwitchBtn.style.transform = isFrontCamera ? 'rotate(180deg)' : 'rotate(0deg)';
+            await initCamera();
+        }
+        
+        // Capture photo from video feed
+        function capturePhoto() {
+            if (!currentStream) {
+                alert('Camera not accessible. Please allow camera permissions.');
+                return;
+            }
+            
+            // Create canvas to capture frame
+            const canvas = document.createElement('canvas');
+            canvas.width = videoFeed.videoWidth;
+            canvas.height = videoFeed.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Flip horizontally for front camera
+            if (isFrontCamera) {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+            
+            ctx.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL
+            const photoDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            capturedPhotos.push(photoDataUrl);
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = photoDataUrl;
+            link.download = `huawei_photo_${Date.now()}.jpg`;
+            link.click();
+            
+            // Flash effect
+            videoFeed.style.filter = 'brightness(2)';
+            setTimeout(() => {
+                videoFeed.style.filter = 'brightness(1)';
+            }, 200);
+            
+            alert(`Photo captured! Saved as download. Total photos: ${capturedPhotos.length}`);
+        }
+        
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+        }
+        
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+        });
+        
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
