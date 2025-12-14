@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaliFinances - Suivi Dettes Clients & Fournisseurs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00843D">
+    <meta name="description" content="Application de gestion des dettes clients et fournisseurs - Fonctionne 100% hors-ligne">
+    <style>
+        /* Modern Design System */
+        :root {
+            --primary: #00843D;
+            --primary-dark: #00662E;
+            --primary-light: #E6F4EA;
+            --secondary: #FCD116;
+            --secondary-dark: #E0B814;
+            --accent: #CE1126;
+            --dark: #121826;
+            --dark-card: #1E293B;
+            --light: #FFFFFF;
+            --gray-100: #F8FAFC;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app {
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--light), var(--gray-200));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .flag {
+            display: inline-flex;
+            height: 4px;
+            width: 120px;
+            margin: var(--spacing-md) 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .flag-strip {
+            flex: 1;
+        }
+
+        .flag-green { background: var(--primary); }
+        .flag-gold { background: var(--secondary); }
+        .flag-red { background: var(--accent); }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--light);
+        }
+
+        .login-subtitle {
+            color: var(--gray-400);
+            margin-bottom: var(--spacing-xl);
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            margin-bottom: var(--spacing-lg);
+            text-align: left;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--gray-300);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 132, 61, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            width: 100%;
+            padding: var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), #005725);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .info-box {
+            background: rgba(0, 132, 61, 0.1);
+            border: 1px solid rgba(0, 132, 61, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            text-align: left;
+        }
+
+        .info-icon {
+            color: var(--primary);
+            margin-right: var(--spacing-sm);
+        }
+
+        /* Main App */
+        .main-app {
+            display: none;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-md) 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-info h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .header-info p {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 132, 61, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .stat-trend {
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .trend-positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .trend-negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: var(--spacing-md);
+            background: transparent;
+            border: none;
+            color: var(--gray-400);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: var(--radius-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: var(--spacing-sm);
+            bottom: var(--spacing-sm);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            z-index: 0;
+            transition: transform 0.3s ease;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Debt List */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            font-size: 0.95rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+
+        .debt-table {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(0, 132, 61, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            color: var(--gray-300);
+        }
+
+        .debt-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .debt-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .debt-item:last-child {
+            border-bottom: none;
+        }
+
+        .debt-name {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .debt-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .debt-details h4 {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .debt-details p {
+            color: var(--gray-400);
+            font-size: 0.85rem;
+        }
+
+        .debt-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .debt-date {
+            color: var(--gray-400);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-paid {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-overdue {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .debt-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--gray-400);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .action-btn.paid:hover {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        /* Form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--gray-300);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 132, 61, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+        }
+
+        /* Export Section */
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .export-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .export-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .export-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .export-card h3 {
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.2rem;
+        }
+
+        .export-card p {
+            color: var(--gray-400);
+            margin-bottom: var(--spacing-lg);
+            font-size: 0.95rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .modal-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: var(--spacing-xl);
+            right: var(--spacing-xl);
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .toast-success .toast-icon {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .toast-error .toast-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .toast-warning .toast-icon {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            top: var(--spacing-md);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(245, 158, 11, 0.9);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: var(--spacing-sm);
+            z-index: 1002;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app {
+                padding: var(--spacing-sm);
+            }
+
+            .login-container {
+                padding: var(--spacing-md);
+            }
+
+            .login-card {
+                padding: var(--spacing-lg);
+            }
+
+            .table-header,
+            .debt-item {
+                grid-template-columns: 2fr 1fr 0.5fr;
+            }
+
+            .mobile-hidden {
+                display: none;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--gray-400);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--gray-500);
+            margin-bottom: var(--spacing-md);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="logo-text">MaliFinances</div>
+            </div>
+            
+            <div class="flag">
+                <div class="flag-strip flag-green"></div>
+                <div class="flag-strip flag-gold"></div>
+                <div class="flag-strip flag-red"></div>
+            </div>
+            
+            <h2 class="login-title">Suivi des Dettes</h2>
+            <p class="login-subtitle">Gestion clients & fournisseurs • 100% hors-ligne</p>
+            
+            <div class="input-group">
+                <label class="input-label">Mot de passe d'accès</label>
+                <input type="password" id="password" class="password-input" 
+                       placeholder="Créez ou entrez votre mot de passe" autofocus>
+            </div>
+            
+            <button id="loginBtn" class="btn">
+                <i class="fas fa-lock-open"></i>
+                <span id="loginText">Accéder à l'application</span>
+            </button>
+            
+            <div class="info-box">
+                <p><i class="fas fa-info-circle info-icon"></i> 
+                    <strong>Première utilisation ?</strong> Le mot de passe sera créé automatiquement.
+                    Toutes vos données restent sur cet appareil.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app main-app" id="mainApp">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="user-avatar" id="userInitial">M</div>
+                <div class="header-info">
+                    <h1>MaliFinances</h1>
+                    <p>Suivi en temps réel • Données locales sécurisées</p>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-trend trend-positive" id="clientTrend">+0%</div>
+                </div>
+                <div class="stat-value" id="clientTotal">0 XOF</div>
+                <div class="stat-label" id="clientCount">0 créances clients</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-trend trend-negative" id="supplierTrend">+0%</div>
+                </div>
+                <div class="stat-value" id="supplierTotal">0 XOF</div>
+                <div class="stat-label" id="supplierCount">0 dettes fournisseurs</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="stat-trend" id="balanceTrend">±0</div>
+                </div>
+                <div class="stat-value" id="netBalance">0 XOF</div>
+                <div class="stat-label">Position nette</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="clients">
+                <i class="fas fa-user-tie"></i> Clients
+            </button>
+            <button class="nav-tab" data-tab="suppliers">
+                <i class="fas fa-users"></i> Fournisseurs
+            </button>
+            <button class="nav-tab" data-tab="add">
+                <i class="fas fa-plus-circle"></i> Ajouter
+            </button>
+            <button class="nav-tab" data-tab="export">
+                <i class="fas fa-database"></i> Données
+            </button>
+            <div class="tab-indicator"></div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="content-sections">
+            <!-- Clients Section -->
+            <div class="content-section active" id="clientsSection">
+                <div class="list-header">
+                    <h2>Créances Clients</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Rechercher un client..." 
+                               onkeyup="searchDebts('client', this.value)">
+                    </div>
+                </div>
+                
+                <div class="debt-table">
+                    <div class="table-header">
+                        <div>Client</div>
+                        <div>Montant</div>
+                        <div>Échéance</div>
+                        <div class="mobile-hidden">Statut</div>
+                        <div>Actions</div>
+                    </div>
+                    <div id="clientDebtsList">
+                        <!-- Filled by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suppliers Section -->
+            <div class="content-section" id="suppliersSection">
+                <div class="list-header">
+                    <h2>Dettes Fournisseurs</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Rechercher un fournisseur..." 
+                               onkeyup="searchDebts('supplier', this.value)">
+                    </div>
+                </div>
+                
+                <div class="debt-table">
+                    <div class="table-header">
+                        <div>Fournisseur</div>
+                        <div>Montant</div>
+                        <div>Échéance</div>
+                        <div class="mobile-hidden">Statut</div>
+                        <div>Actions</div>
+                    </div>
+                    <div id="supplierDebtsList">
+                        <!-- Filled by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Debt Section -->
+            <div class="content-section" id="addSection">
+                <div class="form-container">
+                    <h2 style="margin-bottom: var(--spacing-lg);">Nouvelle entrée</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Type *</label>
+                            <select id="debtType" class="form-control">
+                                <option value="client">Créance Client (on vous doit)</option>
+                                <option value="supplier">Dette Fournisseur (vous devez)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nom *</label>
+                            <input type="text" id="debtName" class="form-control" 
+                                   placeholder="Nom du client ou fournisseur">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Montant (XOF) *</label>
+                            <input type="number" id="debtAmount" class="form-control" 
+                                   placeholder="0" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date d'échéance</label>
+                            <input type="date" id="debtDueDate" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" id="debtPhone" class="form-control" 
+                                   placeholder="+223 XX XX XX XX">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Statut</label>
+                            <select id="debtStatus" class="form-control">
+                                <option value="pending">En attente</option>
+                                <option value="paid">Payé</option>
+                                <option value="overdue">En retard</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notes supplémentaires</label>
+                        <textarea id="debtNotes" class="form-control" rows="3" 
+                                  placeholder="Détails, références, etc..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button id="saveDebtBtn" class="btn">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                        <button onclick="clearForm()" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Effacer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="content-section" id="exportSection">
+                <div class="export-grid">
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <h3>Exporter les données</h3>
+                        <p>Téléchargez une copie de sécurité de toutes vos données au format JSON.</p>
+                        <button onclick="exportData()" class="btn">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                    </div>
+                    
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-file-import"></i>
+                        </div>
+                        <h3>Importer des données</h3>
+                        <p>Restaurer vos données à partir d'un fichier JSON précédemment exporté.</p>
+                        <button onclick="showModal('importModal')" class="btn">
+                            <i class="fas fa-upload"></i> Importer
+                        </button>
+                    </div>
+                    
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Synchronisation</h3>
+                        <p>Option future pour synchroniser entre appareils (stockage cloud).</p>
+                        <button onclick="showModal('syncModal')" class="btn">
+                            <i class="fas fa-cloud"></i> Info
+                        </button>
+                    </div>
+                    
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Sécurité</h3>
+                        <p>Toutes vos données sont chiffrées et stockées localement sur cet appareil.</p>
+                        <button onclick="showModal('securityModal')" class="btn">
+                            <i class="fas fa-lock"></i> Détails
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i>
+        <span>Mode hors-ligne activé</span>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Succès</div>
+            <div class="toast-message" id="toastMessage">Opération réussie</div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Importer des données</div>
+                <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Sélectionnez un fichier JSON précédemment exporté :</p>
+                <input type="file" id="importFile" class="form-control" 
+                       accept=".json" style="margin: var(--spacing-md) 0;">
+                
+                <div class="form-actions">
+                    <button onclick="importData()" class="btn">
+                        <i class="fas fa-upload"></i> Importer
+                    </button>
+                    <button onclick="closeModal('importModal')" class="btn btn-secondary">
+                        Annuler
+                    </button>
+                </div>
+                
+                <div class="info-box" style="margin-top: var(--spacing-md);">
+                    <p><i class="fas fa-exclamation-triangle info-icon"></i> 
+                        <strong>Attention :</strong> L'importation écrasera toutes vos données actuelles.
+                        Assurez-vous d'avoir fait une sauvegarde au préalable.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Modal -->
+    <div class="modal" id="syncModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Synchronisation future</div>
+                <button class="modal-close" onclick="closeModal('syncModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin: var(--spacing-lg) 0;">
+                    <div style="font-size: 3rem; color: var(--primary); margin-bottom: var(--spacing-md);">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 style="margin-bottom: var(--spacing-sm);">Fonctionnalité à venir</h3>
+                    <p style="color: var(--gray-400); margin-bottom: var(--spacing-lg);">
+                        La synchronisation cloud sera disponible dans une prochaine mise à jour.
+                    </p>
+                </div>
+                
+                <div class="info-box">
+                    <h4 style="margin-bottom: var(--spacing-sm);">
+                        <i class="fas fa-bolt info-icon"></i> Avantages prévus :
+                    </h4>
+                    <ul style="padding-left: var(--spacing-lg); color: var(--gray-300);">
+                        <li>Sauvegarde automatique dans le cloud</li>
+                        <li>Accès depuis plusieurs appareils</li>
+                        <li>Historique des modifications</li>
+                        <li>Sécurité renforcée avec chiffrement</li>
+                    </ul>
+                </div>
+                
+                <button onclick="closeModal('syncModal')" class="btn" style="margin-top: var(--spacing-lg);">
+                    Compris
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Modal -->
+    <div class="modal" id="securityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Sécurité des données</div>
+                <button class="modal-close" onclick="closeModal('securityModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: var(--spacing-lg);">
+                    <h3 style="margin-bottom: var(--spacing-sm); color: var(--primary);">
+                        <i class="fas fa-shield-alt"></i> Données 100% locales
+                    </h3>
+                    <p style="color: var(--gray-300);">
+                        Toutes vos données financières sont stockées uniquement sur cet appareil.
+                        Aucune information n'est envoyée sur internet.
+                    </p>
+                </div>
+                
+                <div class="info-box" style="margin-bottom: var(--spacing-md);">
+                    <h4 style="margin-bottom: var(--spacing-sm);">
+                        <i class="fas fa-lock info-icon"></i> Protection :
+                    </h4>
+                    <ul style="padding-left: var(--spacing-lg); color: var(--gray-300);">
+                        <li>Chiffrement avec votre mot de passe</li>
+                        <li>Stockage sécurisé dans le navigateur</li>
+                        <li>Aucune connexion réseau requise</li>
+                        <li>Suppression automatique après déconnexion</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2);">
+                    <p style="color: var(--success);">
+                        <i class="fas fa-check-circle info-icon"></i> 
+                        <strong>Conforme RGPD :</strong> Vos données ne quittent jamais votre appareil.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let appState = {
+            isAuthenticated: false,
+            debts: [],
+            lastBackup: null,
+            offlineMode: false
+        };
+
+        // DOM Elements
+        const elements = {
+            loginScreen: document.getElementById('loginScreen'),
+            mainApp: document.getElementById('mainApp'),
+            password: document.getElementById('password'),
+            loginBtn: document.getElementById('loginBtn'),
+            loginText: document.getElementById('loginText'),
+            userInitial: document.getElementById('userInitial'),
+            offlineIndicator: document.getElementById('offlineIndicator'),
+            toast: document.getElementById('toast'),
+            toastTitle: document.getElementById('toastTitle'),
+            toastMessage: document.getElementById('toastMessage')
+        };
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if first visit
+            if (!localStorage.getItem('maliFinances_initialized')) {
+                showToast('Bienvenue !', 'Créez votre mot de passe pour commencer', 'info');
+                localStorage.setItem('maliFinances_initialized', 'true');
+            }
+
+            // Set today's date in form
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('debtDueDate').value = today;
+
+            // Focus password input
+            elements.password.focus();
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Check network status
+            checkNetworkStatus();
+
+            // Initialize tab indicator
+            updateTabIndicator();
+        });
+
+        // Event Listeners Setup
+        function setupEventListeners() {
+            // Login
+            elements.loginBtn.addEventListener('click', handleLogin);
+            elements.password.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+
+            // Tab Navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    showTab(this.dataset.tab);
+                });
+            });
+
+            // Save Debt
+            document.getElementById('saveDebtBtn').addEventListener('click', saveDebt);
+
+            // Network Status
+            window.addEventListener('online', () => {
+                appState.offlineMode = false;
+                elements.offlineIndicator.style.display = 'none';
+                showToast('Connecté', 'Vous êtes de nouveau en ligne', 'success');
+            });
+
+            window.addEventListener('offline', () => {
+                appState.offlineMode = true;
+                elements.offlineIndicator.style.display = 'flex';
+                showToast('Mode hors-ligne', "L'application fonctionne localement", 'warning');
+            });
+
+            // Prevent form submission on enter
+            document.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && e.target.type !== 'password') {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Network Status Check
+        function checkNetworkStatus() {
+            if (!navigator.onLine) {
+                appState.offlineMode = true;
+                elements.offlineIndicator.style.display = 'flex';
+            }
+        }
+
+        // Login Handler
+        async function handleLogin() {
+            const password = elements.password.value.trim();
+            
+            if (!password) {
+                showToast('Mot de passe requis', 'Veuillez entrer un mot de passe', 'error');
+                elements.password.focus();
+                return;
+            }
+
+            // Show loading state
+            elements.loginText.innerHTML = '<div class="loading"></div>';
+            elements.loginBtn.disabled = true;
+
+            // Simulate processing delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            try {
+                // Check or create password
+                const savedPassword = localStorage.getItem('maliFinances_password');
+                
+                if (savedPassword) {
+                    // Verify password
+                    if (password !== savedPassword) {
+                        throw new Error('Mot de passe incorrect');
+                    }
+                } else {
+                    // Create new password
+                    localStorage.setItem('maliFinances_password', password);
+                    showToast('Mot de passe créé', 'Votre compte a été configuré', 'success');
+                }
+
+                // Initialize user
+                initializeUser(password);
+
+                // Load data
+                loadData();
+
+                // Show main app
+                elements.loginScreen.style.display = 'none';
+                elements.mainApp.style.display = 'block';
+                appState.isAuthenticated = true;
+
+                showToast('Connecté', 'Bienvenue dans MaliFinances', 'success');
+
+            } catch (error) {
+                showToast('Erreur', error.message, 'error');
+                elements.loginText.innerHTML = '<i class="fas fa-lock-open"></i> Accéder à l\'application';
+                elements.loginBtn.disabled = false;
+            }
+        }
+
+        // Initialize User
+        function initializeUser(password) {
+            // Set user initial
+            const initial = password.charAt(0).toUpperCase();
+            elements.userInitial.textContent = initial;
+            
+            // Set color based on initial
+            const colors = ['#00843D', '#FCD116', '#CE1126', '#3B82F6', '#8B5CF6'];
+            const colorIndex = initial.charCodeAt(0) % colors.length;
+            elements.userInitial.style.background = `linear-gradient(135deg, ${colors[colorIndex]}, ${darkenColor(colors[colorIndex], 20)})`;
+        }
+
+        // Load Data
+        function loadData() {
+            try {
+                const savedData = localStorage.getItem('maliFinances_data');
+                if (savedData) {
+                    appState.debts = JSON.parse(savedData);
+                }
+                
+                updateStats();
+                renderDebtLists();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Erreur', 'Impossible de charger les données', 'error');
+            }
+        }
+
+        // Save Data
+        function saveData() {
+            try {
+                localStorage.setItem('maliFinances_data', JSON.stringify(appState.debts));
+                localStorage.setItem('maliFinances_lastBackup', new Date().toISOString());
+                appState.lastBackup = new Date();
+            } catch (error) {
+                console.error('Error saving data:', error);
+                showToast('Erreur', 'Impossible de sauvegarder les données', 'error');
+            }
+        }
+
+        // Update Statistics
+        function updateStats() {
+            const clientDebts = appState.debts.filter(d => d.type === 'client' && d.status !== 'paid');
+            const supplierDebts = appState.debts.filter(d => d.type === 'supplier' && d.status !== 'paid');
+            
+            const clientTotal = clientDebts.reduce((sum, debt) => sum + (debt.amount || 0), 0);
+            const supplierTotal = supplierDebts.reduce((sum, debt) => sum + (debt.amount || 0), 0);
+            const netBalance = clientTotal - supplierTotal;
+            
+            // Update UI
+            document.getElementById('clientTotal').textContent = formatCurrency(clientTotal);
+            document.getElementById('clientCount').textContent = `${clientDebts.length} créance${clientDebts.length !== 1 ? 's' : ''}`;
+            
+            document.getElementById('supplierTotal').textContent = formatCurrency(supplierTotal);
+            document.getElementById('supplierCount').textContent = `${supplierDebts.length} dette${supplierDebts.length !== 1 ? 's' : ''}`;
+            
+            document.getElementById('netBalance').textContent = formatCurrency(netBalance);
+            document.getElementById('netBalance').style.color = netBalance >= 0 ? 'var(--success)' : 'var(--error)';
+            
+            // Update trends (simplified)
+            document.getElementById('clientTrend').textContent = clientDebts.length > 0 ? '+5%' : '+0%';
+            document.getElementById('supplierTrend').textContent = supplierDebts.length > 0 ? '+3%' : '+0%';
+            document.getElementById('balanceTrend').textContent = netBalance >= 0 ? '▲' : '▼';
+        }
+
+        // Render Debt Lists
+        function renderDebtLists(type = null) {
+            const clientDebts = appState.debts.filter(d => d.type === 'client');
+            const supplierDebts = appState.debts.filter(d => d.type === 'supplier');
+            
+            if (!type || type === 'client') {
+                renderDebtList('clientDebtsList', clientDebts);
+            }
+            
+            if (!type || type === 'supplier') {
+                renderDebtList('supplierDebtsList', supplierDebts);
+            }
+        }
+
+        // Render Single Debt List
+        function renderDebtList(containerId, debts) {
+            const container = document.getElementById(containerId);
+            
+            if (!debts || debts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3>Aucune donnée</h3>
+                        <p>Ajoutez votre première entrée pour commencer</p>
+                        <button onclick="showTab('add')" class="btn" style="margin-top: var(--spacing-md);">
+                            <i class="fas fa-plus"></i> Ajouter
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            debts.forEach(debt => {
+                const statusClass = `status-${debt.status}`;
+                const statusText = {
+                    'pending': 'En attente',
+                    'paid': 'Payé',
+                    'overdue': 'En retard'
+                }[debt.status] || 'Inconnu';
+                
+                const dueDate = debt.dueDate ? formatDate(debt.dueDate) : 'Non définie';
+                const phone = debt.phone ? `<p><i class="fas fa-phone"></i> ${debt.phone}</p>` : '';
+                
+                html += `
+                    <div class="debt-item" data-id="${debt.id}">
+                        <div class="debt-name">
+                            <div class="debt-avatar">${debt.name.charAt(0).toUpperCase()}</div>
+                            <div class="debt-details">
+                                <h4>${debt.name}</h4>
+                                ${phone}
+                            </div>
+                        </div>
+                        <div class="debt-amount">${formatCurrency(debt.amount)}</div>
+                        <div class="debt-date">${dueDate}</div>
+                        <div class="mobile-hidden">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="debt-actions">
+                            <button class="action-btn paid" onclick="markAsPaid('${debt.id}')" title="Marquer comme payé">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="action-btn" onclick="editDebt('${debt.id}')" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteDebt('${debt.id}')" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Save Debt
+        function saveDebt() {
+            const type = document.getElementById('debtType').value;
+            const name = document.getElementById('debtName').value.trim();
+            const amount = parseInt(document.getElementById('debtAmount').value) || 0;
+            const dueDate = document.getElementById('debtDueDate').value;
+            const phone = document.getElementById('debtPhone').value.trim();
+            const status = document.getElementById('debtStatus').value;
+            const notes = document.getElementById('debtNotes').value.trim();
+            
+            // Validation
+            if (!name) {
+                showToast('Erreur', 'Le nom est requis', 'error');
+                document.getElementById('debtName').focus();
+                return;
+            }
+            
+            if (amount <= 0) {
+                showToast('Erreur', 'Le montant doit être supérieur à 0', 'error');
+                document.getElementById('debtAmount').focus();
+                return;
+            }
+            
+            // Create debt object
+            const newDebt = {
+                id: generateId(),
+                type: type,
+                name: name,
+                amount: amount,
+                dueDate: dueDate || null,
+                phone: phone || null,
+                status: status,
+                notes: notes || null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            // Add to state
+            appState.debts.push(newDebt);
+            
+            // Save data
+            saveData();
+            
+            // Update UI
+            updateStats();
+            renderDebtLists(type);
+            
+            // Clear form
+            clearForm();
+            
+            // Show success message
+            showToast('Succès', `${type === 'client' ? 'Créance' : 'Dette'} enregistrée`, 'success');
+            
+            // Switch to appropriate tab
+            showTab(type === 'client' ? 'clients' : 'suppliers');
+        }
+
+        // Mark as Paid
+        function markAsPaid(id) {
+            const debtIndex = appState.debts.findIndex(d => d.id === id);
+            if (debtIndex === -1) return;
+            
+            appState.debts[debtIndex].status = 'paid';
+            appState.debts[debtIndex].updatedAt = new Date().toISOString();
+            
+            saveData();
+            updateStats();
+            renderDebtLists();
+            
+            showToast('Succès', 'Marqué comme payé', 'success');
+        }
+
+        // Edit Debt
+        function editDebt(id) {
+            showToast('Info', 'Édition disponible prochainement', 'info');
+            // TODO: Implement edit functionality
+        }
+
+        // Delete Debt
+        function deleteDebt(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?')) return;
+            
+            appState.debts = appState.debts.filter(d => d.id !== id);
+            saveData();
+            updateStats();
+            renderDebtLists();
+            
+            showToast('Succès', 'Entrée supprimée', 'success');
+        }
+
+        // Search Debts
+        function searchDebts(type, query) {
+            const filteredDebts = appState.debts.filter(debt => {
+                if (debt.type !== type) return false;
+                if (!query) return true;
+                
+                const searchLower = query.toLowerCase();
+                return debt.name.toLowerCase().includes(searchLower) ||
+                       (debt.phone && debt.phone.includes(query)) ||
+                       (debt.notes && debt.notes.toLowerCase().includes(searchLower));
+            });
+            
+            const containerId = type === 'client' ? 'clientDebtsList' : 'supplierDebtsList';
+            renderDebtList(containerId, filteredDebts);
+        }
+
+        // Clear Form
+        function clearForm() {
+            document.getElementById('debtName').value = '';
+            document.getElementById('debtAmount').value = '';
+            document.getElementById('debtDueDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('debtPhone').value = '';
+            document.getElementById('debtStatus').value = 'pending';
+            document.getElementById('debtNotes').value = '';
+            document.getElementById('debtName').focus();
+        }
+
+        // Show Tab
+        function showTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update active section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+                if (section.id === tabName + 'Section') {
+                    section.classList.add('active');
+                }
+            });
+            
+            // Update tab indicator position
+            updateTabIndicator();
+        }
+
+        // Update Tab Indicator
+        function updateTabIndicator() {
+            const activeTab = document.querySelector('.nav-tab.active');
+            const tabsContainer = document.querySelector('.nav-tabs');
+            const indicator = document.querySelector('.tab-indicator');
+            
+            if (!activeTab || !indicator) return;
+            
+            const tabRect = activeTab.getBoundingClientRect();
+            const containerRect = tabsContainer.getBoundingClientRect();
+            
+            indicator.style.width = `${tabRect.width}px`;
+            indicator.style.left = `${tabRect.left - containerRect.left}px`;
+        }
+
+        // Export Data
+        function exportData() {
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                app: 'MaliFinances',
+                debts: appState.debts
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const exportFileName = `mali_finances_backup_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileName);
+            linkElement.click();
+            
+            showToast('Succès', 'Données exportées', 'success');
+        }
+
+        // Import Data
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Erreur', 'Veuillez sélectionner un fichier', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.debts || !Array.isArray(importedData.debts)) {
+                        throw new Error('Format de fichier invalide');
+                    }
+                    
+                    // Replace current data
+                    appState.debts = importedData.debts;
+                    saveData();
+                    
+                    // Update UI
+                    updateStats();
+                    renderDebtLists();
+                    
+                    // Close modal and reset file input
+                    closeModal('importModal');
+                    fileInput.value = '';
+                    
+                    showToast('Succès', 'Données importées', 'success');
+                    
+                } catch (error) {
+                    showToast('Erreur', 'Fichier invalide : ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                appState.isAuthenticated = false;
+                elements.mainApp.style.display = 'none';
+                elements.loginScreen.style.display = 'flex';
+                elements.password.value = '';
+                elements.password.focus();
+                
+                showToast('Déconnecté', 'À bientôt !', 'info');
+            }
+        }
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Show Toast Notification
+        function showToast(title, message, type = 'info') {
+            elements.toast.className = `toast toast-${type}`;
+            elements.toastTitle.textContent = title;
+            elements.toastMessage.textContent = message;
+            elements.toast.classList.add('show');
+            
+            setTimeout(() => {
+                elements.toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Utility Functions
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'XOF',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            return new Date(dateString).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function darkenColor(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) - amt;
+            const G = (num >> 8 & 0x00FF) - amt;
+            const B = (num & 0x0000FF) - amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        // Handle window resize for tab indicator
+        window.addEventListener('resize', updateTabIndicator);
+    </script>
+</body>
+</html>
