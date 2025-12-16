@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mali Stands with Palestine | HydaraSoft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --palestine-green: #007a4d;
+            --palestine-red: #ce1126;
+            --palestine-black: #000000;
+            --palestine-white: #ffffff;
+            --mali-green: #14b53a;
+            --mali-yellow: #fcd116;
+            --mali-red: #ce1126;
+            --gold: #daa520;
+            --dark-bg: #0a1f2e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--mali-green), var(--mali-yellow), var(--mali-red));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, var(--dark-bg), var(--palestine-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .brand-text h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brand-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn:hover, .lang-btn.active {
+            background: white;
+            color: var(--mali-red);
+        }
+        
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 30px 0;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            border-top: 5px solid var(--palestine-green);
+        }
+        
+        .section-title {
+            color: var(--palestine-green);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--mali-red);
+        }
+        
+        .solidarity-message {
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid var(--mali-green);
+            border-right: 5px solid var(--palestine-red);
+        }
+        
+        .flags-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin: 30px 0;
+        }
+        
+        .flag {
+            width: 200px;
+            height: 120px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .palestine-flag {
+            background: linear-gradient(to bottom, var(--palestine-black) 33%, var(--palestine-white) 33%, var(--palestine-white) 66%, var(--palestine-green) 66%);
+            border-left: 10px solid var(--palestine-red);
+        }
+        
+        .mali-flag {
+            background: linear-gradient(to right, var(--mali-green) 33%, var(--mali-yellow) 33%, var(--mali-yellow) 66%, var(--mali-red) 66%);
+        }
+        
+        .flag-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: var(--dark-bg);
+        }
+        
+        .unity-symbol {
+            font-size: 3rem;
+            color: var(--gold);
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-top: 4px solid var(--palestine-green);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card h3 {
+            color: var(--palestine-green);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark-bg);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .copyright {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .solidarity-quote {
+            font-style: italic;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Language-specific content */
+        .lang-content {
+            display: none;
+        }
+        
+        .lang-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .flags-container {
+                gap: 60px;
+            }
+            
+            .flag {
+                width: 150px;
+                height: 90px;
+            }
+            
+            .brand-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .solidarity-message {
+                font-size: 1.1rem;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content-section {
+                padding: 20px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-selector {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="branding">
+                    <div class="logo">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1>HydaraSoft - Ismail Haidara</h1>
+                        <p>Malian Solidarity with Palestine</p>
+                    </div>
+                </div>
+                
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="fr">
+                        <i class="fas fa-flag"></i> Français
+                    </button>
+                    <button class="lang-btn" data-lang="ar">
+                        <i class="fas fa-flag"></i> العربية
+                    </button>
+                    <button class="lang-btn" data-lang="en">
+                        <i class="fas fa-flag"></i> English
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Solidarity Message Section -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-handshake"></i>
+                <span class="lang-text" data-key="solidarityTitle">Solidarité Mali-Palestine</span>
+            </h2>
+            
+            <div class="solidarity-message">
+                <p class="lang-content active" data-lang="fr">
+                    <strong>Le Mali se tient aux côtés de la Palestine.</strong> En tant que nation ayant elle-même lutté pour la souveraineté et la dignité, nous exprimons notre pleine solidarité avec le peuple palestinien dans sa quête légitime de liberté, de justice et d'autodétermination.
+                </p>
+                <p class="lang-content" data-lang="ar">
+                    <strong>مالي تقف إلى جانب فلسطين.</strong> كأمة ناضلت من أجل السيادة والكرامة، نعبر عن تضامننا الكامل مع الشعب الفلسطيني في سعيه المشروع نحو الحرية والعدالة وتقرير المصير.
+                </p>
+                <p class="lang-content" data-lang="en">
+                    <strong>Mali stands with Palestine.</strong> As a nation that has itself struggled for sovereignty and dignity, we express our full solidarity with the Palestinian people in their legitimate quest for freedom, justice, and self-determination.
+                </p>
+            </div>
+            
+            <div class="flags-container">
+                <div class="flag mali-flag">
+                    <div class="flag-label">Mali</div>
+                </div>
+                
+                <div class="unity-symbol">
+                    <i class="fas fa-heart"></i>
+                </div>
+                
+                <div class="flag palestine-flag">
+                    <div class="flag-label">Palestine</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features/Information Section -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                <span class="lang-text" data-key="infoTitle">À propos de cette application</span>
+            </h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-laptop-code"></i> <span class="lang-text" data-key="feature1Title">Application Locale</span></h3>
+                    <p class="lang-text" data-key="feature1Text">
+                        Cette application fonctionne entièrement hors ligne dans un seul fichier HTML. Aucune connexion Internet requise après le téléchargement.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><i class="fas fa-language"></i> <span class="lang-text" data-key="feature2Title">Trois Langues</span></h3>
+                    <p class="lang-text" data-key="feature2Text">
+                        Disponible en français, arabe et anglais pour une accessibilité maximale et pour représenter les liens culturels entre le Mali et la Palestine.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><i class="fas fa-users"></i> <span class="lang-text" data-key="feature3Title">Solidarité</span></h3>
+                    <p class="lang-text" data-key="feature3Text">
+                        Une expression numérique de la solidarité malienne avec la Palestine, créée par HydaraSoft/Ismail Haidara pour promouvoir la justice et la paix.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Call to Action Section -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-bullhorn"></i>
+                <span class="lang-text" data-key="actionTitle">Comment soutenir</span>
+            </h2>
+            
+            <div class="lang-content active" data-lang="fr">
+                <p>La solidarité nécessite une action concrète. Voici comment vous pouvez soutenir la cause palestinienne :</p>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li>Sensibilisez à la situation en Palestine</li>
+                    <li>Soutenez les organisations humanitaires œuvrant en Palestine</li>
+                    <li>Éduquez-vous et éduquez les autres sur l'histoire de la Palestine</li>
+                    <li>Exprimez votre solidarité sur les plateformes numériques</li>
+                    <li>Contactez vos représentants pour exiger une position juste</li>
+                </ul>
+            </div>
+            
+            <div class="lang-content" data-lang="ar">
+                <p>التضامن يحتاج إلى عمل ملموس. إليك كيف يمكنك دعم القضية الفلسطينية:</p>
+                <ul style="padding-left: 20px; margin-top: 15px; direction: rtl; text-align: right;">
+                    <li>التوعية بواقع الشعب الفلسطيني</li>
+                    <li>دعم المنظمات الإنسانية العاملة في فلسطين</li>
+                    <li>التعليم والتثقيف حول تاريخ فلسطين</li>
+                    <li>التعبير عن التضامن على المنصات الرقمية</li>
+                    <li>الاتصال بممثليك للمطالبة بموقف عادل</li>
+                </ul>
+            </div>
+            
+            <div class="lang-content" data-lang="en">
+                <p>Solidarity requires concrete action. Here's how you can support the Palestinian cause:</p>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li>Raise awareness about the situation in Palestine</li>
+                    <li>Support humanitarian organizations working in Palestine</li>
+                    <li>Educate yourself and others about Palestinian history</li>
+                    <li>Express solidarity on digital platforms</li>
+                    <li>Contact your representatives to demand a just stance</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-code"></i> HydaraSoft | Ismail Haidara
+                </div>
+                
+                <div class="solidarity-quote">
+                    <p class="lang-content active" data-lang="fr">
+                        "La solidarité n'est pas un acte de charité, mais une union de forces pour avancer vers les mêmes objectifs." - Samora Machel
+                    </p>
+                    <p class="lang-content" data-lang="ar">
+                        "التضامن ليس عملاً خيرياً، بل اتحاد قوى للمضي قدماً نحو نفس الأهداف." - سامورا ماشيل
+                    </p>
+                    <p class="lang-content" data-lang="en">
+                        "Solidarity is not an act of charity, but a union of forces to advance towards the same goals." - Samora Machel
+                    </p>
+                </div>
+                
+                <div class="copyright">
+                    <p class="lang-text" data-key="copyright">© 2023 HydaraSoft - Ismail Haidara. Application de solidarité Mali-Palestine.</p>
+                    <p><i class="fas fa-heart" style="color: #ff6b6b;"></i> <span class="lang-text" data-key="footerMessage">Créé avec solidarité pour Gaza et toute la Palestine</span></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const langContents = document.querySelectorAll('.lang-content');
+            const langTexts = document.querySelectorAll('.lang-text');
+            
+            // Language data
+            const translations = {
+                'fr': {
+                    'solidarityTitle': 'Solidarité Mali-Palestine',
+                    'infoTitle': 'À propos de cette application',
+                    'feature1Title': 'Application Locale',
+                    'feature1Text': 'Cette application fonctionne entièrement hors ligne dans un seul fichier HTML. Aucune connexion Internet requise après le téléchargement.',
+                    'feature2Title': 'Trois Langues',
+                    'feature2Text': 'Disponible en français, arabe et anglais pour une accessibilité maximale et pour représenter les liens culturels entre le Mali et la Palestine.',
+                    'feature3Title': 'Solidarité',
+                    'feature3Text': 'Une expression numérique de la solidarité malienne avec la Palestine, créée par HydaraSoft/Ismail Haidara pour promouvoir la justice et la paix.',
+                    'actionTitle': 'Comment soutenir',
+                    'copyright': '© 2023 HydaraSoft - Ismail Haidara. Application de solidarité Mali-Palestine.',
+                    'footerMessage': 'Créé avec solidarité pour Gaza et toute la Palestine'
+                },
+                'ar': {
+                    'solidarityTitle': 'تضامن مالي-فلسطين',
+                    'infoTitle': 'حول هذا التطبيق',
+                    'feature1Title': 'تطبيق محلي',
+                    'feature1Text': 'يعمل هذا التطبيق بالكامل دون اتصال بالإنترنت في ملف HTML واحد. لا يلزم وجود اتصال بالإنترنت بعد التحميل.',
+                    'feature2Title': 'ثلاث لغات',
+                    'feature2Text': 'متاح بالفرنسية والعربية والإنجليزية لأقصى درجات الوصول وتمثيل الروابط الثقافية بين مالي وفلسطين.',
+                    'feature3Title': 'تضامن',
+                    'feature3Text': 'تعبير رقمي عن التضامن المالي مع فلسطين، تم إنشاؤه بواسطة HydaraSoft/Ismail Haidara لتعزيز العدالة والسلام.',
+                    'actionTitle': 'كيفية الدعم',
+                    'copyright': '© 2023 HydaraSoft - Ismail Haidara. تطبيق تضامن مالي-فلسطين.',
+                    'footerMessage': 'تم إنشاؤه بتضامن مع غزة وكل فلسطين'
+                },
+                'en': {
+                    'solidarityTitle': 'Mali-Palestine Solidarity',
+                    'infoTitle': 'About this application',
+                    'feature1Title': 'Local Application',
+                    'feature1Text': 'This app works entirely offline in a single HTML file. No internet connection required after download.',
+                    'feature2Title': 'Three Languages',
+                    'feature2Text': 'Available in French, Arabic, and English for maximum accessibility and to represent cultural links between Mali and Palestine.',
+                    'feature3Title': 'Solidarity',
+                    'feature3Text': 'A digital expression of Malian solidarity with Palestine, created by HydaraSoft/Ismail Haidara to promote justice and peace.',
+                    'actionTitle': 'How to support',
+                    'copyright': '© 2023 HydaraSoft - Ismail Haidara. Mali-Palestine solidarity app.',
+                    'footerMessage': 'Created with solidarity for Gaza and all of Palestine'
+                }
+            };
+            
+            // Language switching function
+            function switchLanguage(lang) {
+                // Update active button
+                langButtons.forEach(btn => {
+                    if (btn.getAttribute('data-lang') === lang) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Show/hide language-specific content
+                langContents.forEach(content => {
+                    if (content.getAttribute('data-lang') === lang) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+                
+                // Update text elements
+                langTexts.forEach(element => {
+                    const key = element.getAttribute('data-key');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+                
+                // Update direction for Arabic
+                if (lang === 'ar') {
+                    document.body.style.direction = 'rtl';
+                    document.querySelectorAll('h1, h2, h3, p, li').forEach(el => {
+                        el.style.textAlign = 'right';
+                    });
+                    document.querySelector('.solidarity-message').style.borderLeft = '5px solid var(--palestine-red)';
+                    document.querySelector('.solidarity-message').style.borderRight = '5px solid var(--mali-green)';
+                } else {
+                    document.body.style.direction = 'ltr';
+                    document.querySelectorAll('h1, h2, h3, p, li').forEach(el => {
+                        el.style.textAlign = 'left';
+                    });
+                    document.querySelector('.solidarity-message').style.borderLeft = '5px solid var(--mali-green)';
+                    document.querySelector('.solidarity-message').style.borderRight = '5px solid var(--palestine-red)';
+                }
+            }
+            
+            // Add click events to language buttons
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                    
+                    // Add visual feedback
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+            
+            // Set initial language to French
+            switchLanguage('fr');
+            
+            // Add animation to solidarity message
+            const solidarityMessage = document.querySelector('.solidarity-message');
+            setInterval(() => {
+                solidarityMessage.style.boxShadow = '0 5px 20px rgba(206, 17, 38, 0.2)';
+                setTimeout(() => {
+                    solidarityMessage.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.08)';
+                }, 1000);
+            }, 3000);
+            
+            // Add animation to flags
+            const flags = document.querySelectorAll('.flag');
+            flags.forEach((flag, index) => {
+                flag.addEventListener('mouseenter', function() {
+                    this.style.transform = `scale(1.05) rotate(${index === 0 ? '-2deg' : '2deg'})`;
+                });
+                
+                flag.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
