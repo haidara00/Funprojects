@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaza Emergency Aid Navigator | HydaraSoft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #006633; /* Palestine green */
+            --secondary: #CE1126; /* Palestine red */
+            --accent: #DA291C; /* Mali red accent */
+            --dark: #0A1F2E;
+            --light: #F5F5F5;
+            --warning: #FF6B35;
+            --safe: #2E8B57;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 25px 0;
+            border-bottom: 5px solid var(--secondary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .brand-text h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brand-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .lang-btn:hover, .lang-btn.active {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Emergency Alert Banner */
+        .alert-banner {
+            background: linear-gradient(to right, var(--warning), #FF8C42);
+            color: white;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3); }
+            50% { box-shadow: 0 4px 20px rgba(255, 107, 53, 0.6); }
+            100% { box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3); }
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid var(--primary);
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+        
+        /* Resource Grid */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .resource-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .resource-item:hover {
+            background: #f0f7ff;
+            transform: translateX(5px);
+        }
+        
+        .resource-item h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active { background-color: var(--safe); }
+        .status-warning { background-color: var(--warning); }
+        .status-critical { background-color: var(--secondary); }
+        
+        /* Map Container */
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid var(--accent);
+        }
+        
+        .map-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #e0f7fa, #bbdefb);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 5px solid var(--secondary);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-brand {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #FFD166;
+        }
+        
+        .emergency-contact {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .emergency-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD166;
+            margin: 10px 0;
+        }
+        
+        /* Language Content */
+        .lang-content {
+            display: none;
+        }
+        
+        .lang-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .lang-btn, .alert-banner {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-first-aid"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1>Gaza Emergency Aid Navigator</h1>
+                        <p>HydaraSoft - Ismail Haidara | Mali Stands with Palestine</p>
+                    </div>
+                </div>
+                
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="fr">
+                        <i class="fas fa-flag"></i> Français
+                    </button>
+                    <button class="lang-btn" data-lang="ar">
+                        <i class="fas fa-flag"></i> العربية
+                    </button>
+                    <button class="lang-btn" data-lang="en">
+                        <i class="fas fa-flag"></i> English
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Emergency Alert -->
+        <div class="alert-banner">
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <div class="lang-content active" data-lang="fr">
+                <strong>ALERTE : Situation d'urgence en cours à Gaza.</strong> Cette application fournit des ressources locales pour l'aide d'urgence. Partagez avec ceux dans le besoin.
+            </div>
+            <div class="lang-content" data-lang="ar">
+                <strong>تنبيه: حالة طوارئ مستمرة في غزة.</strong> يوفر هذا التطبيق موارد محلية للمساعدة في حالات الطوارئ. شاركه مع المحتاجين.
+            </div>
+            <div class="lang-content" data-lang="en">
+                <strong>ALERT: Ongoing emergency situation in Gaza.</strong> This app provides local resources for emergency aid. Share with those in need.
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Medical Aid Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3 class="lang-text" data-key="medicalTitle">Aide Médicale</h3>
+                </div>
+                
+                <div class="lang-content active" data-lang="fr">
+                    <p>Hôpitaux et centres de santé opérationnels à Gaza :</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-critical"></span> Hôpital Al-Shifa</h4>
+                            <p>Gaza Ville - Services limités</p>
+                            <p><i class="fas fa-phone"></i> +970 8 282 2400</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> Hôpital Al-Awda</h4>
+                            <p>Jabalia - Soins d'urgence</p>
+                            <p><i class="fas fa-phone"></i> +970 8 247 6500</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> Clinique Al-Rantisi</h4>
+                            <p>Rafah - Soins pédiatriques</p>
+                            <p><i class="fas fa-phone"></i> +970 8 215 1200</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="ar">
+                    <p>المستشفيات ومراكز الصحية العاملة في غزة:</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-critical"></span> مستشفى الشفاء</h4>
+                            <p>غزة المدينة - خدمات محدودة</p>
+                            <p><i class="fas fa-phone"></i> +970 8 282 2400</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> مستشفى العودة</h4>
+                            <p>جباليا - رعاية الطوارئ</p>
+                            <p><i class="fas fa-phone"></i> +970 8 247 6500</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> عيادة الرنتيسي</h4>
+                            <p>رفح - رعاية الأطفال</p>
+                            <p><i class="fas fa-phone"></i> +970 8 215 1200</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="en">
+                    <p>Operating hospitals and health centers in Gaza:</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-critical"></span> Al-Shifa Hospital</h4>
+                            <p>Gaza City - Limited services</p>
+                            <p><i class="fas fa-phone"></i> +970 8 282 2400</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> Al-Awda Hospital</h4>
+                            <p>Jabalia - Emergency care</p>
+                            <p><i class="fas fa-phone"></i> +970 8 247 6500</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> Al-Rantisi Clinic</h4>
+                            <p>Rafah - Pediatric care</p>
+                            <p><i class="fas fa-phone"></i> +970 8 215 1200</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Food & Water Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3 class="lang-text" data-key="foodTitle">Nourriture & Eau</h3>
+                </div>
+                
+                <div class="lang-content active" data-lang="fr">
+                    <p>Distribution de nourriture et points d'eau potable :</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> UNRWA Centre Sud</h4>
+                            <p>Khan Younis - Rations quotidiennes</p>
+                            <p><i class="fas fa-clock"></i> 8h-16h</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> Puits Al-Zaytoun</h4>
+                            <p>Gaza Est - Eau potable</p>
+                            <p><i class="fas fa-tint"></i> 2h-5h quotidien</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> Cuisine Communautaire</h4>
+                            <p>Beit Hanoun - Repas chauds</p>
+                            <p><i class="fas fa-users"></i> 500 repas/jour</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="ar">
+                    <p>توزيع الغذاء ونقاط مياه الشرب:</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> مركز الأونروا الجنوبي</h4>
+                            <p>خان يونس - حصص يومية</p>
+                            <p><i class="fas fa-clock"></i> 8 صباحاً - 4 مساءً</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> بئر الزيتون</h4>
+                            <p>غزة الشرقية - مياه شرب</p>
+                            <p><i class="fas fa-tint"></i> 2-5 صباحاً يومياً</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> مطبخ مجتمعي</h4>
+                            <p>بيت حانون - وجبات ساخنة</p>
+                            <p><i class="fas fa-users"></i> 500 وجبة/يوم</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="en">
+                    <p>Food distribution and drinking water points:</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> UNRWA South Center</h4>
+                            <p>Khan Younis - Daily rations</p>
+                            <p><i class="fas fa-clock"></i> 8am-4pm</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> Al-Zaytoun Well</h4>
+                            <p>East Gaza - Drinking water</p>
+                            <p><i class="fas fa-tint"></i> 2am-5am daily</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> Community Kitchen</h4>
+                            <p>Beit Hanoun - Hot meals</p>
+                            <p><i class="fas fa-users"></i> 500 meals/day</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Shelter & Safety Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="lang-text" data-key="shelterTitle">Abris & Sécurité</h3>
+                </div>
+                
+                <div class="lang-content active" data-lang="fr">
+                    <p>Abris désignés et zones sécurisées :</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> École UNRWA N°45</h4>
+                            <p>Rafah - Capacité: 800 personnes</p>
+                            <p><i class="fas fa-user-friends"></i> Espace disponible</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-critical"></span> Abri Al-Shati</h4>
+                            <p>Camp de la plage - Surpeuplé</p>
+                            <p><i class="fas fa-exclamation-circle"></i> Besoin urgent d'aide</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> Mosquée Al-Omari</h4>
+                            <p>Gaza Ville - Abri temporaire</p>
+                            <p><i class="fas fa-mosque"></i> Ouvert 24h/24</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="ar">
+                    <p>ملاجئ معينة ومناطق آمنة:</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> مدرسة الأونروا ٤٥</h4>
+                            <p>رفح - سعة: ٨٠٠ شخص</p>
+                            <p><i class="fas fa-user-friends"></i> مساحة متاحة</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-critical"></span> ملجأ الشاطئ</h4>
+                            <p>مخيم الشاطئ - مكتظ</p>
+                            <p><i class="fas fa-exclamation-circle"></i> حاجة ملحة للمساعدة</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> مسجد العمري</h4>
+                            <p>غزة المدينة - ملجأ مؤقت</p>
+                            <p><i class="fas fa-mosque"></i> مفتوح 24 ساعة</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="en">
+                    <p>Designated shelters and safe zones:</p>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-active"></span> UNRWA School No. 45</h4>
+                            <p>Rafah - Capacity: 800 people</p>
+                            <p><i class="fas fa-user-friends"></i> Space available</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-critical"></span> Al-Shati Shelter</h4>
+                            <p>Beach Camp - Overcrowded</p>
+                            <p><i class="fas fa-exclamation-circle"></i> Urgent aid needed</p>
+                        </div>
+                        <div class="resource-item">
+                            <h4><span class="status-indicator status-warning"></span> Al-Omari Mosque</h4>
+                            <p>Gaza City - Temporary shelter</p>
+                            <p><i class="fas fa-mosque"></i> Open 24/7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Emergency Map -->
+        <div class="map-container">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3 class="lang-text" data-key="mapTitle">Carte d'Urgence de Gaza</h3>
+            </div>
+            
+            <div class="map-placeholder">
+                <i class="fas fa-map fa-3x" style="margin-bottom: 20px; color: var(--primary);"></i>
+                <div class="lang-content active" data-lang="fr">
+                    <h4>Carte des ressources d'urgence</h4>
+                    <p>En situation de connexion, cette carte afficherait les hôpitaux, points d'eau et abris en temps réel.</p>
+                    <p><small>En mode hors ligne, sauvegardez cette page pour référence.</small></p>
+                </div>
+                <div class="lang-content" data-lang="ar">
+                    <h4>خريطة موارد الطوارئ</h4>
+                    <p>في حالة الاتصال، تعرض هذه الخريطة المستشفيات ونقاط المياه والملاجئ في الوقت الفعلي.</p>
+                    <p><small>في وضع عدم الاتصال، احفظ هذه الصفحة للرجوع إليها.</small></p>
+                </div>
+                <div class="lang-content" data-lang="en">
+                    <h4>Gaza Emergency Resources Map</h4>
+                    <p>When connected, this map would display hospitals, water points, and shelters in real-time.</p>
+                    <p><small>In offline mode, save this page for reference.</small></p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="status-indicator status-active"></span>
+                    <span class="lang-text" data-key="legendActive">Opérationnel / Functioning</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="status-indicator status-warning"></span>
+                    <span class="lang-text" data-key="legendWarning">Capacité limitée / Limited capacity</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="status-indicator status-critical"></span>
+                    <span class="lang-text" data-key="legendCritical">Surchargé / besoin urgent / Overcrowded / Urgent need</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Safety Tips -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="lang-text" data-key="safetyTitle">Conseils de Sécurité</h3>
+            </div>
+            
+            <div class="lang-content active" data-lang="fr">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4><i class="fas fa-bell text-warning"></i> En cas d'alerte</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Cherchez immédiatement un abri</li>
+                            <li>Éloignez-vous des fenêtres</li>
+                            <li>Restez au rez-de-chaussée</li>
+                            <li>Écoutez les mises à jour</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4><i class="fas fa-first-aid text-danger"></i> Premiers soins</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Arrêtez les saignements avec pression</li>
+                            <li>Stabilisez les fractures</li>
+                            <li>Conservez l'eau propre pour boire</li>
+                            <li>Désinfectez les blessures</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4><i class="fas fa-users text-primary"></i> Solidarité</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Vérifiez vos voisins</li>
+                            <li>Partagez les ressources</li>
+                            <li>Restez en groupe pour sécurité</li>
+                            <li>Transmettez les informations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lang-content" data-lang="ar">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4><i class="fas fa-bell text-warning"></i> في حالة الإنذار</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px; direction: rtl;">
+                            <li>ابحث عن ملجأ فوراً</li>
+                            <li>ابتعد عن النوافذ</li>
+                            <li>ابقَ في الطابق الأرضي</li>
+                            <li>استمع إلى التحديثات</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4><i class="fas fa-first-aid text-danger"></i> الإسعافات الأولية</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px; direction: rtl;">
+                            <li>أوقف النزيف بالضغط</li>
+                            <li>ثبّت الكسور</li>
+                            <li>احفظ مياه نظيفة للشرب</li>
+                            <li>عقم الجروح</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4><i class="fas fa-users text-primary"></i> التضامن</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px; direction: rtl;">
+                            <li>تحقق من جيرانك</li>
+                            <li>شارك الموارد</li>
+                            <li>ابقَ في مجموعة للأمان</li>
+                            <li>انقل المعلومات</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lang-content" data-lang="en">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4><i class="fas fa-bell text-warning"></i> During Alerts</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Seek shelter immediately</li>
+                            <li>Stay away from windows</li>
+                            <li>Remain on ground floor</li>
+                            <li>Listen for updates</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4><i class="fas fa-first-aid text-danger"></i> First Aid</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Stop bleeding with pressure</li>
+                            <li>Stabilize fractures</li>
+                            <li>Save clean water for drinking</li>
+                            <li>Disinfect wounds</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4><i class="fas fa-users text-primary"></i> Community</h4>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Check on your neighbors</li>
+                            <li>Share resources</li>
+                            <li>Stay in groups for safety</li>
+                            <li>Pass along information</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-code"></i> Gaza Emergency Aid Navigator
+                    <p style="font-size: 0.9rem; margin-top: 5px;">HydaraSoft - Ismail Haidara</p>
+                </div>
+                
+                <div class="emergency-contact">
+                    <div class="lang-content active" data-lang="fr">
+                        <p><i class="fas fa-phone-alt"></i> Numéro d'urgence local</p>
+                        <div class="emergency-number">102</div>
+                        <p>Service de secours à Gaza</p>
+                    </div>
+                    <div class="lang-content" data-lang="ar">
+                        <p><i class="fas fa-phone-alt"></i> رقم الطوارئ المحلي</p>
+                        <div class="emergency-number">102</div>
+                        <p>خدمات الإنقاذ في غزة</p>
+                    </div>
+                    <div class="lang-content" data-lang="en">
+                        <p><i class="fas fa-phone-alt"></i> Local Emergency Number</p>
+                        <div class="emergency-number">102</div>
+                        <p>Gaza Rescue Services</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <p class="lang-content active" data-lang="fr">
+                        <i class="fas fa-heart" style="color: #ff6b6b;"></i> Solidarité Mali-Palestine<br>
+                        <small>Application hors ligne - Sauvegardez pour référence</small>
+                    </p>
+                    <p class="lang-content" data-lang="ar">
+                        <i class="fas fa-heart" style="color: #ff6b6b;"></i> تضامن مالي-فلسطين<br>
+                        <small>تطبيق غير متصل - احفظ للرجوع</small>
+                    </p>
+                    <p class="lang-content" data-lang="en">
+                        <i class="fas fa-heart" style="color: #ff6b6b;"></i> Mali-Palestine Solidarity<br>
+                        <small>Offline app - Save for reference</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const langContents = document.querySelectorAll('.lang-content');
+            const langTexts = document.querySelectorAll('.lang-text');
+            
+            const translations = {
+                'fr': {
+                    'medicalTitle': 'Aide Médicale',
+                    'foodTitle': 'Nourriture & Eau',
+                    'shelterTitle': 'Abris & Sécurité',
+                    'mapTitle': 'Carte d\'Urgence de Gaza',
+                    'safetyTitle': 'Conseils de Sécurité',
+                    'legendActive': 'Opérationnel',
+                    'legendWarning': 'Capacité limitée',
+                    'legendCritical': 'Surchargé / besoin urgent'
+                },
+                'ar': {
+                    'medicalTitle': 'المساعدة الطبية',
+                    'foodTitle': 'الغذاء والماء',
+                    'shelterTitle': 'المأوى والسلامة',
+                    'mapTitle': 'خريطة طوارئ غزة',
+                    'safetyTitle': 'نصائح السلامة',
+                    'legendActive': 'يعمل',
+                    'legendWarning': 'سعة محدودة',
+                    'legendCritical': 'مكتظ / حاجة ملحة'
+                },
+                'en': {
+                    'medicalTitle': 'Medical Aid',
+                    'foodTitle': 'Food & Water',
+                    'shelterTitle': 'Shelter & Safety',
+                    'mapTitle': 'Gaza Emergency Map',
+                    'safetyTitle': 'Safety Tips',
+                    'legendActive': 'Functioning',
+                    'legendWarning': 'Limited capacity',
+                    'legendCritical': 'Overcrowded / Urgent need'
+                }
+            };
+            
+            function switchLanguage(lang) {
+                // Update active button
+                langButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+                });
+                
+                // Show/hide language content
+                langContents.forEach(content => {
+                    content.classList.toggle('active', content.getAttribute('data-lang') === lang);
+                });
+                
+                // Update text elements
+                langTexts.forEach(element => {
+                    const key = element.getAttribute('data-key');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+                
+                // Update direction for Arabic
+                if (lang === 'ar') {
+                    document.body.style.direction = 'rtl';
+                    document.querySelectorAll('h1, h2, h3, h4, p, li').forEach(el => {
+                        el.style.textAlign = 'right';
+                    });
+                } else {
+                    document.body.style.direction = 'ltr';
+                    document.querySelectorAll('h1, h2, h3, h4, p, li').forEach(el => {
+                        el.style.textAlign = 'left';
+                    });
+                }
+            }
+            
+            // Add click events to language buttons
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                    
+                    // Button animation
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+            
+            // Initialize with French
+            switchLanguage('fr');
+            
+            // Simulate real-time updates
+            function updateResourceStatus() {
+                const statusIndicators = document.querySelectorAll('.status-indicator');
+                statusIndicators.forEach(indicator => {
+                    if (indicator.classList.contains('status-active')) {
+                        // 90% chance to stay active, 10% to change
+                        if (Math.random() < 0.1) {
+                            indicator.classList.remove('status-active');
+                            indicator.classList.add('status-warning');
+                        }
+                    } else if (indicator.classList.contains('status-warning')) {
+                        // 80% stay warning, 10% improve, 10% worsen
+                        const rand = Math.random();
+                        if (rand < 0.1) {
+                            indicator.classList.remove('status-warning');
+                            indicator.classList.add('status-active');
+                        } else if (rand < 0.2) {
+                            indicator.classList.remove('status-warning');
+                            indicator.classList.add('status-critical');
+                        }
+                    } else if (indicator.classList.contains('status-critical')) {
+                        // 5% chance to improve to warning
+                        if (Math.random() < 0.05) {
+                            indicator.classList.remove('status-critical');
+                            indicator.classList.add('status-warning');
+                        }
+                    }
+                });
+            }
+            
+            // Update status every 30 seconds (simulated)
+            setInterval(updateResourceStatus, 30000);
+            
+            // Print functionality
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'p') {
+                    e.preventDefault();
+                    alert("Conseil: Utilisez 'Imprimer en PDF' pour sauvegarder cette ressource hors ligne.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
