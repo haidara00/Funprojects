@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaza Story Keeper | HydaraSoft Digital Archive</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --olive: #6B8E23;
+            --keffiyeh: #2C3E50;
+            --sun: #F39C12;
+            --earth: #8B4513;
+            --sky: #3498DB;
+            --palestine-red: #CE1126;
+            --palestine-green: #006633;
+            --palestine-black: #000000;
+            --palestine-white: #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
+            line-height: 1.7;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(to right, var(--keffiyeh), var(--olive));
+            color: white;
+            padding: 30px 0;
+            border-bottom: 5px solid var(--sun);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to right, var(--palestine-red), var(--palestine-green), var(--palestine-black));
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--sun), var(--earth));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+            animation: gentlePulse 4s infinite alternate;
+        }
+        
+        @keyframes gentlePulse {
+            0% { box-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+            100% { box-shadow: 0 0 30px rgba(243, 156, 18, 0.8); }
+        }
+        
+        .brand-text h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brand-text p {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 500px;
+        }
+        
+        /* PDF Controls */
+        .pdf-controls {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--palestine-green);
+        }
+        
+        .pdf-btn {
+            background: linear-gradient(to right, #d35400, #e74c3c);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .pdf-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(231, 76, 60, 0.4);
+        }
+        
+        .pdf-btn.secondary {
+            background: linear-gradient(to right, var(--olive), #2E8B57);
+        }
+        
+        .pdf-btn.tertiary {
+            background: linear-gradient(to right, var(--keffiyeh), #3498DB);
+        }
+        
+        .pdf-info {
+            margin-left: auto;
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Language & Mode Selector */
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .lang-btn, .mode-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .lang-btn:hover, .lang-btn.active,
+        .mode-btn:hover, .mode-btn.active {
+            background: white;
+            color: var(--keffiyeh);
+            transform: translateY(-3px);
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%236B8E23" fill-opacity="0.1" d="M0,0 L100,0 L100,100 Z M0,0 L0,100 L100,100 Z"/></svg>');
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 2px dashed var(--olive);
+        }
+        
+        .hero-icon {
+            font-size: 4rem;
+            color: var(--olive);
+            margin-bottom: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .archive-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            border: 1px solid #eaeaea;
+        }
+        
+        .archive-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--keffiyeh), var(--olive));
+            color: white;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        /* Story Entry Form */
+        .story-form {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--olive);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--keffiyeh);
+            font-size: 1.1rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--olive);
+        }
+        
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(to right, var(--olive), var(--keffiyeh));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(107, 142, 35, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(107, 142, 35, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, var(--sky), #2980B9);
+        }
+        
+        /* Archive Display */
+        .stories-archive {
+            margin-top: 50px;
+        }
+        
+        .story-item {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--olive);
+            transition: all 0.3s ease;
+            page-break-inside: avoid; /* For PDF printing */
+        }
+        
+        .story-item:hover {
+            border-left-width: 10px;
+        }
+        
+        .story-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, var(--keffiyeh), #1a252f);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 5px solid var(--sun);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .footer-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--sun);
+        }
+        
+        .solidarity-message {
+            text-align: center;
+            font-size: 1.1rem;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        /* Language Content */
+        .lang-content {
+            display: none;
+        }
+        
+        .lang-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* PDF Preview Modal */
+        .pdf-preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .pdf-preview-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .pdf-preview-header {
+            background: linear-gradient(to right, var(--keffiyeh), var(--olive));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pdf-preview-body {
+            flex: 1;
+            overflow: auto;
+            padding: 30px;
+        }
+        
+        .close-preview {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-preview:hover {
+            background: white;
+            color: var(--keffiyeh);
+            transform: rotate(90deg);
+        }
+        
+        /* Print Styles */
+        @media print {
+            .header, .control-panel, .story-form, .footer, 
+            .pdf-controls, .btn, .pdf-btn {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            
+            .story-item {
+                break-inside: avoid;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                padding: 10px !important;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero {
+                padding: 30px 15px;
+            }
+            
+            .story-form {
+                padding: 25px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .pdf-controls {
+                flex-direction: column;
+            }
+            
+            .pdf-info {
+                margin-left: 0;
+                margin-top: 15px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1>Gaza Story Keeper</h1>
+                        <p>Preserving Palestinian stories, memories, and culture. Because memory is resistance.</p>
+                    </div>
+                </div>
+                
+                <div class="control-panel">
+                    <div class="language-switcher">
+                        <button class="lang-btn active" data-lang="fr">
+                            <i class="fas fa-flag"></i> Français
+                        </button>
+                        <button class="lang-btn" data-lang="ar">
+                            <i class="fas fa-flag"></i> العربية
+                        </button>
+                        <button class="lang-btn" data-lang="en">
+                            <i class="fas fa-flag"></i> English
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- PDF Controls Section -->
+        <div class="pdf-controls">
+            <div>
+                <button class="pdf-btn" id="generatePdfBtn">
+                    <i class="fas fa-file-pdf"></i> <span class="lang-text" data-key="generatePdf">Générer PDF</span>
+                </button>
+                <button class="pdf-btn secondary" id="previewPdfBtn">
+                    <i class="fas fa-eye"></i> <span class="lang-text" data-key="previewPdf">Prévisualiser</span>
+                </button>
+                <button class="pdf-btn tertiary" id="printStoriesBtn">
+                    <i class="fas fa-print"></i> <span class="lang-text" data-key="printPdf">Imprimer</span>
+                </button>
+            </div>
+            
+            <div class="pdf-info">
+                <i class="fas fa-info-circle"></i>
+                <span class="lang-content active" data-lang="fr">
+                    Exportez toutes les histoires en PDF pour archivage permanent
+                </span>
+                <span class="lang-content" data-lang="ar">
+                    قم بتصدير جميع القصص إلى PDF للأرشفة الدائمة
+                </span>
+                <span class="lang-content" data-lang="en">
+                    Export all stories to PDF for permanent archiving
+                </span>
+            </div>
+        </div>
+        
+        <!-- PDF Preview Modal -->
+        <div class="pdf-preview-modal" id="pdfPreviewModal">
+            <div class="pdf-preview-content">
+                <div class="pdf-preview-header">
+                    <h3 class="lang-text" data-key="previewTitle">Aperçu PDF</h3>
+                    <button class="close-preview" id="closePreviewBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="pdf-preview-body" id="pdfPreviewBody">
+                    <!-- PDF preview will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-icon">
+                <i class="fas fa-archive"></i>
+            </div>
+            
+            <div class="lang-content active" data-lang="fr">
+                <h2 style="color: var(--keffiyeh); margin-bottom: 20px; font-size: 2.2rem;">Préserver les Histoires de Gaza</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 30px;">
+                    En ces temps difficiles, chaque histoire compte. Cette application vous permet de sauvegarder numériquement les récits, souvenirs et traditions palestiniennes. Exportez en PDF pour un archivage permanent.
+                </p>
+                <div style="background: rgba(107, 142, 35, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--palestine-red);">
+                    <p><strong>Nouveau : Export PDF !</strong> Maintenant vous pouvez générer un PDF professionnel de toutes vos histoires sauvegardées. Parfait pour l'archivage et le partage.</p>
+                </div>
+            </div>
+            
+            <div class="lang-content" data-lang="ar">
+                <h2 style="color: var(--keffiyeh); margin-bottom: 20px; font-size: 2.2rem; direction: rtl;">حافظ على قصص غزة</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 30px; direction: rtl;">
+                    في هذه الأوقات الصعبة، كل قصة تهم. يتيح لك هذا التطبيق حفظ القصص والذكريات والتقاليد الفلسطينية رقميًا. قم بالتصدير إلى PDF للأرشفة الدائمة.
+                </p>
+                <div style="background: rgba(107, 142, 35, 0.1); padding: 20px; border-radius: 15px; border-right: 5px solid var(--palestine-red); direction: rtl;">
+                    <p><strong>جديد: تصدير PDF!</strong> يمكنك الآن إنشاء ملف PDF احترافي لجميع قصصك المحفوظة. مثالي للأرشفة والمشاركة.</p>
+                </div>
+            </div>
+            
+            <div class="lang-content" data-lang="en">
+                <h2 style="color: var(--keffiyeh); margin-bottom: 20px; font-size: 2.2rem;">Preserving Gaza's Stories</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 30px;">
+                    In these difficult times, every story matters. This app allows you to digitally preserve Palestinian stories, memories, and traditions. Export to PDF for permanent archiving.
+                </p>
+                <div style="background: rgba(107, 142, 35, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--palestine-red);">
+                    <p><strong>New: PDF Export!</strong> Now you can generate a professional PDF of all your saved stories. Perfect for archiving and sharing.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Story Form Card -->
+            <div class="archive-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-pen-fancy"></i>
+                    </div>
+                    <h3 class="lang-text" data-key="shareStoryTitle">Partagez Votre Histoire</h3>
+                </div>
+                <div class="card-body">
+                    <form id="storyForm">
+                        <div class="form-group">
+                            <label for="storyTitle" class="lang-text" data-key="storyTitleLabel">Titre de l'histoire</label>
+                            <input type="text" id="storyTitle" class="form-control" placeholder="Ex: Les oliviers de mon grand-père" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="storyAuthor" class="lang-text" data-key="authorLabel">Votre nom ou pseudonyme</label>
+                            <input type="text" id="storyAuthor" class="form-control" placeholder="Ex: Ahmed de Gaza" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="storyDate" class="lang-text" data-key="dateLabel">Date (facultatif)</label>
+                            <input type="date" id="storyDate" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="storyContent" class="lang-text" data-key="storyLabel">Votre histoire, souvenir ou tradition</label>
+                            <textarea id="storyContent" class="form-control" placeholder="Racontez votre histoire ici..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="storyCategory" class="lang-text" data-key="categoryLabel">Catégorie</label>
+                            <select id="storyCategory" class="form-control">
+                                <option value="memory">Souvenir personnel</option>
+                                <option value="tradition">Tradition culturelle</option>
+                                <option value="family">Histoire familiale</option>
+                                <option value="place">Lieu important</option>
+                                <option value="resistance">Récit de résistance</option>
+                                <option value="hope">Message d'espoir</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn">
+                            <i class="fas fa-save"></i> <span class="lang-text" data-key="saveStoryBtn">Sauvegarder l'Histoire</span>
+                        </button>
+                        
+                        <button type="button" class="btn btn-secondary" id="clearStoriesBtn" style="margin-left: 15px;">
+                            <i class="fas fa-trash-alt"></i> <span class="lang-text" data-key="clearBtn">Effacer Local</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Cultural Preservation Card -->
+            <div class="archive-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3 class="lang-text" data-key="preservationTitle">Préservation Culturelle</h3>
+                </div>
+                <div class="card-body">
+                    <div class="lang-content active" data-lang="fr">
+                        <h4 style="color: var(--olive); margin-bottom: 15px;">Export PDF - Nouvelle Fonctionnalité</h4>
+                        <ul style="padding-left: 20px; margin-bottom: 25px;">
+                            <li><strong>Archivage permanent</strong> - Créez un PDF professionnel</li>
+                            <li><strong>Partage facile</strong> - Envoyez par email, WhatsApp, etc.</li>
+                            <li><strong>Impression</strong> - Créez des copies physiques</li>
+                            <li><strong>Sauvegarde</strong> - Stockez sur clé USB ou cloud</li>
+                            <li><strong>Prévisualisation</strong> - Vérifiez avant de générer</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--olive); margin-bottom: 15px;">Instructions PDF</h4>
+                        <ol style="padding-left: 20px;">
+                            <li>Ajoutez vos histoires avec le formulaire</li>
+                            <li>Cliquez sur "Générer PDF"</li>
+                            <li>Prévisualisez si nécessaire</li>
+                            <li>Téléchargez ou imprimez</li>
+                            <li>Partagez avec votre communauté</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="lang-content" data-lang="ar">
+                        <h4 style="color: var(--olive); margin-bottom: 15px; direction: rtl;">تصدير PDF - ميزة جديدة</h4>
+                        <ul style="padding-right: 20px; margin-bottom: 25px; direction: rtl;">
+                            <li><strong>أرشفة دائمة</strong> - إنشاء ملف PDF احترافي</li>
+                            <li><strong>مشاركة سهلة</strong> - أرسل عبر البريد الإلكتروني، واتساب، إلخ.</li>
+                            <li><strong>طباعة</strong> - إنشاء نسخ مادية</li>
+                            <li><strong>نسخ احتياطي</strong> - تخزين على USB أو سحابة</li>
+                            <li><strong>معاينة</strong> - تحقق قبل الإنشاء</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--olive); margin-bottom: 15px; direction: rtl;">تعليمات PDF</h4>
+                        <ol style="padding-right: 20px; direction: rtl;">
+                            <li>أضف قصصك باستخدام النموذج</li>
+                            <li>انقر على "إنشاء PDF"</li>
+                            <li>معاينة إذا لزم الأمر</li>
+                            <li>قم بالتنزيل أو الطباعة</li>
+                            <li>شارك مع مجتمعك</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="lang-content" data-lang="en">
+                        <h4 style="color: var(--olive); margin-bottom: 15px;">PDF Export - New Feature</h4>
+                        <ul style="padding-left: 20px; margin-bottom: 25px;">
+                            <li><strong>Permanent archiving</strong> - Create professional PDF</li>
+                            <li><strong>Easy sharing</strong> - Send via email, WhatsApp, etc.</li>
+                            <li><strong>Printing</strong> - Create physical copies</li>
+                            <li><strong>Backup</strong> - Store on USB or cloud</li>
+                            <li><strong>Preview</strong> - Check before generating</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--olive); margin-bottom: 15px;">PDF Instructions</h4>
+                        <ol style="padding-left: 20px;">
+                            <li>Add your stories using the form</li>
+                            <li>Click "Generate PDF"</li>
+                            <li>Preview if needed</li>
+                            <li>Download or print</li>
+                            <li>Share with your community</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Archive Display -->
+        <div class="stories-archive">
+            <div class="card-header" style="border-radius: 15px 15px 0 0; margin-bottom: 0;">
+                <div class="card-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3 class="lang-text" data-key="archiveTitle">Archive des Histoires</h3>
+                <span id="storyCount" style="margin-left: auto; background: white; color: var(--keffiyeh); padding: 5px 15px; border-radius: 30px; font-weight: bold;">0</span>
+            </div>
+            
+            <div id="storiesContainer" style="background: white; border-radius: 0 0 15px 15px; padding: 30px; min-height: 200px;">
+                <div class="lang-content active" data-lang="fr" id="noStoriesMessage">
+                    <div style="text-align: center; padding: 50px 20px; color: #666;">
+                        <i class="fas fa-book-open fa-3x" style="margin-bottom: 20px; color: #ddd;"></i>
+                        <h4>Aucune histoire encore</h4>
+                        <p>Soyez le premier à partager une histoire. Utilisez le formulaire ci-dessus.</p>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="ar" id="noStoriesMessageAr">
+                    <div style="text-align: center; padding: 50px 20px; color: #666; direction: rtl;">
+                        <i class="fas fa-book-open fa-3x" style="margin-bottom: 20px; color: #ddd;"></i>
+                        <h4>لا توجد قصص بعد</h4>
+                        <p>كن أول من يشارك قصة. استخدم النموذج أعلاه.</p>
+                    </div>
+                </div>
+                
+                <div class="lang-content" data-lang="en" id="noStoriesMessageEn">
+                    <div style="text-align: center; padding: 50px 20px; color: #666;">
+                        <i class="fas fa-book-open fa-3x" style="margin-bottom: 20px; color: #ddd;"></i>
+                        <h4>No stories yet</h4>
+                        <p>Be the first to share a story. Use the form above.</p>
+                    </div>
+                </div>
+                
+                <!-- Stories will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-code"></i> Gaza Story Keeper
+                    <p style="font-size: 1rem; margin-top: 10px; color: #ccc;">HydaraSoft - Ismail Haidara</p>
+                </div>
+                
+                <div>
+                    <p class="lang-content active" data-lang="fr">
+                        <i class="fas fa-file-pdf" style="color: var(--sun);"></i> Export PDF disponible<br>
+                        <small>Archivez, partagez, préservez</small>
+                    </p>
+                    <p class="lang-content" data-lang="ar">
+                        <i class="fas fa-file-pdf" style="color: var(--sun);"></i> تصدير PDF متاح<br>
+                        <small>أرشف، شارك، احفظ</small>
+                    </p>
+                    <p class="lang-content" data-lang="en">
+                        <i class="fas fa-file-pdf" style="color: var(--sun);"></i> PDF Export available<br>
+                        <small>Archive, share, preserve</small>
+                    </p>
+                </div>
+                
+                <div style="text-align: right;">
+                    <button class="btn" id="exportStoriesBtn">
+                        <i class="fas fa-file-export"></i> <span class="lang-text" data-key="exportBtn">Exporter JSON</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="solidarity-message">
+                <p class="lang-content active" data-lang="fr">
+                    <strong>🇲🇱 Mali avec Palestine 🇵🇸</strong> | Chaque histoire sauvegardée est une victoire contre l'effacement
+                </p>
+                <p class="lang-content" data-lang="ar">
+                    <strong>🇲🇱 مالي مع فلسطين 🇵🇸</strong> | كل قصة محفوظة هي انتصار ضد المحو
+                </p>
+                <p class="lang-content" data-lang="en">
+                    <strong>🇲🇱 Mali with Palestine 🇵🇸</strong> | Every saved story is a victory against erasure
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Make jsPDF available globally
+        window.jsPDF = window.jspdf.jsPDF;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Language Management
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const langContents = document.querySelectorAll('.lang-content');
+            const langTexts = document.querySelectorAll('.lang-text');
+            
+            const translations = {
+                'fr': {
+                    'generatePdf': 'Générer PDF',
+                    'previewPdf': 'Prévisualiser',
+                    'printPdf': 'Imprimer',
+                    'previewTitle': 'Aperçu PDF',
+                    'shareStoryTitle': 'Partagez Votre Histoire',
+                    'storyTitleLabel': 'Titre de l\'histoire',
+                    'authorLabel': 'Votre nom ou pseudonyme',
+                    'dateLabel': 'Date (facultatif)',
+                    'storyLabel': 'Votre histoire, souvenir ou tradition',
+                    'categoryLabel': 'Catégorie',
+                    'saveStoryBtn': 'Sauvegarder l\'Histoire',
+                    'clearBtn': 'Effacer Local',
+                    'preservationTitle': 'Préservation Culturelle',
+                    'archiveTitle': 'Archive des Histoires',
+                    'exportBtn': 'Exporter JSON'
+                },
+                'ar': {
+                    'generatePdf': 'إنشاء PDF',
+                    'previewPdf': 'معاينة',
+                    'printPdf': 'طباعة',
+                    'previewTitle': 'معاينة PDF',
+                    'shareStoryTitle': 'شارك قصتك',
+                    'storyTitleLabel': 'عنوان القصة',
+                    'authorLabel': 'اسمك أو اسم مستعار',
+                    'dateLabel': 'التاريخ (اختياري)',
+                    'storyLabel': 'قصتك، ذكرى، أو تقليد',
+                    'categoryLabel': 'فئة',
+                    'saveStoryBtn': 'حفظ القصة',
+                    'clearBtn': 'مسح المحلي',
+                    'preservationTitle': 'الحفظ الثقافي',
+                    'archiveTitle': 'أرشيف القصص',
+                    'exportBtn': 'تصدير JSON'
+                },
+                'en': {
+                    'generatePdf': 'Generate PDF',
+                    'previewPdf': 'Preview',
+                    'printPdf': 'Print',
+                    'previewTitle': 'PDF Preview',
+                    'shareStoryTitle': 'Share Your Story',
+                    'storyTitleLabel': 'Story Title',
+                    'authorLabel': 'Your Name or Pseudonym',
+                    'dateLabel': 'Date (optional)',
+                    'storyLabel': 'Your Story, Memory, or Tradition',
+                    'categoryLabel': 'Category',
+                    'saveStoryBtn': 'Save Story',
+                    'clearBtn': 'Clear Local',
+                    'preservationTitle': 'Cultural Preservation',
+                    'archiveTitle': 'Stories Archive',
+                    'exportBtn': 'Export JSON'
+                }
+            };
+            
+            function switchLanguage(lang) {
+                // Update active button
+                langButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+                });
+                
+                // Show/hide language content
+                langContents.forEach(content => {
+                    content.classList.toggle('active', content.getAttribute('data-lang') === lang);
+                });
+                
+                // Update text elements
+                langTexts.forEach(element => {
+                    const key = element.getAttribute('data-key');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+                
+                // Update direction for Arabic
+                if (lang === 'ar') {
+                    document.body.style.direction = 'rtl';
+                    document.querySelectorAll('h1, h2, h3, h4, p, li, label').forEach(el => {
+                        el.style.textAlign = 'right';
+                    });
+                } else {
+                    document.body.style.direction = 'ltr';
+                    document.querySelectorAll('h1, h2, h3, h4, p, li, label').forEach(el => {
+                        el.style.textAlign = 'left';
+                    });
+                }
+                
+                // Update stories display
+                displayStories();
+            }
+            
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+            
+            // Story Storage Management
+            let stories = JSON.parse(localStorage.getItem('gazaStories')) || [];
+            
+            function saveStory(event) {
+                event.preventDefault();
+                
+                const title = document.getElementById('storyTitle').value;
+                const author = document.getElementById('storyAuthor').value;
+                const date = document.getElementById('storyDate').value;
+                const content = document.getElementById('storyContent').value;
+                const category = document.getElementById('storyCategory').value;
+                
+                if (!title.trim() || !content.trim() || !author.trim()) {
+                    alert(getCurrentLanguage() === 'fr' ? 'Veuillez remplir tous les champs requis.' : 
+                          getCurrentLanguage() === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' : 
+                          'Please fill in all required fields.');
+                    return;
+                }
+                
+                const story = {
+                    id: Date.now(),
+                    title,
+                    author,
+                    date: date || new Date().toISOString().split('T')[0],
+                    content,
+                    category,
+                    timestamp: new Date().toISOString()
+                };
+                
+                stories.unshift(story); // Add to beginning
+                localStorage.setItem('gazaStories', JSON.stringify(stories));
+                
+                // Clear form
+                document.getElementById('storyForm').reset();
+                
+                // Update display
+                displayStories();
+                
+                // Show confirmation
+                const msg = getCurrentLanguage() === 'fr' ? 'Histoire sauvegardée localement !' :
+                           getCurrentLanguage() === 'ar' ? 'تم حفظ القصة محليًا!' :
+                           'Story saved locally!';
+                alert(msg);
+            }
+            
+            function displayStories() {
+                const container = document.getElementById('storiesContainer');
+                const currentLang = getCurrentLanguage();
+                
+                // Clear container but keep no-stories message in current language
+                container.innerHTML = '';
+                
+                const noStoriesMsg = document.getElementById(`noStoriesMessage${currentLang === 'fr' ? '' : currentLang === 'ar' ? 'Ar' : 'En'}`).cloneNode(true);
+                container.appendChild(noStoriesMsg);
+                
+                // Update story count
+                document.getElementById('storyCount').textContent = stories.length;
+                
+                if (stories.length === 0) return;
+                
+                // Remove no-stories message
+                container.innerHTML = '';
+                
+                // Display each story
+                stories.forEach(story => {
+                    const storyElement = document.createElement('div');
+                    storyElement.className = 'story-item';
+                    
+                    // Category icon
+                    const categoryIcons = {
+                        'memory': 'fas fa-brain',
+                        'tradition': 'fas fa-hands',
+                        'family': 'fas fa-users',
+                        'place': 'fas fa-map-marker-alt',
+                        'resistance': 'fas fa-fist-raised',
+                        'hope': 'fas fa-dove'
+                    };
+                    
+                    const categoryLabels = {
+                        'fr': {
+                            'memory': 'Souvenir',
+                            'tradition': 'Tradition',
+                            'family': 'Famille',
+                            'place': 'Lieu',
+                            'resistance': 'Résistance',
+                            'hope': 'Espoir'
+                        },
+                        'ar': {
+                            'memory': 'ذكرى',
+                            'tradition': 'تقليد',
+                            'family': 'عائلة',
+                            'place': 'مكان',
+                            'resistance': 'مقاومة',
+                            'hope': 'أمل'
+                        },
+                        'en': {
+                            'memory': 'Memory',
+                            'tradition': 'Tradition',
+                            'family': 'Family',
+                            'place': 'Place',
+                            'resistance': 'Resistance',
+                            'hope': 'Hope'
+                        }
+                    };
+                    
+                    storyElement.innerHTML = `
+                        <div class="story-meta">
+                            <div>
+                                <i class="${categoryIcons[story.category]}" style="color: var(--olive);"></i>
+                                <strong>${categoryLabels[currentLang][story.category]}</strong>
+                            </div>
+                            <div>
+                                ${story.date} | ${story.author}
+                            </div>
+                        </div>
+                        <h4 style="color: var(--keffiyeh); margin-bottom: 15px;">${story.title}</h4>
+                        <div style="white-space: pre-wrap; line-height: 1.8;">${story.content}</div>
+                        <div style="margin-top: 20px; text-align: right; font-size: 0.9rem; color: #888;">
+                            <i class="far fa-clock"></i> ${new Date(story.timestamp).toLocaleDateString()}
+                        </div>
+                    `;
+                    
+                    container.appendChild(storyElement);
+                });
+            }
+            
+            // ==================== PDF FUNCTIONALITY ====================
+            
+            function generatePDF() {
+                if (stories.length === 0) {
+                    alert(getCurrentLanguage() === 'fr' ? 'Aucune histoire à exporter en PDF.' :
+                          getCurrentLanguage() === 'ar' ? 'لا توجد قصص لتصديرها إلى PDF.' :
+                          'No stories to export to PDF.');
+                    return;
+                }
+                
+                const currentLang = getCurrentLanguage();
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // PDF Settings
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const margin = 20;
+                const contentWidth = pageWidth - (margin * 2);
+                
+                // Colors
+                const colors = {
+                    primary: [43, 62, 80], // keffiyeh
+                    secondary: [107, 142, 35], // olive
+                    accent: [206, 17, 38] // palestine red
+                };
+                
+                // Add Cover Page
+                doc.setFillColor(...colors.primary);
+                doc.rect(0, 0, pageWidth, 50, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(28);
+                doc.setFont('helvetica', 'bold');
+                
+                const title = currentLang === 'fr' ? 'Archive des Histoires de Gaza' :
+                             currentLang === 'ar' ? 'أرشيف قصص غزة' :
+                             'Gaza Stories Archive';
+                
+                doc.text(title, pageWidth / 2, 30, { align: 'center' });
+                
+                doc.setFontSize(14);
+                const subtitle = currentLang === 'fr' ? 'Préservé par Gaza Story Keeper' :
+                                currentLang === 'ar' ? 'محفوظ بواسطة حافظ قصص غزة' :
+                                'Preserved by Gaza Story Keeper';
+                doc.text(subtitle, pageWidth / 2, 45, { align: 'center' });
+                
+                // Mali-Palestine solidarity
+                doc.setFontSize(12);
+                doc.setTextColor(...colors.accent);
+                const solidarity = currentLang === 'fr' ? '🇲🇱 Solidarité Mali-Palestine 🇵🇸' :
+                                 currentLang === 'ar' ? '🇲🇱 تضامن مالي-فلسطين 🇵🇸' :
+                                 '🇲🇱 Mali-Palestine Solidarity 🇵🇸';
+                doc.text(solidarity, pageWidth / 2, 60, { align: 'center' });
+                
+                // Metadata
+                doc.setTextColor(100, 100, 100);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                const dateStr = new Date().toLocaleDateString();
+                const countStr = currentLang === 'fr' ? `${stories.length} histoires` :
+                                currentLang === 'ar' ? `${stories.length} قصة` :
+                                `${stories.length} stories`;
+                doc.text(`${countStr} | ${dateStr} | HydaraSoft - Ismail Haidara`, margin, 80);
+                
+                // Add separator
+                doc.setDrawColor(...colors.secondary);
+                doc.setLineWidth(0.5);
+                doc.line(margin, 85, pageWidth - margin, 85);
+                
+                let yPosition = 100;
+                let page = 1;
+                
+                // Add each story
+                stories.forEach((story, index) => {
+                    // Check if we need a new page
+                    if (yPosition > doc.internal.pageSize.getHeight() - 50) {
+                        doc.addPage();
+                        page++;
+                        yPosition = margin;
+                        
+                        // Add page footer
+                        doc.setFontSize(10);
+                        doc.setTextColor(150, 150, 150);
+                        doc.text(`Page ${page} - Gaza Stories Archive`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                    }
+                    
+                    // Story title
+                    doc.setFontSize(16);
+                    doc.setTextColor(...colors.primary);
+                    doc.setFont('helvetica', 'bold');
+                    
+                    // Split title if too long
+                    const titleLines = doc.splitTextToSize(story.title, contentWidth - 20);
+                    doc.text(titleLines, margin, yPosition);
+                    yPosition += (titleLines.length * 7) + 5;
+                    
+                    // Story metadata
+                    doc.setFontSize(11);
+                    doc.setTextColor(...colors.secondary);
+                    doc.setFont('helvetica', 'italic');
+                    
+                    const categoryLabels = {
+                        'fr': { 'memory': 'Souvenir', 'tradition': 'Tradition', 'family': 'Famille', 'place': 'Lieu', 'resistance': 'Résistance', 'hope': 'Espoir' },
+                        'ar': { 'memory': 'ذكرى', 'tradition': 'تقليد', 'family': 'عائلة', 'place': 'مكان', 'resistance': 'مقاومة', 'hope': 'أمل' },
+                        'en': { 'memory': 'Memory', 'tradition': 'Tradition', 'family': 'Family', 'place': 'Place', 'resistance': 'Resistance', 'hope': 'Hope' }
+                    };
+                    
+                    const metaText = `${categoryLabels[currentLang][story.category]} | ${story.author} | ${story.date}`;
+                    doc.text(metaText, margin, yPosition);
+                    yPosition += 10;
+                    
+                    // Story content
+                    doc.setFontSize(12);
+                    doc.setTextColor(60, 60, 60);
+                    doc.setFont('helvetica', 'normal');
+                    
+                    // Split content into lines that fit the page
+                    const contentLines = doc.splitTextToSize(story.content, contentWidth);
+                    doc.text(contentLines, margin, yPosition);
+                    yPosition += (contentLines.length * 6) + 20;
+                    
+                    // Add separator between stories
+                    if (index < stories.length - 1) {
+                        doc.setDrawColor(200, 200, 200);
+                        doc.setLineWidth(0.3);
+                        doc.line(margin, yPosition - 10, pageWidth - margin, yPosition - 10);
+                        yPosition += 10;
+                    }
+                });
+                
+                // Add final page number
+                doc.setFontSize(10);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${page} - Gaza Stories Archive`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                
+                // Add "Memory is Resistance" footer
+                doc.setFontSize(12);
+                doc.setTextColor(...colors.accent);
+                doc.setFont('helvetica', 'bold');
+                const resistanceText = currentLang === 'fr' ? 'La mémoire est une résistance' :
+                                      currentLang === 'ar' ? 'الذاكرة مقاومة' :
+                                      'Memory is Resistance';
+                doc.text(resistanceText, pageWidth / 2, doc.internal.pageSize.getHeight() - 25, { align: 'center' });
+                
+                // Save the PDF
+                const fileName = `gaza_stories_archive_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(fileName);
+                
+                // Show confirmation
+                alert(getCurrentLanguage() === 'fr' ? 'PDF généré avec succès !' :
+                      getCurrentLanguage() === 'ar' ? 'تم إنشاء PDF بنجاح!' :
+                      'PDF generated successfully!');
+            }
+            
+            function previewPDF() {
+                if (stories.length === 0) {
+                    alert(getCurrentLanguage() === 'fr' ? 'Aucune histoire à prévisualiser.' :
+                          getCurrentLanguage() === 'ar' ? 'لا توجد قصص للمعاينة.' :
+                          'No stories to preview.');
+                    return;
+                }
+                
+                const modal = document.getElementById('pdfPreviewModal');
+                const previewBody = document.getElementById('pdfPreviewBody');
+                const currentLang = getCurrentLanguage();
+                
+                // Generate HTML preview
+                let previewHTML = `
+                    <div style="max-width: 800px; margin: 0 auto; font-family: 'Segoe UI', sans-serif;">
+                        <div style="background: linear-gradient(to right, #2C3E50, #6B8E23); color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
+                            <h1 style="margin: 0 0 10px 0; font-size: 2.5rem;">
+                                ${currentLang === 'fr' ? 'Archive des Histoires de Gaza' :
+                                  currentLang === 'ar' ? 'أرشيف قصص غزة' :
+                                  'Gaza Stories Archive'}
+                            </h1>
+                            <p style="margin: 0; opacity: 0.9;">
+                                ${currentLang === 'fr' ? 'Prévisualisation PDF' :
+                                  currentLang === 'ar' ? 'معاينة PDF' :
+                                  'PDF Preview'}
+                            </p>
+                            <div style="margin-top: 15px; font-size: 1.2rem;">
+                                <strong>🇲🇱 ${currentLang === 'fr' ? 'Solidarité Mali-Palestine' :
+                                         currentLang === 'ar' ? 'تضامن مالي-فلسطين' :
+                                         'Mali-Palestine Solidarity'} 🇵🇸</strong>
+                            </div>
+                        </div>
+                        
+                        <div style="color: #666; margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+                            <p><strong>${currentLang === 'fr' ? 'Informations du PDF :' :
+                                       currentLang === 'ar' ? 'معلومات PDF:' :
+                                       'PDF Information:'}</strong></p>
+                            <p>${currentLang === 'fr' ? `${stories.length} histoires` :
+                                currentLang === 'ar' ? `${stories.length} قصة` :
+                                `${stories.length} stories`} | ${new Date().toLocaleDateString()} | HydaraSoft</p>
+                            <p><em>${currentLang === 'fr' ? 'Ceci est une prévisualisation. Cliquez sur "Générer PDF" pour créer le fichier.' :
+                                   currentLang === 'ar' ? 'هذه معاينة. انقر على "إنشاء PDF" لإنشاء الملف.' :
+                                   'This is a preview. Click "Generate PDF" to create the file.'}</em></p>
+                        </div>
+                `;
+                
+                // Add each story to preview
+                stories.forEach((story, index) => {
+                    const categoryLabels = {
+                        'fr': { 'memory': 'Souvenir', 'tradition': 'Tradition', 'family': 'Famille', 'place': 'Lieu', 'resistance': 'Résistance', 'hope': 'Espoir' },
+                        'ar': { 'memory': 'ذكرى', 'tradition': 'تقليد', 'family': 'عائلة', 'place': 'مكان', 'resistance': 'مقاومة', 'hope': 'أمل' },
+                        'en': { 'memory': 'Memory', 'tradition': 'Tradition', 'family': 'Family', 'place': 'Place', 'resistance': 'Resistance', 'hope': 'Hope' }
+                    };
+                    
+                    previewHTML += `
+                        <div style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: ${index < stories.length - 1 ? '2px dashed #6B8E23' : 'none'};">
+                            <h2 style="color: #2C3E50; margin-bottom: 10px;">${story.title}</h2>
+                            <div style="color: #6B8E23; margin-bottom: 15px; font-style: italic;">
+                                <strong>${categoryLabels[currentLang][story.category]}</strong> | ${story.author} | ${story.date}
+                            </div>
+                            <div style="line-height: 1.8; white-space: pre-wrap;">${story.content}</div>
+                            <div style="margin-top: 20px; color: #888; font-size: 0.9rem; text-align: right;">
+                                ${new Date(story.timestamp).toLocaleDateString()}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                previewHTML += `
+                    <div style="text-align: center; margin-top: 50px; padding: 30px; background: #f0f7f0; border-radius: 10px; border-left: 5px solid #CE1126;">
+                        <h3 style="color: #2C3E50;">${currentLang === 'fr' ? 'La mémoire est une résistance' :
+                                                     currentLang === 'ar' ? 'الذاكرة مقاومة' :
+                                                     'Memory is Resistance'}</h3>
+                        <p>${currentLang === 'fr' ? 'Chaque histoire sauvegardée est une victoire contre l\'effacement.' :
+                            currentLang === 'ar' ? 'كل قصة محفوظة هي انتصار ضد المحو.' :
+                            'Every saved story is a victory against erasure.'}</p>
+                    </div>
+                `;
+                
+                previewBody.innerHTML = previewHTML;
+                modal.style.display = 'flex';
+            }
+            
+            function printStories() {
+                if (stories.length === 0) {
+                    alert(getCurrentLanguage() === 'fr' ? 'Aucune histoire à imprimer.' :
+                          getCurrentLanguage() === 'ar' ? 'لا توجد قصص للطباعة.' :
+                          'No stories to print.');
+                    return;
+                }
+                
+                // Create a print-friendly version
+                const printWindow = window.open('', '_blank');
+                const currentLang = getCurrentLanguage();
+                
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>${currentLang === 'fr' ? 'Archive des Histoires de Gaza' :
+                                 currentLang === 'ar' ? 'أرشيف قصص غزة' :
+                                 'Gaza Stories Archive'}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; color: #333; }
+                            .header { text-align: center; margin-bottom: 40px; }
+                            .story { margin-bottom: 40px; page-break-inside: avoid; }
+                            .story-title { color: #2C3E50; font-size: 1.5rem; margin-bottom: 10px; }
+                            .story-meta { color: #6B8E23; margin-bottom: 15px; font-style: italic; }
+                            .story-content { white-space: pre-wrap; margin-bottom: 20px; }
+                            .footer { text-align: center; margin-top: 50px; font-size: 0.9rem; color: #666; }
+                            @media print {
+                                .page-break { page-break-before: always; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>${currentLang === 'fr' ? 'Archive des Histoires de Gaza' :
+                                  currentLang === 'ar' ? 'أرشيف قصص غزة' :
+                                  'Gaza Stories Archive'}</h1>
+                            <p><strong>🇲🇱 ${currentLang === 'fr' ? 'Solidarité Mali-Palestine' :
+                                           currentLang === 'ar' ? 'تضامن مالي-فلسطين' :
+                                           'Mali-Palestine Solidarity'} 🇵🇸</strong></p>
+                            <p>${currentLang === 'fr' ? `${stories.length} histoires | ${new Date().toLocaleDateString()}` :
+                                currentLang === 'ar' ? `${stories.length} قصة | ${new Date().toLocaleDateString()}` :
+                                `${stories.length} stories | ${new Date().toLocaleDateString()}`}</p>
+                            <p>HydaraSoft - Ismail Haidara</p>
+                            <hr>
+                        </div>
+                `);
+                
+                // Add stories
+                stories.forEach((story, index) => {
+                    const categoryLabels = {
+                        'fr': { 'memory': 'Souvenir', 'tradition': 'Tradition', 'family': 'Famille', 'place': 'Lieu', 'resistance': 'Résistance', 'hope': 'Espoir' },
+                        'ar': { 'memory': 'ذكرى', 'tradition': 'تقليد', 'family': 'عائلة', 'place': 'مكان', 'resistance': 'مقاومة', 'hope': 'أمل' },
+                        'en': { 'memory': 'Memory', 'tradition': 'Tradition', 'family': 'Family', 'place': 'Place', 'resistance': 'Resistance', 'hope': 'Hope' }
+                    };
+                    
+                    printWindow.document.write(`
+                        <div class="story">
+                            <h2 class="story-title">${story.title}</h2>
+                            <div class="story-meta">
+                                ${categoryLabels[currentLang][story.category]} | ${story.author} | ${story.date}
+                            </div>
+                            <div class="story-content">${story.content}</div>
+                            <div style="text-align: right; color: #888; font-size: 0.9rem;">
+                                ${new Date(story.timestamp).toLocaleDateString()}
+                            </div>
+                        </div>
+                        ${index < stories.length - 1 ? '<hr>' : ''}
+                    `);
+                    
+                    // Add page break every 3 stories
+                    if ((index + 1) % 3 === 0 && index < stories.length - 1) {
+                        printWindow.document.write('<div class="page-break"></div>');
+                    }
+                });
+                
+                // Add footer
+                printWindow.document.write(`
+                        <div class="footer">
+                            <hr>
+                            <p><strong>${currentLang === 'fr' ? 'La mémoire est une résistance' :
+                                         currentLang === 'ar' ? 'الذاكرة مقاومة' :
+                                         'Memory is Resistance'}</strong></p>
+                            <p>${currentLang === 'fr' ? 'Gaza Story Keeper - HydaraSoft' :
+                                currentLang === 'ar' ? 'حافظ قصص غزة - HydaraSoft' :
+                                'Gaza Story Keeper - HydaraSoft'}</p>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+                printWindow.focus();
+                
+                // Wait a bit then print
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+            }
+            
+            function clearStories() {
+                const confirmMsg = getCurrentLanguage() === 'fr' ? 'Effacer toutes les histoires sauvegardées localement ?' :
+                                 getCurrentLanguage() === 'ar' ? 'حذف جميع القصص المحفوظة محليًا؟' :
+                                 'Clear all locally saved stories?';
+                
+                if (confirm(confirmMsg)) {
+                    stories = [];
+                    localStorage.removeItem('gazaStories');
+                    displayStories();
+                    
+                    const msg = getCurrentLanguage() === 'fr' ? 'Toutes les histoires ont été effacées.' :
+                               getCurrentLanguage() === 'ar' ? 'تم حذف جميع القصص.' :
+                               'All stories have been cleared.';
+                    alert(msg);
+                }
+            }
+            
+            function exportStories() {
+                if (stories.length === 0) {
+                    const msg = getCurrentLanguage() === 'fr' ? 'Aucune histoire à exporter.' :
+                               getCurrentLanguage() === 'ar' ? 'لا توجد قصص للتصدير.' :
+                               'No stories to export.';
+                    alert(msg);
+                    return;
+                }
+                
+                const dataStr = JSON.stringify(stories, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `gaza_stories_archive_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                const msg = getCurrentLanguage() === 'fr' ? 'Archive JSON exportée avec succès !' :
+                           getCurrentLanguage() === 'ar' ? 'تم تصدير أرشيف JSON بنجاح!' :
+                           'JSON archive exported successfully!';
+                alert(msg);
+            }
+            
+            function getCurrentLanguage() {
+                const activeBtn = document.querySelector('.lang-btn.active');
+                return activeBtn ? activeBtn.getAttribute('data-lang') : 'fr';
+            }
+            
+            // Event Listeners
+            document.getElementById('storyForm').addEventListener('submit', saveStory);
+            document.getElementById('clearStoriesBtn').addEventListener('click', clearStories);
+            document.getElementById('exportStoriesBtn').addEventListener('click', exportStories);
+            
+            // PDF Event Listeners
+            document.getElementById('generatePdfBtn').addEventListener('click', generatePDF);
+            document.getElementById('previewPdfBtn').addEventListener('click', previewPDF);
+            document.getElementById('printStoriesBtn').addEventListener('click', printStories);
+            document.getElementById('closePreviewBtn').addEventListener('click', function() {
+                document.getElementById('pdfPreviewModal').style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('pdfPreviewModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // Initialize
+            switchLanguage('fr');
+            displayStories();
+            
+            // Add sample story if empty
+            if (stories.length === 0) {
+                const sampleStory = {
+                    id: 1,
+                    title: getCurrentLanguage() === 'fr' ? 'Les oliviers centenaires' : 
+                           getCurrentLanguage() === 'ar' ? 'أشجار الزيتون المعمرة' :
+                           'The Century-Old Olive Trees',
+                    author: getCurrentLanguage() === 'fr' ? 'Fatima de Gaza' : 
+                           getCurrentLanguage() === 'ar' ? 'فاطمة من غزة' :
+                           'Fatima from Gaza',
+                    date: '2023-10-01',
+                    content: getCurrentLanguage() === 'fr' ? 'Les oliviers de mon arrière-grand-père ont plus de 200 ans. Ils ont survécu à tant d\'histoires et continuent de nous donner leurs fruits. Chaque olive est une bénédiction et un symbole de notre lien à cette terre.' : 
+                            getCurrentLanguage() === 'ar' ? 'أشجار الزيتون لجد جدي عمرها أكثر من 200 عام. لقد نجت من العديد من القصص وتستمر في منحنا ثمارها. كل زيتونة هي نعمة ورمز لارتباطنا بهذه الأرض.' :
+                            'My great-grandfather\'s olive trees are over 200 years old. They have survived so many stories and continue to give us their fruit. Every olive is a blessing and a symbol of our connection to this land.',
+                    category: 'memory',
+                    timestamp: new Date().toISOString()
+                };
+                
+                stories.push(sampleStory);
+                localStorage.setItem('gazaStories', JSON.stringify(stories));
+                displayStories();
+            }
+        });
+    </script>
+</body>
+</html>
