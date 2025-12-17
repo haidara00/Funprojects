@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaza Safe Routes Navigator | HydaraSoft Community Safety</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --safe-green: #27AE60;
+            --warning-orange: #F39C12;
+            --danger-red: #E74C3C;
+            --route-blue: #3498DB;
+            --checkpoint-purple: #9B59B6;
+            --dark-navy: #2C3E50;
+            --light-bg: #ECF0F1;
+            --palestine-red: #CE1126;
+            --palestine-green: #006633;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(to right, var(--dark-navy), var(--route-blue));
+            color: white;
+            padding: 25px 0;
+            border-bottom: 5px solid var(--palestine-green);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to right, var(--palestine-red), var(--palestine-green), var(--dark-navy));
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--route-blue), var(--dark-navy));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.5);
+            animation: pulse 3s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(52, 152, 219, 0.5); }
+            100% { transform: scale(1.05); box-shadow: 0 0 30px rgba(52, 152, 219, 0.8); }
+        }
+        
+        .brand-text h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .brand-text p {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 500px;
+        }
+        
+        /* Emergency Alert */
+        .emergency-alert {
+            background: linear-gradient(to right, var(--danger-red), #C0392B);
+            color: white;
+            padding: 15px 25px;
+            margin: 25px 0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            animation: alertPulse 2s infinite;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+            border-left: 8px solid gold;
+        }
+        
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 5px 25px rgba(231, 76, 60, 0.6); }
+        }
+        
+        /* Language & Controls */
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .lang-btn:hover, .lang-btn.active {
+            background: white;
+            color: var(--dark-navy);
+            transform: translateY(-3px);
+        }
+        
+        /* Main Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 1100px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Interactive Map */
+        .map-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 3px solid var(--route-blue);
+            height: 600px;
+            position: relative;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.2)), 
+                        repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(52, 152, 219, 0.05) 20px, rgba(52, 152, 219, 0.05) 40px);
+            pointer-events: none;
+        }
+        
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 5px;
+            padding: 20px;
+        }
+        
+        .map-cell {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-cell:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .map-cell.safe {
+            background: rgba(39, 174, 96, 0.3);
+            border-color: var(--safe-green);
+        }
+        
+        .map-cell.warning {
+            background: rgba(243, 156, 18, 0.3);
+            border-color: var(--warning-orange);
+        }
+        
+        .map-cell.danger {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--danger-red);
+        }
+        
+        .map-cell.checkpoint {
+            background: rgba(155, 89, 182, 0.3);
+            border-color: var(--checkpoint-purple);
+        }
+        
+        .cell-label {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--dark-navy);
+        }
+        
+        .cell-status {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid var(--route-blue);
+        }
+        
+        .card-title {
+            color: var(--dark-navy);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.3rem;
+        }
+        
+        /* Route Information */
+        .route-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .route-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid var(--route-blue);
+            transition: all 0.3s ease;
+        }
+        
+        .route-item:hover {
+            background: #e8f4fc;
+            transform: translateX(5px);
+        }
+        
+        .route-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--route-blue), var(--dark-navy));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        /* Status Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-safe { background-color: var(--safe-green); }
+        .legend-warning { background-color: var(--warning-orange); }
+        .legend-danger { background-color: var(--danger-red); }
+        .legend-checkpoint { background-color: var(--checkpoint-purple); }
+        
+        /* Route Planner */
+        .route-planner {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--palestine-green);
+        }
+        
+        .planner-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-control {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--route-blue);
+        }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(to right, var(--route-blue), var(--dark-navy));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, var(--safe-green), #219653);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, var(--warning-orange), #D68910);
+        }
+        
+        /* Reports Grid */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .report-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .report-card.safe { border-color: var(--safe-green); }
+        .report-card.warning { border-color: var(--warning-orange); }
+        .report-card.danger { border-color: var(--danger-red); }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .report-time {
+            font-size: 0.9rem;
+            color: #666;
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        /* Community Updates */
+        .community-updates {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid var(--checkpoint-purple);
+        }
+        
+        .updates-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .update-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid var(--route-blue);
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, var(--dark-navy), #1a252f);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 5px solid var(--palestine-red);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .footer-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD166;
+        }
+        
+        .emergency-contacts {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 250px;
+        }
+        
+        .emergency-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD166;
+            margin: 10px 0;
+        }
+        
+        /* Language Content */
+        .lang-content {
+            display: none;
+        }
+        
+        .lang-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+            
+            .map-grid {
+                grid-template-columns: repeat(6, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .map-grid {
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+                padding: 10px;
+            }
+            
+            .info-card, .route-planner, .community-updates {
+                padding: 20px;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .header, .control-panel, .btn, .emergency-alert,
+            .route-planner, .community-updates, .footer {
+                display: none !important;
+            }
+            
+            .map-container {
+                height: 400px !important;
+                break-inside: avoid;
+            }
+            
+            .info-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1>Gaza Safe Routes Navigator</h1>
+                        <p>Community-powered safe paths, checkpoints, and evacuation routes</p>
+                    </div>
+                </div>
+                
+                <div class="control-panel">
+                    <div class="language-switcher">
+                        <button class="lang-btn active" data-lang="fr">
+                            <i class="fas fa-flag"></i> Français
+                        </button>
+                        <button class="lang-btn" data-lang="ar">
+                            <i class="fas fa-flag"></i> العربية
+                        </button>
+                        <button class="lang-btn" data-lang="en">
+                            <i class="fas fa-flag"></i> English
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Emergency Alert -->
+        <div class="emergency-alert">
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <div class="lang-content active" data-lang="fr">
+                <strong>URGENT : Routes en temps réel mis à jour par la communauté</strong>
+                <p>Cette carte interactive montre les chemins sûrs, zones dangereuses et points de contrôle. Les données sont mises à jour par les résidents.</p>
+            </div>
+            <div class="lang-content" data-lang="ar">
+                <strong>عاجل: يتم تحديث الطرق في الوقت الحقيقي من قبل المجتمع</strong>
+                <p>تُظهر هذه الخريطة التفاعلية المسارات الآمنة والمناطق الخطيرة ونقاط التفتيش. يتم تحديث البيانات من قبل السكان.</p>
+            </div>
+            <div class="lang-content" data-lang="en">
+                <strong>URGENT: Real-time routes updated by the community</strong>
+                <p>This interactive map shows safe paths, dangerous areas, and checkpoints. Data is updated by residents.</p>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Interactive Map -->
+            <div class="map-container">
+                <div class="map-grid" id="mapGrid">
+                    <!-- Map cells will be generated by JavaScript -->
+                </div>
+                <div class="map-overlay"></div>
+            </div>
+            
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <!-- Current Route Info -->
+                <div class="info-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-route"></i>
+                        <span class="lang-text" data-key="currentRoute">Route Actuelle</span>
+                    </h3>
+                    
+                    <div class="route-info">
+                        <div class="route-item">
+                            <div class="route-icon">
+                                <i class="fas fa-walking"></i>
+                            </div>
+                            <div>
+                                <h4 class="lang-text" data-key="safestRoute">Chemin le plus sûr</h4>
+                                <p class="lang-content active" data-lang="fr">Nord Gaza → Rafah via zones agricoles</p>
+                                <p class="lang-content" data-lang="ar">شمال غزة → رفح عبر المناطق الزراعية</p>
+                                <p class="lang-content" data-lang="en">North Gaza → Rafah via agricultural areas</p>
+                                <small class="lang-text" data-key="updated">Mis à jour il y a 2h</small>
+                            </div>
+                        </div>
+                        
+                        <div class="route-item">
+                            <div class="route-icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div>
+                                <h4 class="lang-text" data-key="evacRoute">Route d'évacuation</h4>
+                                <p class="lang-content active" data-lang="fr">Gaza Ville → Khan Younis</p>
+                                <p class="lang-content" data-lang="ar">غزة المدينة → خان يونس</p>
+                                <p class="lang-content" data-lang="en">Gaza City → Khan Younis</p>
+                                <small class="lang-text" data-key="status">Statut: Partiellement sûr</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Legend -->
+                    <div style="margin-top: 30px;">
+                        <h4 class="lang-text" data-key="legend">Légende</h4>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-safe"></div>
+                                <span class="lang-text" data-key="safeZone">Zone sûre</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-warning"></div>
+                                <span class="lang-text" data-key="cautionZone">Précaution</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-danger"></div>
+                                <span class="lang-text" data-key="dangerZone">Danger</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-checkpoint"></div>
+                                <span class="lang-text" data-key="checkpoint">Point de contrôle</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="info-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-bolt"></i>
+                        <span class="lang-text" data-key="quickActions">Actions Rapides</span>
+                    </h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <button class="btn btn-success" id="reportSafeBtn">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="lang-text" data-key="reportSafe">Signaler zone sûre</span>
+                        </button>
+                        <button class="btn btn-warning" id="reportDangerBtn">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span class="lang-text" data-key="reportDanger">Signaler danger</span>
+                        </button>
+                        <button class="btn" id="shareRouteBtn">
+                            <i class="fas fa-share-alt"></i>
+                            <span class="lang-text" data-key="shareRoute">Partager route</span>
+                        </button>
+                        <button class="btn" id="printMapBtn">
+                            <i class="fas fa-print"></i>
+                            <span class="lang-text" data-key="printMap">Imprimer carte</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Route Planner -->
+        <div class="route-planner">
+            <h3 class="card-title">
+                <i class="fas fa-map-marked-alt"></i>
+                <span class="lang-text" data-key="planRoute">Planificateur de Route</span>
+            </h3>
+            
+            <div class="lang-content active" data-lang="fr">
+                <p>Trouvez le chemin le plus sûr entre deux points. Les itinéraires sont basés sur les rapports communautaires récents.</p>
+            </div>
+            <div class="lang-content" data-lang="ar">
+                <p>ابحث عن المسار الأكثر أمانًا بين نقطتين. تستند المسارات إلى التقارير المجتمعية الحديثة.</p>
+            </div>
+            <div class="lang-content" data-lang="en">
+                <p>Find the safest path between two points. Routes are based on recent community reports.</p>
+            </div>
+            
+            <form class="planner-form" id="routePlannerForm">
+                <div class="form-group">
+                    <label for="startPoint">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="lang-text" data-key="startPoint">Point de départ</span>
+                    </label>
+                    <select class="form-control" id="startPoint">
+                        <option value="north">Nord Gaza (Jabalia)</option>
+                        <option value="gaza_city">Gaza Ville</option>
+                        <option value="central">Gaza Central</option>
+                        <option value="khan_younis">Khan Younis</option>
+                        <option value="rafah">Rafah</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endPoint">
+                        <i class="fas fa-flag-checkered"></i>
+                        <span class="lang-text" data-key="endPoint">Destination</span>
+                    </label>
+                    <select class="form-control" id="endPoint">
+                        <option value="rafah">Rafah</option>
+                        <option value="khan_younis">Khan Younis</option>
+                        <option value="central">Gaza Central</option>
+                        <option value="gaza_city">Gaza Ville</option>
+                        <option value="north">Nord Gaza (Jabalia)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="travelMode">
+                        <i class="fas fa-walking"></i>
+                        <span class="lang-text" data-key="travelMode">Mode de déplacement</span>
+                    </label>
+                    <select class="form-control" id="travelMode">
+                        <option value="walking">À pied</option>
+                        <option value="vehicle">Véhicule</option>
+                        <option value="ambulance">Ambulance</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="priority">
+                        <i class="fas fa-clock"></i>
+                        <span class="lang-text" data-key="priority">Priorité</span>
+                    </label>
+                    <select class="form-control" id="priority">
+                        <option value="safest">Le plus sûr</option>
+                        <option value="fastest">Le plus rapide</option>
+                        <option value="shortest">Le plus court</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" style="grid-column: 1 / -1; margin-top: 20px;">
+                    <i class="fas fa-route"></i>
+                    <span class="lang-text" data-key="findRoute">Trouver Route</span>
+                </button>
+            </form>
+        </div>
+        
+        <!-- Recent Reports -->
+        <div class="info-card">
+            <h3 class="card-title">
+                <i class="fas fa-bullhorn"></i>
+                <span class="lang-text" data-key="recentReports">Rapports Récents</span>
+            </h3>
+            
+            <div class="reports-grid">
+                <div class="report-card safe">
+                    <div class="report-header">
+                        <h4 class="lang-text" data-key="safePassage">Passage sûr</h4>
+                        <span class="report-time">2h ago</span>
+                    </div>
+                    <p class="lang-content active" data-lang="fr">Route agricole entre Beit Hanoun et Jabalia est sécurisée. Points de contrôle civils présents.</p>
+                    <p class="lang-content" data-lang="ar">الطريق الزراعي بين بيت حانون وجباليا آمن. نقاط تفتيش مدنية موجودة.</p>
+                    <p class="lang-content" data-lang="en">Agricultural road between Beit Hanoun and Jabalia is secure. Civilian checkpoints present.</p>
+                    <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user" style="color: #666;"></i>
+                        <small>Ahmed G.</small>
+                    </div>
+                </div>
+                
+                <div class="report-card warning">
+                    <div class="report-header">
+                        <h4 class="lang-text" data-key="cautionArea">Zone de précaution</h4>
+                        <span class="report-time">4h ago</span>
+                    </div>
+                    <p class="lang-content active" data-lang="fr">Rue principale de Gaza Ville congestionnée. Utilisez les ruelles parallèles.</p>
+                    <p class="lang-content" data-lang="ar">الشارع الرئيسي في مدينة غزة مزدحم. استخدم الأزقة الموازية.</p>
+                    <p class="lang-content" data-lang="en">Main street in Gaza City congested. Use parallel alleyways.</p>
+                    <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user" style="color: #666;"></i>
+                        <small>Mariam R.</small>
+                    </div>
+                </div>
+                
+                <div class="report-card danger">
+                    <div class="report-header">
+                        <h4 class="lang-text" data-key="avoidArea">Zone à éviter</h4>
+                        <span class="report-time">6h ago</span>
+                    </div>
+                    <p class="lang-content active" data-lang="fr">Route côtière au nord de Gaza Ville dangereuse. Détour recommandé.</p>
+                    <p class="lang-content" data-lang="ar">الطريق الساحلي شمال مدينة غزة خطير. يوصى بالتحويل.</p>
+                    <p class="lang-content" data-lang="en">Coastal road north of Gaza City dangerous. Detour recommended.</p>
+                    <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user" style="color: #666;"></i>
+                        <small>Omar K.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Community Updates -->
+        <div class="community-updates">
+            <h3 class="card-title">
+                <i class="fas fa-users"></i>
+                <span class="lang-text" data-key="communityUpdates">Mises à jour Communautaires</span>
+            </h3>
+            
+            <div class="updates-list">
+                <div class="update-item">
+                    <div class="lang-content active" data-lang="fr">
+                        <p><strong>Nouveau point d'eau :</strong> Puits réparé près de l'école Al-Rashid. Eau potable disponible de 6h à 8h.</p>
+                        <small><i class="far fa-clock"></i> Il y a 1 heure</small>
+                    </div>
+                    <div class="lang-content" data-lang="ar">
+                        <p><strong>نقطة ماء جديدة:</strong> تم إصلاح البئر بالقرب من مدرسة الرشيد. مياه شرب متاحة من 6 صباحًا حتى 8 صباحًا.</p>
+                        <small><i class="far fa-clock"></i> منذ ساعة واحدة</small>
+                    </div>
+                    <div class="lang-content" data-lang="en">
+                        <p><strong>New water point:</strong> Well repaired near Al-Rashid school. Drinking water available 6am-8am.</p>
+                        <small><i class="far fa-clock"></i> 1 hour ago</small>
+                    </div>
+                </div>
+                
+                <div class="update-item">
+                    <div class="lang-content active" data-lang="fr">
+                        <p><strong>Distribution nourriture :</strong> ONU distribue des rations à la mosquée Al-Omari jusqu'à 16h.</p>
+                        <small><i class="far fa-clock"></i> Il y a 3 heures</small>
+                    </div>
+                    <div class="lang-content" data-lang="ar">
+                        <p><strong>توزيع الطعام:</strong> الأمم المتحدة توزع حصصًا في مسجد العمري حتى الساعة 4 مساءً.</p>
+                        <small><i class="far fa-clock"></i> منذ 3 ساعات</small>
+                    </div>
+                    <div class="lang-content" data-lang="en">
+                        <p><strong>Food distribution:</strong> UN distributing rations at Al-Omari mosque until 4pm.</p>
+                        <small><i class="far fa-clock"></i> 3 hours ago</small>
+                    </div>
+                </div>
+                
+                <div class="update-item">
+                    <div class="lang-content active" data-lang="fr">
+                        <p><strong>Médecin disponible :</strong> Docteur Hassan offre soins gratuits à la clinique Nasser.</p>
+                        <small><i class="far fa-clock"></i> Il y a 5 heures</small>
+                    </div>
+                    <div class="lang-content" data-lang="ar">
+                        <p><strong>طبيب متاح:</strong> الدكتور حسن يقدم رعاية مجانية في عيادة الناصر.</p>
+                        <small><i class="far fa-clock"></i> منذ 5 ساعات</small>
+                    </div>
+                    <div class="lang-content" data-lang="en">
+                        <p><strong>Doctor available:</strong> Dr. Hassan offering free care at Nasser clinic.</p>
+                        <small><i class="far fa-clock"></i> 5 hours ago</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn" id="addUpdateBtn">
+                    <i class="fas fa-plus"></i>
+                    <span class="lang-text" data-key="addUpdate">Ajouter Mise à jour</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-route"></i> Gaza Safe Routes
+                    <p style="font-size: 1rem; margin-top: 10px; color: #ccc;">HydaraSoft - Ismail Haidara</p>
+                </div>
+                
+                <div class="emergency-contacts">
+                    <div class="lang-content active" data-lang="fr">
+                        <p><i class="fas fa-phone-alt"></i> Urgences Gaza</p>
+                        <div class="emergency-number">101</div>
+                        <p>Police | Ambulance | Pompiers</p>
+                    </div>
+                    <div class="lang-content" data-lang="ar">
+                        <p><i class="fas fa-phone-alt"></i> طوارئ غزة</p>
+                        <div class="emergency-number">101</div>
+                        <p>شرطة | إسعاف | إطفاء</p>
+                    </div>
+                    <div class="lang-content" data-lang="en">
+                        <p><i class="fas fa-phone-alt"></i> Gaza Emergency</p>
+                        <div class="emergency-number">101</div>
+                        <p>Police | Ambulance | Fire</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <p class="lang-content active" data-lang="fr">
+                        <i class="fas fa-hands-helping" style="color: #FFD166;"></i> Solidarité Mali-Palestine<br>
+                        <small>Application communautaire hors ligne</small>
+                    </p>
+                    <p class="lang-content" data-lang="ar">
+                        <i class="fas fa-hands-helping" style="color: #FFD166;"></i> تضامن مالي-فلسطين<br>
+                        <small>تطبيق مجتمعي غير متصل</small>
+                    </p>
+                    <p class="lang-content" data-lang="en">
+                        <i class="fas fa-hands-helping" style="color: #FFD166;"></i> Mali-Palestine Solidarity<br>
+                        <small>Offline community application</small>
+                    </p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p class="lang-content active" data-lang="fr">
+                    <strong>Conseil de sécurité :</strong> Voyagez en groupe • Informez vos proches • Ayez de l'eau • Évitez la nuit
+                </p>
+                <p class="lang-content" data-lang="ar">
+                    <strong>نصيحة السلامة:</strong> سافر في مجموعات • أخبر أحباءك • احمل ماء • تجنب الليل
+                </p>
+                <p class="lang-content" data-lang="en">
+                    <strong>Safety tip:</strong> Travel in groups • Inform loved ones • Carry water • Avoid nighttime
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Make jsPDF available
+        window.jsPDF = window.jspdf.jsPDF;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Language Management
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const langContents = document.querySelectorAll('.lang-content');
+            const langTexts = document.querySelectorAll('.lang-text');
+            
+            const translations = {
+                'fr': {
+                    'currentRoute': 'Route Actuelle',
+                    'safestRoute': 'Chemin le plus sûr',
+                    'evacRoute': 'Route d\'évacuation',
+                    'updated': 'Mis à jour il y a 2h',
+                    'status': 'Statut: Partiellement sûr',
+                    'legend': 'Légende',
+                    'safeZone': 'Zone sûre',
+                    'cautionZone': 'Précaution',
+                    'dangerZone': 'Danger',
+                    'checkpoint': 'Point de contrôle',
+                    'quickActions': 'Actions Rapides',
+                    'reportSafe': 'Signaler zone sûre',
+                    'reportDanger': 'Signaler danger',
+                    'shareRoute': 'Partager route',
+                    'printMap': 'Imprimer carte',
+                    'planRoute': 'Planificateur de Route',
+                    'startPoint': 'Point de départ',
+                    'endPoint': 'Destination',
+                    'travelMode': 'Mode de déplacement',
+                    'priority': 'Priorité',
+                    'findRoute': 'Trouver Route',
+                    'recentReports': 'Rapports Récents',
+                    'safePassage': 'Passage sûr',
+                    'cautionArea': 'Zone de précaution',
+                    'avoidArea': 'Zone à éviter',
+                    'communityUpdates': 'Mises à jour Communautaires',
+                    'addUpdate': 'Ajouter Mise à jour'
+                },
+                'ar': {
+                    'currentRoute': 'الطريق الحالي',
+                    'safestRoute': 'أأمن طريق',
+                    'evacRoute': 'طريق الإخلاء',
+                    'updated': 'تم التحديث منذ ساعتين',
+                    'status': 'الحالة: آمن جزئيًا',
+                    'legend': 'مفتاح الخريطة',
+                    'safeZone': 'منطقة آمنة',
+                    'cautionZone': 'حذر',
+                    'dangerZone': 'خطر',
+                    'checkpoint': 'نقطة تفتيش',
+                    'quickActions': 'إجراءات سريعة',
+                    'reportSafe': 'الإبلاغ عن منطقة آمنة',
+                    'reportDanger': 'الإبلاغ عن خطر',
+                    'shareRoute': 'مشاركة طريق',
+                    'printMap': 'طباعة الخريطة',
+                    'planRoute': 'مخطط الطريق',
+                    'startPoint': 'نقطة البداية',
+                    'endPoint': 'الوجهة',
+                    'travelMode': 'وسيلة السفر',
+                    'priority': 'الأولوية',
+                    'findRoute': 'البحث عن طريق',
+                    'recentReports': 'التقارير الأخيرة',
+                    'safePassage': 'ممر آمن',
+                    'cautionArea': 'منطقة حذر',
+                    'avoidArea': 'منطقة تجنب',
+                    'communityUpdates': 'تحديثات المجتمع',
+                    'addUpdate': 'إضافة تحديث'
+                },
+                'en': {
+                    'currentRoute': 'Current Route',
+                    'safestRoute': 'Safest Path',
+                    'evacRoute': 'Evacuation Route',
+                    'updated': 'Updated 2h ago',
+                    'status': 'Status: Partially safe',
+                    'legend': 'Legend',
+                    'safeZone': 'Safe zone',
+                    'cautionZone': 'Caution',
+                    'dangerZone': 'Danger',
+                    'checkpoint': 'Checkpoint',
+                    'quickActions': 'Quick Actions',
+                    'reportSafe': 'Report safe area',
+                    'reportDanger': 'Report danger',
+                    'shareRoute': 'Share route',
+                    'printMap': 'Print map',
+                    'planRoute': 'Route Planner',
+                    'startPoint': 'Starting point',
+                    'endPoint': 'Destination',
+                    'travelMode': 'Travel mode',
+                    'priority': 'Priority',
+                    'findRoute': 'Find Route',
+                    'recentReports': 'Recent Reports',
+                    'safePassage': 'Safe passage',
+                    'cautionArea': 'Caution area',
+                    'avoidArea': 'Avoid area',
+                    'communityUpdates': 'Community Updates',
+                    'addUpdate': 'Add Update'
+                }
+            };
+            
+            function switchLanguage(lang) {
+                // Update active button
+                langButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+                });
+                
+                // Show/hide language content
+                langContents.forEach(content => {
+                    content.classList.toggle('active', content.getAttribute('data-lang') === lang);
+                });
+                
+                // Update text elements
+                langTexts.forEach(element => {
+                    const key = element.getAttribute('data-key');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+                
+                // Update direction for Arabic
+                if (lang === 'ar') {
+                    document.body.style.direction = 'rtl';
+                    document.querySelectorAll('h1, h2, h3, h4, p, li, label').forEach(el => {
+                        el.style.textAlign = 'right';
+                    });
+                } else {
+                    document.body.style.direction = 'ltr';
+                    document.querySelectorAll('h1, h2, h3, h4, p, li, label').forEach(el => {
+                        el.style.textAlign = 'left';
+                    });
+                }
+            }
+            
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+            
+            // ==================== INTERACTIVE MAP ====================
+            
+            const mapGrid = document.getElementById('mapGrid');
+            const mapData = JSON.parse(localStorage.getItem('gazaRouteData')) || generateInitialMap();
+            
+            // Gaza regions with Arabic names
+            const gazaRegions = {
+                'fr': [
+                    'Jabalia', 'Beit Lahia', 'Beit Hanoun', 'Gaza Nord', 
+                    'Gaza Ville', 'Al-Shati', 'Al-Zaytoun', 'Al-Rimal',
+                    'Al-Nasser', 'Al-Qarara', 'Khan Younis', 'Bani Suheila',
+                    'Abasan', 'Rafah', 'Al-Shoka', 'Al-Mawasi'
+                ],
+                'ar': [
+                    'جباليا', 'بيت لاهيا', 'بيت حانون', 'شمال غزة',
+                    'غزة المدينة', 'الشاطئ', 'الزيتون', 'الرمال',
+                    'الناصر', 'القرارة', 'خان يونس', 'بني سهيلا',
+                    'عبسان', 'رفح', 'الشوكة', 'الموسى'
+                ],
+                'en': [
+                    'Jabalia', 'Beit Lahia', 'Beit Hanoun', 'North Gaza',
+                    'Gaza City', 'Al-Shati', 'Al-Zaytoun', 'Al-Rimal',
+                    'Al-Nasser', 'Al-Qarara', 'Khan Younis', 'Bani Suheila',
+                    'Abasan', 'Rafah', 'Al-Shoka', 'Al-Mawasi'
+                ]
+            };
+            
+            function generateInitialMap() {
+                const data = [];
+                for (let i = 0; i < 16; i++) {
+                    // Random status with weighted probability (more safe areas)
+                    const rand = Math.random();
+                    let status = 'safe';
+                    if (rand < 0.1) status = 'danger';
+                    else if (rand < 0.3) status = 'warning';
+                    else if (rand < 0.35) status = 'checkpoint';
+                    
+                    data.push({
+                        id: i,
+                        status: status,
+                        lastUpdated: Date.now() - Math.random() * 43200000, // Random within 12 hours
+                        reports: Math.floor(Math.random() * 5)
+                    });
+                }
+                localStorage.setItem('gazaRouteData', JSON.stringify(data));
+                return data;
+            }
+            
+            function renderMap() {
+                mapGrid.innerHTML = '';
+                const currentLang = getCurrentLanguage();
+                
+                mapData.forEach((cell, index) => {
+                    const cellElement = document.createElement('div');
+                    cellElement.className = `map-cell ${cell.status}`;
+                    cellElement.dataset.id = cell.id;
+                    
+                    // Cell label (region name)
+                    const label = document.createElement('div');
+                    label.className = 'cell-label';
+                    label.textContent = gazaRegions[currentLang][index];
+                    
+                    // Status indicator
+                    const status = document.createElement('div');
+                    status.className = 'cell-status';
+                    status.style.backgroundColor = getStatusColor(cell.status);
+                    
+                    // Report count
+                    if (cell.reports > 0) {
+                        const reports = document.createElement('div');
+                        reports.className = 'cell-reports';
+                        reports.innerHTML = `<i class="fas fa-user-friends"></i> ${cell.reports}`;
+                        reports.style.position = 'absolute';
+                        reports.style.top = '5px';
+                        reports.style.right = '5px';
+                        reports.style.fontSize = '0.7rem';
+                        reports.style.color = '#666';
+                        cellElement.appendChild(reports);
+                    }
+                    
+                    cellElement.appendChild(status);
+                    cellElement.appendChild(label);
+                    
+                    // Click handler
+                    cellElement.addEventListener('click', function() {
+                        showCellDetails(cell.id);
+                    });
+                    
+                    mapGrid.appendChild(cellElement);
+                });
+            }
+            
+            function getStatusColor(status) {
+                switch(status) {
+                    case 'safe': return '#27AE60';
+                    case 'warning': return '#F39C12';
+                    case 'danger': return '#E74C3C';
+                    case 'checkpoint': return '#9B59B6';
+                    default: return '#95A5A6';
+                }
+            }
+            
+            function showCellDetails(cellId) {
+                const cell = mapData.find(c => c.id === cellId);
+                const currentLang = getCurrentLanguage();
+                
+                const statusMessages = {
+                    'fr': {
+                        'safe': 'Zone sécurisée',
+                        'warning': 'Zone nécessitant des précautions',
+                        'danger': 'Zone dangereuse - À éviter',
+                        'checkpoint': 'Point de contrôle civil'
+                    },
+                    'ar': {
+                        'safe': 'منطقة آمنة',
+                        'warning': 'منطقة تحتاج إلى حذر',
+                        'danger': 'منطقة خطيرة - تجنب',
+                        'checkpoint': 'نقطة تفتيش مدنية'
+                    },
+                    'en': {
+                        'safe': 'Secure area',
+                        'warning': 'Area requiring caution',
+                        'danger': 'Dangerous area - Avoid',
+                        'checkpoint': 'Civilian checkpoint'
+                    }
+                };
+                
+                const regionName = gazaRegions[currentLang][cellId];
+                const statusText = statusMessages[currentLang][cell.status];
+                const timeAgo = getTimeAgo(cell.lastUpdated, currentLang);
+                
+                const message = currentLang === 'fr' 
+                    ? `${regionName}: ${statusText}. ${cell.reports} rapports. ${timeAgo}`
+                    : currentLang === 'ar'
+                    ? `${regionName}: ${statusText}. ${cell.reports} تقارير. ${timeAgo}`
+                    : `${regionName}: ${statusText}. ${cell.reports} reports. ${timeAgo}`;
+                
+                alert(message);
+            }
+            
+            function getTimeAgo(timestamp, lang) {
+                const diff = Date.now() - timestamp;
+                const hours = Math.floor(diff / 3600000);
+                
+                if (hours < 1) {
+                    return lang === 'fr' ? 'Mis à jour récemment' :
+                           lang === 'ar' ? 'تم التحديث مؤخرًا' :
+                           'Updated recently';
+                } else if (hours === 1) {
+                    return lang === 'fr' ? 'Il y a 1 heure' :
+                           lang === 'ar' ? 'قبل ساعة واحدة' :
+                           '1 hour ago';
+                } else {
+                    return lang === 'fr' ? `Il y a ${hours} heures` :
+                           lang === 'ar' ? `قبل ${hours} ساعات` :
+                           `${hours} hours ago`;
+                }
+            }
+            
+            // ==================== ROUTE PLANNER ====================
+            
+            document.getElementById('routePlannerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const start = document.getElementById('startPoint').value;
+                const end = document.getElementById('endPoint').value;
+                const mode = document.getElementById('travelMode').value;
+                const priority = document.getElementById('priority').value;
+                const currentLang = getCurrentLanguage();
+                
+                if (start === end) {
+                    alert(currentLang === 'fr' ? 'Le point de départ et la destination sont identiques.' :
+                          currentLang === 'ar' ? 'نقطة البداية والوجهة متطابقتان.' :
+                          'Starting point and destination are the same.');
+                    return;
+                }
+                
+                // Simulate route calculation
+                const routes = {
+                    'north-rafah': {
+                        fr: 'Jabalia → Beit Hanoun → Gaza Ville → Khan Younis → Rafah',
+                        ar: 'جباليا → بيت حانون → غزة المدينة → خان يونس → رفح',
+                        en: 'Jabalia → Beit Hanoun → Gaza City → Khan Younis → Rafah'
+                    },
+                    'gaza_city-khan_younis': {
+                        fr: 'Gaza Ville → Al-Zaytoun → Al-Qarara → Khan Younis',
+                        ar: 'غزة المدينة → الزيتون → القرارة → خان يونس',
+                        en: 'Gaza City → Al-Zaytoun → Al-Qarara → Khan Younis'
+                    },
+                    'khan_younis-rafah': {
+                        fr: 'Khan Younis → Bani Suheila → Abasan → Rafah',
+                        ar: 'خان يونس → بني سهيلا → عبسان → رفح',
+                        en: 'Khan Younis → Bani Suheila → Abasan → Rafah'
+                    }
+                };
+                
+                const routeKey = `${start}-${end}`;
+                const reverseKey = `${end}-${start}`;
+                
+                let routeText = routes[routeKey] || routes[reverseKey];
+                
+                if (!routeText) {
+                    routeText = {
+                        fr: 'Route directe via chemins secondaires',
+                        ar: 'طريق مباشر عبر طرق ثانوية',
+                        en: 'Direct route via secondary paths'
+                    };
+                }
+                
+                const routeDetails = currentLang === 'fr' 
+                    ? `Route calculée: ${routeText.fr}\nDistance: ~15km\nTemps estimé: 3-4 heures\nRecommandation: Voyagez de jour`
+                    : currentLang === 'ar'
+                    ? `تم حساب الطريق: ${routeText.ar}\nالمسافة: ~15 كم\nالوقت المقدر: 3-4 ساعات\nالتوصية: السفر نهارًا`
+                    : `Route calculated: ${routeText.en}\nDistance: ~15km\nEstimated time: 3-4 hours\nRecommendation: Travel during daylight`;
+                
+                alert(routeDetails);
+            });
+            
+            // ==================== REPORT FUNCTIONS ====================
+            
+            document.getElementById('reportSafeBtn').addEventListener('click', function() {
+                reportStatus('safe');
+            });
+            
+            document.getElementById('reportDangerBtn').addEventListener('click', function() {
+                reportStatus('danger');
+            });
+            
+            function reportStatus(status) {
+                const currentLang = getCurrentLanguage();
+                
+                const regionNames = {
+                    fr: ['Sélectionnez une région', ...gazaRegions.fr],
+                    ar: ['اختر منطقة', ...gazaRegions.ar],
+                    en: ['Select a region', ...gazaRegions.en]
+                };
+                
+                const regionSelect = prompt(
+                    currentLang === 'fr' ? 'Sélectionnez la région:' :
+                    currentLang === 'ar' ? 'اختر المنطقة:' :
+                    'Select the region:',
+                    regionNames[currentLang].join('\n')
+                );
+                
+                if (regionSelect && regionSelect !== regionNames[currentLang][0]) {
+                    const regionIndex = regionNames[currentLang].indexOf(regionSelect) - 1;
+                    
+                    if (regionIndex >= 0 && regionIndex < mapData.length) {
+                        mapData[regionIndex].status = status;
+                        mapData[regionIndex].lastUpdated = Date.now();
+                        mapData[regionIndex].reports += 1;
+                        
+                        localStorage.setItem('gazaRouteData', JSON.stringify(mapData));
+                        renderMap();
+                        
+                        const msg = currentLang === 'fr' ? 'Merci pour votre rapport. La carte a été mise à jour.' :
+                                  currentLang === 'ar' ? 'شكرًا لتقريرك. تم تحديث الخريطة.' :
+                                  'Thank you for your report. The map has been updated.';
+                        alert(msg);
+                    }
+                }
+            }
+            
+            // ==================== SHARE & PRINT ====================
+            
+            document.getElementById('shareRouteBtn').addEventListener('click', function() {
+                const currentLang = getCurrentLanguage();
+                const message = currentLang === 'fr' 
+                    ? 'Voici mes routes sûres sauvegardées depuis Gaza Safe Routes Navigator'
+                    : currentLang === 'ar'
+                    ? 'ها هي طرقي الآمنة المحفوظة من ملاح الطرق الآمنة في غزة'
+                    : 'Here are my safe routes saved from Gaza Safe Routes Navigator';
+                
+                alert(`${message}\n\nHashtags: #GazaSafeRoutes #CommunityNavigation #HydaraSoftSafety`);
+            });
+            
+            document.getElementById('printMapBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            document.getElementById('addUpdateBtn').addEventListener('click', function() {
+                const currentLang = getCurrentLanguage();
+                const update = prompt(
+                    currentLang === 'fr' ? 'Ajoutez une mise à jour communautaire:' :
+                    currentLang === 'ar' ? 'أضف تحديثًا مجتمعيًا:' :
+                    'Add a community update:',
+                    ''
+                );
+                
+                if (update && update.trim()) {
+                    alert(
+                        currentLang === 'fr' ? 'Merci pour votre mise à jour! Elle sera visible localement.' :
+                        currentLang === 'ar' ? 'شكرًا لتحديثك! سيكون مرئيًا محليًا.' :
+                        'Thank you for your update! It will be visible locally.'
+                    );
+                }
+            });
+            
+            // ==================== INITIALIZATION ====================
+            
+            function getCurrentLanguage() {
+                const activeBtn = document.querySelector('.lang-btn.active');
+                return activeBtn ? activeBtn.getAttribute('data-lang') : 'fr';
+            }
+            
+            // Initialize
+            switchLanguage('fr');
+            renderMap();
+            
+            // Auto-update map every 5 minutes (simulated)
+            setInterval(() => {
+                // Randomly update some cells
+                mapData.forEach(cell => {
+                    if (Math.random() < 0.1) { // 10% chance to change status
+                        const statuses = ['safe', 'warning', 'danger', 'checkpoint'];
+                        cell.status = statuses[Math.floor(Math.random() * statuses.length)];
+                        cell.lastUpdated = Date.now();
+                    }
+                });
+                localStorage.setItem('gazaRouteData', JSON.stringify(mapData));
+                renderMap();
+            }, 300000); // 5 minutes
+        });
+    </script>
+</body>
+</html>
